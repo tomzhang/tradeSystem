@@ -2,57 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bernard.mysql.dao.UserDataMapper">
-    <select id="getConversionBondByday" resultType="com.bernard.mysql.dto.ConversionBond">
-		SELECT sec_code AS secCode,sec_name AS secName,conversion_sec_code AS conversionSecCode,PB AS PB,conversion_proportion AS conversionProportion,conversion_price AS conversionPrice,Bond_value AS bondValue,Option_value AS optionValue,buyback_price AS buyBackPrice,qyz_interest AS qyzInterest,redem_price AS redemPrice,
-		end_date AS endDate, interest_terms AS interestTerms,stockvolatility AS stockVolatility,dividend_rate AS dividendRate,Remaining_year AS remainingYear, betax_yield AS betaxYield,aftertax_yield AS aftertaxYield, buyback_profit AS buyBackProfit,timestamp AS timeStamp,remaining_proportion AS remainingProportion,issue_amount AS issueAmount FROM conversion_bond WHERE TIMESTAMP =#{1}
 
-	</select>
-
-    <select id="getConversionBondHistroyByday" resultType="com.bernard.mysql.dto.ConversionBond">
-		SELECT sec_code AS secCode,sec_name AS secName,conversion_sec_code AS conversionSecCode,PB AS PB,conversion_proportion AS conversionProportion,conversion_price AS conversionPrice,Bond_value AS bondValue,Option_value AS optionValue,buyback_price AS buyBackPrice,qyz_interest AS qyzInterest,redem_price AS redemPrice,
-		end_date AS endDate, interest_terms AS interestTerms,stockvolatility AS stockVolatility,dividend_rate AS dividendRate,Remaining_year AS remainingYear, betax_yield AS betaxYield,aftertax_yield AS aftertaxYield, buyback_profit AS buyBackProfit,timestamp AS timeStamp,remaining_proportion AS remainingProportion,issue_amount AS issueAmount FROM conversion_bond_history WHERE TIMESTAMP =#{1}
-	</select>
-
-    <!-- 昨日可转债信息 -->
-    <update id="updateYesterdayConversionBond" parameterType="com.bernard.mysql.dto.ConversionBond">
-		UPDATE conversion_bond_history
-		SET conversion_bond_history.betax_yield = #{yieldRateBeforeTax},
-		conversion_bond_history.aftertax_yield = #{yieldRateAfterTax},
-		conversion_bond_history.Option_value = #{optPrice},
-		conversion_bond_history.conversion_stock_value = #{conversionStockValue},
-		conversion_bond_history.Bond_value=#{PureDebtValue},
-		conversion_bond_history.premium_Rate=#{premiumRate}
-		WHERE conversion_bond_history.sec_code = #{secCodeDataBase} AND conversion_bond_history.timestamp=#{timeStamp}
-	</update>
-
-    <insert id="saveOrUpdateDemo">
-        <selectKey keyProperty="count" resultType="int" order="BEFORE">
-            select count(*) from country where id = #{id}
-        </selectKey>
-        <if test="count > 0">
-            update country
-            set countryname = #{countryname},countrycode = #{countrycode}
-            where id = #{id}
-        </if>
-        <if test="count==0">
-            insert into country values(#{id},#{countryname},#{countrycode})
-        </if>
-    </insert>
-
-    <select id="getConversionBondProgressOverview" resultType="com.bernard.mysql.dto.ConversionBondProgressOverview">
-			SELECT
-	conversion_bond.sec_code AS secCode,
-	conversion_bond.apply_price AS applyPrice,
-	conversion_bond.apply_date AS applyDate,
-	conversion_bond_progress.sec_name AS secName,
-	conversion_bond_progress.progress AS progress,
-	conversion_bond_progress.sec_code AS conversionSecCode
-FROM
-	conversion_bond_progress
-LEFT JOIN conversion_bond ON conversion_bond_progress.sec_code = conversion_bond.conversion_sec_code
-AND conversion_bond.apply_date >= #{1}
-where conversion_bond_progress.is_conversion_bond = '是'
-and conversion_bond_progress.issue_method='优先配售，网上定价和网下配售'
-	</select>
+	<insert id="inserUserOrder" parameterType="com.bernard.mysql.dto.Order">
+		INSERT INTO T_USER_ORDER VALUE (#{orderID},#{orderTime},#{account},#{asset},#{orderSide,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{orderType,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{surviveTime},#{amount},#{price},#{state,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{remain},#{AssertLimit},#{LockVersion})
+	</insert>
 
 </mapper>

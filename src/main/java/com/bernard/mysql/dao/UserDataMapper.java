@@ -2,14 +2,12 @@ package com.bernard.mysql.dao;
 
 import com.bernard.mysql.dto.ConversionBond;
 import com.bernard.mysql.dto.ConversionBondProgressOverview;
+import com.bernard.mysql.dto.Order;
 import org.mybatis.spring.annotation.MapperScan;
 
 import java.util.List;
 
 @MapperScan
 public interface UserDataMapper {
-    public List<ConversionBond> getConversionBondByday(String dateString);
-    public List<ConversionBond> getConversionBondHistroyByday(String dateString);
-    public List<ConversionBond> updateYesterdayConversionBond(ConversionBond conversionBond);
-    public List<ConversionBondProgressOverview> getConversionBondProgressOverview(String date);
+    void inserUserOrder(Order userOder);
 }

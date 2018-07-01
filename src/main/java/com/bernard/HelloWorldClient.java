@@ -1,8 +1,6 @@
 package com.bernard;
 
-import com.bernard.grpc.client.pool.ConversionBondCalcExecutor;
-import com.bernard.grpc.client.pool.ConvertibleBondTask;
-import com.bernard.grpc.client.pool.HelloWorldClientPool;
+
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.examples.helloworld.GreeterGrpc;
@@ -46,6 +44,7 @@ public class HelloWorldClient {
         HelloRequest request = HelloRequest.newBuilder().setName(name).build();
         try {
             HelloReply response = blockingStub.sayHello(request);
+            System.out.println(response.getMessage());
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -55,17 +54,7 @@ public class HelloWorldClient {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        //HelloWorldClient client = HelloWorldClientPool.borrowObject();
-      /* long start= System.currentTimeMillis();
-        for (int i =0 ;i<2000 ;i++){
-            ConvertibleBondTask task = new ConvertibleBondTask(i);
-            FutureTask futureTask = new FutureTask(task);
-            ConversionBondCalcExecutor.submitTask(futureTask);
-        }
-        while (atomicLong.get()<99999) {
 
-        }
-        System.out.println(99999/((System.currentTimeMillis()-start)/1000));*/
       HelloWorldClient client = new HelloWorldClient("127.0.0.1",50051);
       client.greet("123");
 
