@@ -7,4 +7,5 @@
 		INSERT INTO T_USER_ORDER VALUE (#{orderID},#{orderTime},#{account},#{asset},#{orderSide,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{orderType,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{surviveTime},#{amount},#{price},#{state,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{remain},#{AssertLimit},#{LockVersion})
 	</insert>
 
+
 </mapper>

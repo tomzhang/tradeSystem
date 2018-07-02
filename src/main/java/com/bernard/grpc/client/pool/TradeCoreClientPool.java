@@ -36,7 +36,7 @@ public class TradeCoreClientPool {
     public static TradeCoreClient borrowObject() {
         try {
             TradeCoreClient clientSingle = objectPool.borrowObject();
-            //System.out.println("总创建线程数"+objectPool.getCreatedCount());
+            logger.debug("总创建线程数"+objectPool.getCreatedCount());
             return clientSingle;
         } catch (Exception e) {
             logger.error("链接池获取链接异常", e);

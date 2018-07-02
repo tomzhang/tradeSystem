@@ -4,11 +4,9 @@ package com.bernard.grpc.client.pool;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.tradesystem.service.TradeCoreGrpc;
-import io.grpc.tradesystem.service.UserOrderReply;
-import io.grpc.tradesystem.service.UserOrderRequest;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+
 
 
 public class TradeCoreClient {
