@@ -1,12 +1,13 @@
 package com.bernard.grpc.client.pool;
 
-import com.bernard.HelloWorldClient;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.apache.log4j.Logger;
 
-public class HelloWorldClientPool {
+public class TradeCoreClientPool {
+    private static Logger logger = Logger.getLogger(TradeCoreClientPool.class);
 
-    private static GenericObjectPool<HelloWorldClient> objectPool = null;
+    private static GenericObjectPool<TradeCoreClient> objectPool = null;
 
     static {
         // 连接池的配置
@@ -32,13 +33,13 @@ public class HelloWorldClientPool {
     /**
      * 从连接池获取对象
      */
-    public static HelloWorldClient borrowObject(){
+    public static TradeCoreClient borrowObject() {
         try {
-            HelloWorldClient clientSingle = objectPool.borrowObject();
+            TradeCoreClient clientSingle = objectPool.borrowObject();
             //System.out.println("总创建线程数"+objectPool.getCreatedCount());
             return clientSingle;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("链接池获取链接异常", e);
         }
         //连接池失败则主动创建
         return createClient();
@@ -47,11 +48,11 @@ public class HelloWorldClientPool {
     /**
      * 当连接池异常,则主动创建对象
      */
-    private static HelloWorldClient createClient(){
-        return new HelloWorldClient("127.0.0.1", 55001);
+    private static TradeCoreClient createClient() {
+        return new TradeCoreClient(GrpcClientFactory.host, GrpcClientFactory.port);
     }
 
-    public static void returnObject(HelloWorldClient client){
+    public static void returnObject(TradeCoreClient client) {
         objectPool.returnObject(client);
     }
 

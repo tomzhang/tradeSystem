@@ -1,30 +1,28 @@
-package com.bernard;
+package com.bernard.grpc.client.pool;
 
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.grpc.examples.helloworld.GreeterGrpc;
-import io.grpc.examples.helloworld.HelloReply;
-import io.grpc.examples.helloworld.HelloRequest;
+import io.grpc.tradesystem.service.TradeCoreGrpc;
+import io.grpc.tradesystem.service.UserOrderReply;
+import io.grpc.tradesystem.service.UserOrderRequest;
 
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 
-public class HelloWorldClient {
-    public static AtomicLong atomicLong = new AtomicLong(0);
+public class TradeCoreClient {
 
     private final ManagedChannel channel;
-    private final GreeterGrpc.GreeterBlockingStub blockingStub;
+    private final TradeCoreGrpc.TradeCoreBlockingStub blockingStub;
 
 
-    public HelloWorldClient(String host,int port){
+    public TradeCoreClient(String host, int port) {
         channel = ManagedChannelBuilder.forAddress(host,port)
                 .usePlaintext(true)
                 .build();
 
-        blockingStub = GreeterGrpc.newBlockingStub(channel).withDeadlineAfter(15,TimeUnit.SECONDS);
+        blockingStub = TradeCoreGrpc.newBlockingStub(channel).withDeadlineAfter(15, TimeUnit.SECONDS);
     }
 
 
@@ -36,11 +34,13 @@ public class HelloWorldClient {
         return channel;
     }
 
-    public GreeterGrpc.GreeterBlockingStub getBlockingStub() {
+    public TradeCoreGrpc.TradeCoreBlockingStub getBlockingStub() {
         return blockingStub;
     }
 
-    public  void greet(String name){
+
+
+ /*   public  void greet (String name){
         HelloRequest request = HelloRequest.newBuilder().setName(name).build();
         try {
             HelloReply response = blockingStub.sayHello(request);
@@ -51,12 +51,21 @@ public class HelloWorldClient {
         atomicLong.incrementAndGet();
         //System.out.println(response.getMessage());
 
-    }
+    }*/
+/* public void takeOrder(UserOrderRequest){
+     UserOrderRequest request = UserOrderRequest.newBuilder()
+    UserOrderReply reply = blockingStub.takeOrder(UserOrderRequest);
 
-    public static void main(String[] args) throws InterruptedException {
+
+ }*/
+
+
+
+
+ /*   public static void main(String[] args) throws InterruptedException {
 
       HelloWorldClient client = new HelloWorldClient("127.0.0.1",50051);
       client.greet("123");
 
-    }
+    }*/
 }
