@@ -27,6 +27,8 @@ message UserOrderRequest {
   string orderSide=3;
   string amount=4;
   string asset=5;
+  string price = 6;
+  string assertLimit = 7;
 }
 
 // The response message containing the greetings

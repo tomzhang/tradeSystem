@@ -1,29 +1,30 @@
-package com.bernard;
+package com.bernard.tradesystem.service;
 
+import com.bernard.App;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
-import io.grpc.tradesystem.service.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import io.grpc.tradesystem.service.CancleOrderReply;
+import io.grpc.tradesystem.service.CancleOrderRequest;
+import io.grpc.tradesystem.service.TradeSystemGrpc;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 
 public class TradeSystemServer {
+    private static Logger logger = Logger.getLogger(TradeSystemServer.class);
 
-    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private int port = 50051;
     private Server server;
 
     public void start() throws IOException {
         server = ServerBuilder.forPort(port)
-                .addService(new TradeSystemImpl())
+                .addService(new TradeSystemService())
                 .build()
                 .start();
 
-        System.out.println("service start...");
+        logger.info("交易柜台GRPC服务开启,服务端口：" + port);
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
 
@@ -59,20 +60,4 @@ public class TradeSystemServer {
     }
 
 
-    // 实现 定义一个实现服务接口的类
-    private class TradeSystemImpl extends TradeSystemGrpc.TradeSystemImplBase {
-        @Override
-        public void takeOrder(UserOrderRequest request, StreamObserver<UserOrderReply> responseObserver) {
-            logger.error("takeOrder server", request);
-            UserOrderReply response = UserOrderReply.newBuilder().setState(false).build();
-            responseObserver.onNext(response);
-            responseObserver.onCompleted();
-        }
-
-        @Override
-        public void cancelOrder(CancleOrderRequest request, StreamObserver<CancleOrderReply> responseObserver) {
-            System.out.println("cancelOrder");
-            super.cancelOrder(request, responseObserver);
-        }
-    }
 }

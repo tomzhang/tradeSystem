@@ -1,5 +1,7 @@
 package com.bernard.mysql.dto;
 
+import io.grpc.tradesystem.service.UserOrderRequest;
+
 public class Order {
     String orderID;// 下单号（主键）
     String orderTime; //下单时间
@@ -14,6 +16,15 @@ public class Order {
     String remain;// 未成交数量
     String AssertLimit; //市价买入最大金额
     int LockVersion;// 乐观锁版本号*/
+
+    public Order() {
+        this.orderTime = System.currentTimeMillis() + "";
+        this.surviveTime = "";
+        this.state = OrderState.OPEN;
+        this.remain = "0";
+        this.AssertLimit = "0";
+        this.LockVersion = 0;
+    }
 
     public String getOrderID() {
         return orderID;
@@ -117,5 +128,17 @@ public class Order {
 
     public void setLockVersion(int lockVersion) {
         LockVersion = lockVersion;
+    }
+
+    public static Order fromUserOrderRequest(UserOrderRequest request) {
+        Order order = new Order();
+        order.setPrice(request.getPrice());
+        order.setAssertLimit(request.getAssertLimit());
+        order.setOrderType(OrderType.valueOf(request.getOrderType()));
+        order.setAmount(request.getAmount());
+        order.setOrderSide(OrderSide.valueOf(request.getOrderSide()));
+        order.setAsset(request.getAsset());
+        order.setAccount(request.getAccount());
+        return order;
     }
 }

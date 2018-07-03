@@ -3,6 +3,7 @@ package com.bernard;
 
 import com.bernard.mysql.dto.*;
 import com.bernard.mysql.service.UserDataService;
+import com.bernard.tradesystem.service.TradeSystemServer;
 import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
