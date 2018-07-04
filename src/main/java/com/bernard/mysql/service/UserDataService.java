@@ -6,10 +6,16 @@ public interface UserDataService {
     public void insertUserOrder(Order userOrder);
 
     //查询用户BTC资产
-    public void queryUserAssert(String account);
+    public void queryUserBTCAssert(String account);
 
     //锁定用户BTC资产
-    public void lockUserAssert();
-    //划转用户BTC资产
+    public void lockUserBTCAssert();
+
+    //更新用户BTC资产
+    public void updateUserBTCAssert();
+
+    //更新用户ETH资产
+
+
 
 }

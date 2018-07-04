@@ -1,7 +1,7 @@
 package com.bernard.mysql.dto;
 
 public enum AssertType {
-    BTC("BTC", "1"), ETH("绿色", "2");
+    BTC("BTC", "1"), ETH("ETH", "2");
     private String assertName;
     private String methodName;
 

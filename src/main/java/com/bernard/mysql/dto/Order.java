@@ -6,7 +6,7 @@ public class Order {
     String orderID;// 下单号（主键）
     String orderTime; //下单时间
     String account;// 账号
-    String asset;// 标的（ETH\BTC）
+    String assetPair;// 标的（ETH\BTC）
     OrderSide orderSide;//BUY/SELL
     OrderType orderType; //限价/市价
     String surviveTime;// 订单有效时间
@@ -50,12 +50,12 @@ public class Order {
         this.account = account;
     }
 
-    public String getAsset() {
-        return asset;
+    public String getAssetPair() {
+        return assetPair;
     }
 
-    public void setAsset(String asset) {
-        this.asset = asset;
+    public void setAssetPair(String assetPair) {
+        this.assetPair = assetPair;
     }
 
     public OrderSide getOrderSide() {
@@ -137,7 +137,7 @@ public class Order {
         order.setOrderType(OrderType.valueOf(request.getOrderType()));
         order.setAmount(request.getAmount());
         order.setOrderSide(OrderSide.valueOf(request.getOrderSide()));
-        order.setAsset(request.getAsset());
+        order.setAssetPair(request.getAssetPair());
         order.setAccount(request.getAccount());
         return order;
     }
