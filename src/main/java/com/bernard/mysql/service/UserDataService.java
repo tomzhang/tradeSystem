@@ -1,18 +1,24 @@
 package com.bernard.mysql.service;
 
 import com.bernard.mysql.dto.Order;
+import com.bernard.mysql.dto.UserAsset;
+
+import java.util.Date;
 
 public interface UserDataService {
     public void insertUserOrder(Order userOrder);
 
-    //查询用户BTC资产
-    public void queryUserBTCAssert(String account);
 
-    //锁定用户BTC资产
-    public void lockUserBTCAssert();
+    public UserAsset queryUserAssert(String account, String asset);
 
-    //更新用户BTC资产
-    public void updateUserBTCAssert();
+
+    int lockUserAssert(String account, String asset, String totalAmount, String oldAvi, String newAvi, int oldLock, int newLock, Date updateTime);
+
+
+    //public void updateUserAssert();
+    Order queryUserOrder(String orderId, String account);
+
+
 
     //更新用户ETH资产
 

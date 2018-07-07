@@ -39,8 +39,10 @@ message UserOrderReply {
 
 message CancleOrderRequest {
   string orderId=1;
+  string account = 2;
 }
 
 message CancleOrderReply {
   bool state =1;
+  bool message = 2;
 }

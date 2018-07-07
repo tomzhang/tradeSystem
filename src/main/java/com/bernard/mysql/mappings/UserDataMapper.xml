@@ -10,5 +10,42 @@
 		(#{orderID},#{orderTime},#{account},#{assetPair},#{orderSide,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{orderType,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{surviveTime},#{amount},#{price},#{state,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{remain},#{AssertLimit},#{LockVersion})
 	</insert>
 
+	<resultMap type="com.bernard.mysql.dto.UserAsset" id="userAssetMap">
+		<result property="account" column="ACCOUNT"/>
+		<result property="totalAmount" column="TOTAL_AMOUNT"/>
+		<result property="aviliable" column="AIVILIABLE"/>
+		<result property="lockVersion" column="LOCK_VERSION"/>
+		<result property="updateTime" column="UPDATE_TIME"/>
+		<result property="liquidationTime" column="LIQUIDATION_TIME"/>
+	</resultMap>
+	<select id="queryUserAssert" resultMap="userAssetMap" parameterType="com.bernard.mysql.dto.UserAsset"
+			statementType="STATEMENT">
+		SELECT * FROM T_USER_ASSET_${param2} WHERE ACCOUNT=${param1}
+	</select>
+
+	<update id="lockUserAssert">
+		UPDATE T_USER_ASSET_${param2} SET LOCK_VERSION =${param7}, AIVILIABLE=${param5},UPDATE_TIME=#{param8} WHERE ACCOUNT=${param1} AND LOCK_VERSION =${param6}
+	</update>
+
+	<resultMap type="com.bernard.mysql.dto.Order" id="userOrderMap">
+		<result property="orderID" column="ORDER_ID"/>
+		<result property="orderTime" column="ORDER_TIME"/>
+		<result property="account" column="ACCOUNT"/>
+		<result property="assetPair" column="ASSET_PAIR"/>
+		<result property="orderSide" column="ORDER_SIDE" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+		<result property="orderType" column="ORDER_TYPE" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+		<result property="surviveTime" column="SURVIVE_TIME"/>
+		<result property="amount" column="AMOUNT"/>
+		<result property="price" column="PRICE"/>
+		<result property="state" column="STATE" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+		<result property="remain" column="REMAIN"/>
+		<result property="AssertLimit" column="ASSET_LIMIT"/>
+		<result property="LockVersion" column="LOCK_VERSION"/>
+	</resultMap>
+
+	<select id="queryUserOrder" resultMap="userOrderMap" parameterType="com.bernard.mysql.dto.Order">
+		SELECT * FROM T_USER_ORDER WHERE ORDER_ID=#{0} AND ACCOUNT =#{1}
+	</select>
+
 
 </mapper>

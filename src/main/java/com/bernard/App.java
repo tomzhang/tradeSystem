@@ -8,7 +8,9 @@ import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Hello world!
@@ -39,8 +41,11 @@ public class App
 //        order.setOrderTime("123");
 //        order.setAssertLimit("0");
 //        order.setPrice("500");
-//        UserDataService userDataService=(UserDataService)appContext.getBean("userDataServiceImpl");
-//        userDataService.insertUserOrder(order);
+        UUID uuid = UUID.randomUUID();
+        String uuids = uuid.toString();
+        UserDataService userDataService = (UserDataService) appContext.getBean("userDataServiceImpl");
+        int userAsset = userDataService.lockUserAssert("1", "ETH", "2", "3", "100", 5, 6, new Date());
+        System.out.println(userAsset);
         System.out.println("启动RPC服务器");
         final TradeSystemServer server = new TradeSystemServer();
         try {

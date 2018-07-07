@@ -2,6 +2,8 @@ package com.bernard.mysql.dto;
 
 import io.grpc.tradesystem.service.UserOrderRequest;
 
+import java.util.UUID;
+
 public class Order {
     String orderID;// 下单号（主键）
     String orderTime; //下单时间
@@ -17,12 +19,27 @@ public class Order {
     String AssertLimit; //市价买入最大金额
     int LockVersion;// 乐观锁版本号*/
 
-    public Order() {
+    private Order() {
         this.orderTime = System.currentTimeMillis() + "";
         this.surviveTime = "";
         this.state = OrderState.OPEN;
         this.remain = "0";
         this.AssertLimit = "0";
+        this.LockVersion = 0;
+    }
+
+    public Order(String account, String assetPair, OrderSide orderSide, OrderType orderType, String surviveTime, String amount, String price, String assertLimit) {
+        this.orderID = UUID.randomUUID().toString();
+        this.orderTime = System.currentTimeMillis() + "";
+        this.account = account;
+        this.assetPair = assetPair;
+        this.orderSide = orderSide;
+        this.orderType = orderType;
+        this.surviveTime = surviveTime;
+        this.state = OrderState.OPEN;
+        this.remain = amount;
+        this.price = price;
+        this.AssertLimit = assertLimit;
         this.LockVersion = 0;
     }
 
@@ -131,14 +148,9 @@ public class Order {
     }
 
     public static Order fromUserOrderRequest(UserOrderRequest request) {
-        Order order = new Order();
-        order.setPrice(request.getPrice());
-        order.setAssertLimit(request.getAssertLimit());
-        order.setOrderType(OrderType.valueOf(request.getOrderType()));
-        order.setAmount(request.getAmount());
-        order.setOrderSide(OrderSide.valueOf(request.getOrderSide()));
-        order.setAssetPair(request.getAssetPair());
-        order.setAccount(request.getAccount());
+        //Order order = new Order(request.getAccount())
+        Order order = new Order(request.getAccount(), request.getAssetPair(), OrderSide.valueOf(request.getOrderSide()),
+                OrderType.valueOf(request.getOrderType()), "", request.getAmount(), request.getPrice(), request.getAssertLimit());
         return order;
     }
 }
