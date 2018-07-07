@@ -47,5 +47,19 @@
 		SELECT * FROM T_USER_ORDER WHERE ORDER_ID=#{0} AND ACCOUNT =#{1}
 	</select>
 
+	<resultMap id="queryAssetResult" type="java.lang.String">
+		<result column="ASSET" property="asset" jdbcType="VARCHAR"/>
+	</resultMap>
+	<select id="queryAllAsset" resultMap="queryAssetResult" parameterType="java.lang.String">
+		SELECT * FROM T_ASSET
+	</select>
+
+	<resultMap id="queryAssetPairResult" type="java.lang.String">
+		<result column="PAIR" property="assetPair" jdbcType="VARCHAR"/>
+	</resultMap>
+	<select id="queryAllAssetPair" resultMap="queryAssetPairResult" parameterType="java.lang.String">
+		SELECT * FROM T_ASSET_PAIR
+	</select>
+
 
 </mapper>

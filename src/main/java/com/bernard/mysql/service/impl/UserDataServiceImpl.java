@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class UserDataServiceImpl implements UserDataService {
@@ -37,6 +38,16 @@ public class UserDataServiceImpl implements UserDataService {
     @Override
     public Order queryUserOrder(String orderId, String account) {
         return userDataMapper.queryUserOrder(orderId, account);
+    }
+
+    @Override
+    public List<String> queryAllAsset() {
+        return userDataMapper.queryAllAsset();
+    }
+
+    @Override
+    public List<String> queryAllAssetPair() {
+        return userDataMapper.queryAllAssetPair();
     }
 
 

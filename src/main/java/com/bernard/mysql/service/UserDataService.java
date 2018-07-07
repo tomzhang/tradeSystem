@@ -4,6 +4,7 @@ import com.bernard.mysql.dto.Order;
 import com.bernard.mysql.dto.UserAsset;
 
 import java.util.Date;
+import java.util.List;
 
 public interface UserDataService {
     public void insertUserOrder(Order userOrder);
@@ -17,6 +18,11 @@ public interface UserDataService {
 
     //public void updateUserAssert();
     Order queryUserOrder(String orderId, String account);
+
+
+    List<String> queryAllAsset();
+
+    List<String> queryAllAssetPair();
 
 
 
