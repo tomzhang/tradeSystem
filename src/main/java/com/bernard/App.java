@@ -28,15 +28,8 @@ public class App
         ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(
                 new String[] { "applicationContext-myBatis.xml" });
         context=appContext;
-        UserDataService userDataService = (UserDataService) appContext.getBean("userDataServiceImpl");
-        List<String> assets = userDataService.queryAllAsset();
-        for (String asset : assets) {
-            AssetCoinfig.assetMap.put(asset, "");
-        }
-        List<String> assetPair = userDataService.queryAllAssetPair();
-        for (String pair : assetPair) {
-            AssetPairConfig.assetPairMap.put(pair, "");
-        }
+        //加载配置文件
+        loadCoinfig();
         System.out.println("启动RPC服务器");
         final TradeSystemServer server = new TradeSystemServer();
         try {
@@ -47,5 +40,17 @@ public class App
         }
 
       //  logger.error("ok");
+    }
+
+    private static void loadCoinfig() {
+        UserDataService userDataService = (UserDataService) context.getBean("userDataServiceImpl");
+        List<String> assets = userDataService.queryAllAsset();
+        for (String asset : assets) {
+            AssetCoinfig.assetMap.put(asset, "");
+        }
+        List<String> assetPair = userDataService.queryAllAssetPair();
+        for (String pair : assetPair) {
+            AssetPairConfig.assetPairMap.put(pair, "");
+        }
     }
 }
