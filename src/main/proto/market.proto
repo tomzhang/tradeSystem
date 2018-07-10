@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.grpc.tradeCore.service";
+option java_outer_classname = "TradeCoreService";
+package market;
+
+service Order {
+    rpc Take (TakeOrderCmd) returns (Response) {
+    }
+    rpc Cancel (CancelOrderCmd) returns (Response) {
+    }
+}
+
+message AssetPair {
+    string Asset = 1;
+    string Money = 2;
+}
+
+enum OrderSide {
+    SIDEUNKNOW = 0;
+    ASK = 1;
+    BID = 2;
+}
+
+enum OrderType {
+    TYPEUNKNOW = 0;
+    MARKET = 1;
+    LIMIT = 2;
+}
+
+message Charge {
+    string price = 1;
+    string amount = 2;
+}
+
+message TakeOrderCmd {
+    string uid = 1; // unique id number for order cmd
+    string account = 2;
+    AssetPair asset_pair = 3;
+    OrderSide side = 4; // ask or bid
+    OrderType type = 5; // market or limit
+    Charge charge = 6;
+}
+
+message CancelOrderCmd {
+    string uid = 1;
+    string account = 2;
+    AssetPair asset_pair = 3;
+    OrderSide side = 4;
+}
+
+message CancelOrdResp {
+    CancelOrderCmd cmd = 1;
+    string amount = 2;
+}
+
+message Response {
+    uint32 code = 1;
+    string message = 2;
+    repeated CancelOrdResp resp = 3;
+}

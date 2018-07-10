@@ -21,7 +21,7 @@ import java.util.UUID;
 public class App 
 {
     private static Logger logger = Logger.getLogger(App.class);
-    private static ClassPathXmlApplicationContext context;
+    public static ClassPathXmlApplicationContext context;
     public static void main( String[] args )
     {
         System.out.println( "Init Spring context" );
@@ -44,6 +44,7 @@ public class App
 
     private static void loadCoinfig() {
         UserDataService userDataService = (UserDataService) context.getBean("userDataServiceImpl");
+        int a = userDataService.existTable("T_USER_ASSET_BTC");
         List<String> assets = userDataService.queryAllAsset();
         for (String asset : assets) {
             AssetCoinfig.assetMap.put(asset, "");
@@ -52,5 +53,14 @@ public class App
         for (String pair : assetPair) {
             AssetPairConfig.assetPairMap.put(pair, "");
         }
+        logger.info("加载支持货币数量：" + assets.size() + " 加载支持交易币对数量：" + assetPair.size());
+        for (String asset : assets) {
+            int isOk = userDataService.existTable("T_USER_ASSET_" + asset);
+            if (isOk == 0) {
+                logger.info("发现新增资产种类，新建表：" + "T_USER_ASSET_" + asset);
+                //userDataService.
+            }
+        }
+
     }
 }

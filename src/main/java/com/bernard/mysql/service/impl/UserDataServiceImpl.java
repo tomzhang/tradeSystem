@@ -50,5 +50,10 @@ public class UserDataServiceImpl implements UserDataService {
         return userDataMapper.queryAllAssetPair();
     }
 
+    @Override
+    public int existTable(String tableName) {
+        return userDataMapper.existTable(tableName);
+    }
+
 
 }

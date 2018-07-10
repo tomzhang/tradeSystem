@@ -5,8 +5,8 @@ import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 
 public class GrpcClientFactory extends BasePooledObjectFactory<TradeCoreClient> {
-    public static String host = "127.0.0.1";
-    public static int port = 50051;
+    public static String host = "45.32.183.25";
+    public static int port = 18080;
     @Override
     public TradeCoreClient create() throws Exception {
         return new TradeCoreClient(host, port);

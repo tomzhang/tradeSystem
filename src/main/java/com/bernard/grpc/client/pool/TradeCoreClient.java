@@ -3,7 +3,7 @@ package com.bernard.grpc.client.pool;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.grpc.tradesystem.service.TradeCoreGrpc;
+import io.grpc.tradeCore.service.OrderGrpc;
 
 import java.util.concurrent.TimeUnit;
 
@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class TradeCoreClient {
 
     private final ManagedChannel channel;
-    private final TradeCoreGrpc.TradeCoreBlockingStub blockingStub;
+    private final OrderGrpc.OrderBlockingStub blockingStub;
 
 
     public TradeCoreClient(String host, int port) {
@@ -20,7 +20,7 @@ public class TradeCoreClient {
                 .usePlaintext(true)
                 .build();
 
-        blockingStub = TradeCoreGrpc.newBlockingStub(channel).withDeadlineAfter(15, TimeUnit.SECONDS);
+        blockingStub = OrderGrpc.newBlockingStub(channel).withDeadlineAfter(15, TimeUnit.SECONDS);
     }
 
 
@@ -32,7 +32,7 @@ public class TradeCoreClient {
         return channel;
     }
 
-    public TradeCoreGrpc.TradeCoreBlockingStub getBlockingStub() {
+    public OrderGrpc.OrderBlockingStub getBlockingStub() {
         return blockingStub;
     }
 

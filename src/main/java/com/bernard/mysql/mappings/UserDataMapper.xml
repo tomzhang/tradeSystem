@@ -5,9 +5,13 @@
 
 	<insert id="inserUserOrder" parameterType="com.bernard.mysql.dto.Order">
 		INSERT INTO T_USER_ORDER
-		("ORDER_ID","ORDER_TIME","ACCOUNT","ASSET_PAIR","ORDER_SIDE","ORDER_TYPE","SURVIVE_TIME","AMOUNT","PRICE,STATE","REMAIN","ASSET_LIMIT","LOCK_VERSION")
-		VALUE
-		(#{orderID},#{orderTime},#{account},#{assetPair},#{orderSide,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{orderType,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{surviveTime},#{amount},#{price},#{state,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{remain},#{AssertLimit},#{LockVersion})
+        (ORDER_ID,ORDER_TIME,ACCOUNT,ASSET_PAIR,ORDER_SIDE,
+        ORDER_TYPE,SURVIVE_TIME,AMOUNT,PRICE,STATE,
+        REMAIN,ASSET_LIMIT,LOCK_VERSION)
+        VALUES
+        (#{orderID},#{orderTime},#{account},#{assetPair},#{orderSide,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+        #{orderType,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{surviveTime},#{amount},#{price},#{state,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+        #{remain},#{AssertLimit},#{LockVersion})
 	</insert>
 
 	<resultMap type="com.bernard.mysql.dto.UserAsset" id="userAssetMap">
@@ -60,6 +64,29 @@
 	<select id="queryAllAssetPair" resultMap="queryAssetPairResult" parameterType="java.lang.String">
 		SELECT * FROM T_ASSET_PAIR
 	</select>
+
+
+    <select id="existTable" parameterType="String" resultType="Integer">
+        SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='tradeCenter' AND TABLE_NAME=#{0} ;
+    </select>
+
+    <update id="createNewTable" parameterType="String">
+        CREATE TABLE ${tableName} (
+        `ID` int(11) NOT NULL AUTO_INCREMENT ,
+        `ACCOUNT` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ,
+        `TOTAL_AMOUNT` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ,
+        `AIVILIABLE` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ,
+        `LOCK_VERSION` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ,
+        `UPDATE_TIME` datetime NULL DEFAULT NULL ,
+        `LIQUIDATION_TIME` datetime NULL DEFAULT NULL ,
+        PRIMARY KEY (`ID`),
+        UNIQUE INDEX ${tableName}_ACCOUNT (`ACCOUNT`) USING BTREE
+        )
+        ENGINE=InnoDB
+        DEFAULT CHARACTER SET=latin1 COLLATE=latin1_swedish_ci
+        AUTO_INCREMENT=2
+        ROW_FORMAT=DYNAMIC;
+    </update>
 
 
 </mapper>

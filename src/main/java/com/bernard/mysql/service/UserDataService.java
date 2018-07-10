@@ -24,6 +24,9 @@ public interface UserDataService {
 
     List<String> queryAllAssetPair();
 
+    int existTable(String tableName);
+
+
 
 
     //更新用户ETH资产

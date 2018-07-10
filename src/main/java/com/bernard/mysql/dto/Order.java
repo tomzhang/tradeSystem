@@ -40,6 +40,7 @@ public class Order {
         this.remain = amount;
         this.price = price;
         this.AssertLimit = assertLimit;
+        this.amount = amount;
         this.LockVersion = 0;
     }
 

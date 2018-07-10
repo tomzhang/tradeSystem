@@ -13,12 +13,6 @@ service TradeSystem {
   rpc takeOrder (UserOrderRequest) returns (UserOrderReply) {}
   rpc cancelOrder (CancleOrderRequest) returns (CancleOrderReply) {}
 }
-//撮合系统service
-service TradeCore {
-  // Sends a greeting
-  rpc takeOrder (UserOrderRequest) returns (UserOrderReply) {}
-  rpc cancelOrder (CancleOrderRequest) returns (CancleOrderReply) {}
-}
 
 // The request message containing the user's name.
 message UserOrderRequest {
@@ -46,3 +40,5 @@ message CancleOrderReply {
   bool state =1;
   bool message = 2;
 }
+
+//撮合系统service

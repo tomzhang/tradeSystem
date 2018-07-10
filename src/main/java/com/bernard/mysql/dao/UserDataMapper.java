@@ -22,4 +22,7 @@ public interface UserDataMapper {
 
     List<String> queryAllAssetPair();
 
+    int existTable(String tableName);
+
+
 }
