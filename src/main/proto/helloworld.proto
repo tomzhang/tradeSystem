@@ -9,9 +9,11 @@ package tradeService;
 
 //柜台service
 service TradeSystem {
-  // Sends a greeting
-  rpc takeOrder (UserOrderRequest) returns (UserOrderReply) {}
-  rpc cancelOrder (CancleOrderRequest) returns (CancleOrderReply) {}
+    // Sends a greeting
+    rpc takeOrder (UserOrderRequest) returns (UserOrderReply) {}
+    rpc cancelOrder (CancleOrderRequest) returns (CancleOrderReply) {}
+    rpc matchOrder (MatchOrderRequest) returns (MatchOrderReply) {
+    }
 }
 
 // The request message containing the user's name.
@@ -41,4 +43,15 @@ message CancleOrderReply {
   bool message = 2;
 }
 
+message MatchOrderRequest {
+    string buySideOrderId = 1;
+    string sellSideOrderId = 2;
+    string matchAmount = 3;
+    string matchPrice = 4;
+    string matchOrderWaterflow = 5;
+}
+
+message MatchOrderReply {
+    bool state = 1;
+}
 //撮合系统service

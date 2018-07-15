@@ -51,6 +51,10 @@
 		SELECT * FROM T_USER_ORDER WHERE ORDER_ID=#{0} AND ACCOUNT =#{1}
 	</select>
 
+	<select id="queryMatchOrders" resultMap="userOrderMap" parameterType="com.bernard.mysql.dto.Order">
+		SELECT * FROM T_USER_ORDER WHERE ORDER_ID=#{0} OR ORDER_ID =#{2}
+	</select>
+
 	<resultMap id="queryAssetResult" type="java.lang.String">
 		<result column="ASSET" property="asset" jdbcType="VARCHAR"/>
 	</resultMap>

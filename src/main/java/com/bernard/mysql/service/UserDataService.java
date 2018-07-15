@@ -19,6 +19,8 @@ public interface UserDataService {
     //public void updateUserAssert();
     Order queryUserOrder(String orderId, String account);
 
+    List<Order> queryMatchOrders(String id1, String id2);
+
 
     List<String> queryAllAsset();
 

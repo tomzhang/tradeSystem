@@ -24,5 +24,8 @@ public interface UserDataMapper {
 
     int existTable(String tableName);
 
+    List<Order> queryMatchOrders(String id1, String id2);
+
+
 
 }

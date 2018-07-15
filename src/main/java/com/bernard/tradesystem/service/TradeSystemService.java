@@ -30,4 +30,10 @@ public class TradeSystemService extends TradeSystemGrpc.TradeSystemImplBase {
         FutureTask futureTask = new FutureTask(cancelOrderTask);
         TradeTaskServicePool.submitTask(futureTask);
     }
+
+    @Override
+    public void matchOrder(MatchOrderRequest request, StreamObserver<MatchOrderReply> responseObserver) {
+        //
+
+    }
 }

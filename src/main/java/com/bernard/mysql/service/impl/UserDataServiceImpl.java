@@ -41,6 +41,12 @@ public class UserDataServiceImpl implements UserDataService {
     }
 
     @Override
+    public List<Order> queryMatchOrders(String id1, String id2) {
+
+        return userDataMapper.queryMatchOrders();
+    }
+
+    @Override
     public List<String> queryAllAsset() {
         return userDataMapper.queryAllAsset();
     }
