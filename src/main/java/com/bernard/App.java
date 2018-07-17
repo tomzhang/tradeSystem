@@ -44,7 +44,7 @@ public class App
 
     private static void loadCoinfig() {
         UserDataService userDataService = (UserDataService) context.getBean("userDataServiceImpl");
-        int a = userDataService.existTable("T_USER_ASSET_BTC");
+        //
         List<String> assets = userDataService.queryAllAsset();
         for (String asset : assets) {
             AssetCoinfig.assetMap.put(asset, "");
@@ -59,6 +59,7 @@ public class App
             if (isOk == 0) {
                 logger.info("发现新增资产种类，新建表：" + "T_USER_ASSET_" + asset);
                 //userDataService.
+
             }
         }
 

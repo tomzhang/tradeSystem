@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bernard.mysql.dao.UserDataMapper">
 
 	<insert id="inserUserOrder" parameterType="com.bernard.mysql.dto.Order">
@@ -13,6 +13,11 @@
         #{orderType,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{surviveTime},#{amount},#{price},#{state,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
         #{remain},#{AssertLimit},#{LockVersion})
 	</insert>
+
+	<update id="updateUserOrder" parameterType="com.bernard.mysql.dto.Order">
+		UPDATE T_USER_ORDER SET STATE= #{state,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+		REMAIN=#{remain},LOCK_VERSION =#{LockVersion} WHERE ORDER_ID =#{orderID} AND LOCK_VERSION =#{LockVersion}-1 AND ACCOUNT =#{account}
+	</update>
 
 	<resultMap type="com.bernard.mysql.dto.UserAsset" id="userAssetMap">
 		<result property="account" column="ACCOUNT"/>
@@ -30,6 +35,11 @@
 	<update id="lockUserAssert">
 		UPDATE T_USER_ASSET_${param2} SET LOCK_VERSION =${param7}, AIVILIABLE=${param5},UPDATE_TIME=#{param8} WHERE ACCOUNT=${param1} AND LOCK_VERSION =${param6}
 	</update>
+
+	<update id="updateUserAssert">
+		UPDATE T_USER_ASSET_${param2} SET LOCK_VERSION=LOCK_VERSION+1,AIVILIABLE=CONVERT(AIVILIABLE,DECIMAL(32,8))+CONVERT (#{param4},DECIMAL(32,8)),TOTAL_AMOUNT=CONVERT (TOTAL_AMOUNT,DECIMAL(32,8))+CONVERT (#{param3},DECIMAL(32,8)),UPDATE_TIME=#{param5} WHERE ACCOUNT=#{param1}
+	</update>
+
 
 	<resultMap type="com.bernard.mysql.dto.Order" id="userOrderMap">
 		<result property="orderID" column="ORDER_ID"/>
@@ -91,6 +101,12 @@
         AUTO_INCREMENT=2
         ROW_FORMAT=DYNAMIC;
     </update>
+
+	<insert id="insertMatchFlow">
+		INSERT INTO T_MATCH_FLOW (ID,SELLSIDE_ORDER_ID,BUYSIDE_ORDER_ID,AMOUNT,PRICE,INSERT_TIME)
+		VALUES
+		(#{0},#{1},#{2},#{4},#{3},#{5})
+	</insert>
 
 
 </mapper>

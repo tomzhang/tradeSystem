@@ -12,6 +12,8 @@ public interface UserDataMapper {
 
     void inserUserOrder(Order userOder);
 
+    int updateUserOrder(Order userOrder);
+
     UserAsset queryUserAssert(String account, String asset);
 
     int lockUserAssert(String account, String asset, String totalAmount, String oldAvi, String newAvi, int oldLock, int newLock, Date updateTime);
@@ -25,6 +27,11 @@ public interface UserDataMapper {
     int existTable(String tableName);
 
     List<Order> queryMatchOrders(String id1, String id2);
+
+    int updateUserAssert(String account, String asset, String totalAmountToAdd, String aviToAdd, Date updateTime);
+
+    int insertMatchFlow(String flowId, String sellSideOrderId, String sellSideAccount, String buySideOrderId, String buySideOrderAccount, String price, String amount, Date date);
+
 
 
 

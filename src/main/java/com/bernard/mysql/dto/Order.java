@@ -154,4 +154,24 @@ public class Order {
                 OrderType.valueOf(request.getOrderType()), "", request.getAmount(), request.getPrice(), request.getAssertLimit());
         return order;
     }
+
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "orderID='" + orderID + '\'' +
+                ", orderTime='" + orderTime + '\'' +
+                ", account='" + account + '\'' +
+                ", assetPair='" + assetPair + '\'' +
+                ", orderSide=" + orderSide +
+                ", orderType=" + orderType +
+                ", surviveTime='" + surviveTime + '\'' +
+                ", amount='" + amount + '\'' +
+                ", price='" + price + '\'' +
+                ", state=" + state +
+                ", remain='" + remain + '\'' +
+                ", AssertLimit='" + AssertLimit + '\'' +
+                ", LockVersion=" + LockVersion +
+                '}';
+    }
 }

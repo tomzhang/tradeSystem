@@ -45,10 +45,12 @@ message CancleOrderReply {
 
 message MatchOrderRequest {
     string buySideOrderId = 1;
-    string sellSideOrderId = 2;
-    string matchAmount = 3;
-    string matchPrice = 4;
-    string matchOrderWaterflow = 5;
+    string buySideAccount = 2;
+    string sellSideOrderId = 3;
+    string sellSideAccount = 4;
+    string matchAmount = 5;
+    string matchPrice = 6;
+    string matchOrderWaterflow = 7;
 }
 
 message MatchOrderReply {

@@ -24,16 +24,35 @@ public class UserDataServiceImpl implements UserDataService {
     }
 
     @Override
-    public UserAsset queryUserAssert(String account, String asset) {
-        return userDataMapper.queryUserAssert(account, asset);
-
+    public int updateUserOrder(Order userOrder) {
+        return userDataMapper.updateUserOrder(userOrder);
     }
 
+    @Override
+    public int insertMatchFlow(String flowId, String sellSideOrderId, String sellSideOrderAccount, String buySideOrderId,
+                               String buySideOrderAccount, String price, String amount, Date date) {
+        return userDataMapper.insertMatchFlow(flowId, sellSideOrderId, sellSideOrderAccount,
+                buySideOrderId, buySideOrderAccount, price, amount, date);
+    }
+
+
+    @Override
+    public UserAsset queryUserAssert(String account, String asset) {
+        return userDataMapper.queryUserAssert(account, asset);
+    }
 
     @Override
     public int lockUserAssert(String account, String asset, String totalAmount, String oldAvi, String newAvi, int oldLock, int newLock, Date updateTime) {
         return userDataMapper.lockUserAssert(account, asset, totalAmount, oldAvi, newAvi, oldLock, newLock, updateTime);
     }
+
+    @Override
+    public int updateUserAssert(String account, String asset, String totalAmountToAdd, String aviToAdd, Date updateTime) {
+        return userDataMapper.updateUserAssert(account, asset, totalAmountToAdd, aviToAdd, updateTime);
+    }
+
+
+
 
     @Override
     public Order queryUserOrder(String orderId, String account) {
@@ -42,8 +61,7 @@ public class UserDataServiceImpl implements UserDataService {
 
     @Override
     public List<Order> queryMatchOrders(String id1, String id2) {
-
-        return userDataMapper.queryMatchOrders();
+        return userDataMapper.queryMatchOrders(id1, id2);
     }
 
     @Override
