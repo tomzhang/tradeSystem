@@ -11,7 +11,8 @@ package tradeService;
 service TradeSystem {
     // Sends a greeting
     rpc takeOrder (UserOrderRequest) returns (UserOrderReply) {}
-    rpc cancelOrder (CancleOrderRequest) returns (CancleOrderReply) {}
+    rpc cancelOrder (CancelOrderRequest) returns (CancelOrderReply) {
+    }
     rpc stepOrder (MatchOrderRequest) returns (MatchOrderReply) {
     }
 }
@@ -33,12 +34,12 @@ message UserOrderReply {
   string orderId=2;
 }
 
-message CancleOrderRequest {
+message CancelOrderRequest {
   string orderId=1;
   string account = 2;
 }
 
-message CancleOrderReply {
+message CancelOrderReply {
   bool state =1;
   bool message = 2;
 }
