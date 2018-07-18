@@ -78,7 +78,7 @@ public class MatchOrderTask implements Callable {
             return false;
         }
         if (order.getOrderSide() == OrderSide.BUY) {
-            //买入，钱-》锁定的钱减少，钱总量减少，货物总量增多
+            //1.买入，钱-》锁定的钱减少，钱总量减少，货物总量增多
             BigDecimal preLockMoneyAmount = orderPrice.multiply(matchAmount);//预先锁定的钱
             BigDecimal spendMoney = matchAmount.multiply(matchPrice);//实际花掉的钱
             int updateMoneyAmount = userDataService.updateUserAssert(account, baseCoin, spendMoney.multiply(new BigDecimal(-1)).toString(), preLockMoneyAmount.subtract(spendMoney).toString(), new Date());
@@ -86,13 +86,13 @@ public class MatchOrderTask implements Callable {
                 logger.fatal("更新用户资产失败");
                 return false;
             }
-            //货物增加
+            //2.货物增加
             int updateCargoAmount = userDataService.updateUserAssert(account, cargoCoin, matchAmount.toString(), matchAmount.toString(), new Date());
             if (updateCargoAmount != 1) {
                 logger.fatal("更新用户资产失败");
                 return false;
             }
-            //更新订单
+            //3.更新订单
             remain = remain.subtract(matchAmount);
             order.setLockVersion(order.getLockVersion() + 1);
             order.setRemain(remain.toString());
@@ -105,6 +105,28 @@ public class MatchOrderTask implements Callable {
             return true;
         } else if (order.getOrderSide() == OrderSide.SELL) {
             //卖出，货-》锁定的货钱少，钱总量增多
+            int updateCargoResult = userDataService.updateUserAssert(account, cargoCoin, matchAmount.multiply(new BigDecimal(-1)).toString(),
+                    "0", new Date());
+            if (updateCargoResult != 1) {
+                logger.fatal("更新资产失败");
+                return false;
+            }
+            String receiveMoney = matchAmount.multiply(matchPrice).toString();
+            int updateMoneyResult = userDataService.updateUserAssert(account, baseCoin, receiveMoney, receiveMoney, new Date());
+            if (updateMoneyResult != 1) {
+                logger.fatal("更新资产失败");
+                return false;
+            }
+            //更新订单
+            remain = remain.subtract(matchAmount);
+            order.setLockVersion(order.getLockVersion() + 1);
+            order.setRemain(remain.toString());
+            if (remain.compareTo(BigDecimal.ZERO) == 0) {
+                order.setState(OrderState.COMPLETE);
+            } else {
+                order.setState(OrderState.PARTITION);
+            }
+            userDataService.updateUserOrder(order);
 
             return true;
         } else {

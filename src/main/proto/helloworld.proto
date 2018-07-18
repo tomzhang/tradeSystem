@@ -12,7 +12,7 @@ service TradeSystem {
     // Sends a greeting
     rpc takeOrder (UserOrderRequest) returns (UserOrderReply) {}
     rpc cancelOrder (CancleOrderRequest) returns (CancleOrderReply) {}
-    rpc matchOrder (MatchOrderRequest) returns (MatchOrderReply) {
+    rpc stepOrder (MatchOrderRequest) returns (MatchOrderReply) {
     }
 }
 
