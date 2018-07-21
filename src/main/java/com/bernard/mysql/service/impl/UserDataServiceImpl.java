@@ -7,11 +7,13 @@ import com.bernard.mysql.dto.UserAsset;
 import com.bernard.mysql.service.UserDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
 
 @Service
+@Transactional
 public class UserDataServiceImpl implements UserDataService {
 
     @Autowired
@@ -44,6 +46,12 @@ public class UserDataServiceImpl implements UserDataService {
     @Override
     public int lockUserAssert(String account, String asset, String totalAmount, String oldAvi, String newAvi, int oldLock, int newLock, Date updateTime) {
         return userDataMapper.lockUserAssert(account, asset, totalAmount, oldAvi, newAvi, oldLock, newLock, updateTime);
+    }
+
+    @Override
+    public int unlockUserAssertWhenFail(String account, String asset, String amountToUnlock, Date updateTime) {
+        userDataMapper.unlockUserAssertWhenFail(account, asset, amountToUnlock, updateTime);
+        return 0;
     }
 
     @Override

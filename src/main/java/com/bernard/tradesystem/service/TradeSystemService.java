@@ -24,7 +24,7 @@ public class TradeSystemService extends TradeSystemGrpc.TradeSystemImplBase {
     }
 
     @Override
-    public void cancelOrder(CancleOrderRequest request, StreamObserver<CancleOrderReply> responseObserver) {
+    public void cancelOrder(CancelOrderRequest request, StreamObserver<CancelOrderReply> responseObserver) {
 
         UserCancelOrderTask cancelOrderTask = new UserCancelOrderTask(request, responseObserver);
         FutureTask futureTask = new FutureTask(cancelOrderTask);

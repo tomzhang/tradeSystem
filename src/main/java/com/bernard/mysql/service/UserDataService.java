@@ -19,6 +19,8 @@ public interface UserDataService {
 
     int lockUserAssert(String account, String asset, String totalAmount, String oldAvi, String newAvi, int oldLock, int newLock, Date updateTime);
 
+    int unlockUserAssertWhenFail(String account, String asset, String amountToUnlock, Date updateTime);
+
     // int updateUserAssert(String account,String asset,String totalAmount,String newAvi,int oldLock, int newLock,Date updateTime);
     int updateUserAssert(String account, String asset, String totalAmountToAdd, String aviToAdd, Date updateTime);
 

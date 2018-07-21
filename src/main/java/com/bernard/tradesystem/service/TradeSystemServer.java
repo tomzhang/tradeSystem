@@ -1,12 +1,9 @@
 package com.bernard.tradesystem.service;
 
-import com.bernard.App;
+
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import io.grpc.stub.StreamObserver;
-import io.grpc.tradesystem.service.CancleOrderReply;
-import io.grpc.tradesystem.service.CancleOrderRequest;
-import io.grpc.tradesystem.service.TradeSystemGrpc;
+
 import org.apache.log4j.Logger;
 
 import java.io.IOException;

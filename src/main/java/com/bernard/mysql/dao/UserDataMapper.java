@@ -32,6 +32,8 @@ public interface UserDataMapper {
 
     int insertMatchFlow(String flowId, String sellSideOrderId, String sellSideAccount, String buySideOrderId, String buySideOrderAccount, String price, String amount, Date date);
 
+    int unlockUserAssertWhenFail(String account, String asset, String amountToUnlock, Date updateTime);
+
 
 
 

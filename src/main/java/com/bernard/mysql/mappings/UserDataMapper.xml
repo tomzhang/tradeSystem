@@ -27,17 +27,24 @@
 		<result property="updateTime" column="UPDATE_TIME"/>
 		<result property="liquidationTime" column="LIQUIDATION_TIME"/>
 	</resultMap>
-	<select id="queryUserAssert" resultMap="userAssetMap" parameterType="com.bernard.mysql.dto.UserAsset"
-			statementType="STATEMENT">
-		SELECT * FROM T_USER_ASSET_${param2} WHERE ACCOUNT=${param1}
+	<select id="queryUserAssert" resultMap="userAssetMap" parameterType="com.bernard.mysql.dto.UserAsset">
+		SELECT * FROM T_USER_ASSET_${param2} WHERE ACCOUNT= #{param1}
 	</select>
 
 	<update id="lockUserAssert">
-		UPDATE T_USER_ASSET_${param2} SET LOCK_VERSION =${param7}, AIVILIABLE=${param5},UPDATE_TIME=#{param8} WHERE ACCOUNT=${param1} AND LOCK_VERSION =${param6}
+		UPDATE T_USER_ASSET_${param2} SET LOCK_VERSION =#{param7}, AIVILIABLE=#{param5},UPDATE_TIME=#{param8} WHERE
+		ACCOUNT=#{param1} AND LOCK_VERSION =#{param6}
 	</update>
 
 	<update id="updateUserAssert">
 		UPDATE T_USER_ASSET_${param2} SET LOCK_VERSION=LOCK_VERSION+1,AIVILIABLE=CONVERT(AIVILIABLE,DECIMAL(32,8))+CONVERT (#{param4},DECIMAL(32,8)),TOTAL_AMOUNT=CONVERT (TOTAL_AMOUNT,DECIMAL(32,8))+CONVERT (#{param3},DECIMAL(32,8)),UPDATE_TIME=#{param5} WHERE ACCOUNT=#{param1}
+	</update>
+
+	<update id="unlockUserAssertWhenFail">
+		unlockUserAssertWhenFail(String account, String asset, String amountToUnlock, Date updateTime)
+		UPDATE T_USER_ASSET_${param2} SET LOCK_VERSION = LOCK_VERSION+1,AIVILIABLE
+		=CONVERT(AIVILIABLE,DECIMAL(32,8))+CONVERT (#{param3},DECIMAL(32,8)),UPDATE_TIME=#{param4} WHERE ACCOUNT
+		=#{param}
 	</update>
 
 
@@ -58,7 +65,7 @@
 	</resultMap>
 
 	<select id="queryUserOrder" resultMap="userOrderMap" parameterType="com.bernard.mysql.dto.Order">
-		SELECT * FROM T_USER_ORDER WHERE ORDER_ID=#{0} AND ACCOUNT =#{1}
+		SELECT * FROM T_USER_ORDER WHERE ORDER_ID= #{0} AND ACCOUNT = #{1}
 	</select>
 
 	<select id="queryMatchOrders" resultMap="userOrderMap" parameterType="com.bernard.mysql.dto.Order">

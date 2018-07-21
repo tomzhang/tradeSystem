@@ -120,12 +120,12 @@
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
 
-    <!-- 事务管理器
-    <bean id="transactionManager"class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <propertyname="dataSource" ref="dataSource" />
+
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
     </bean>
-    -->
-    <!-- 使用声明式事务
-    <tx:annotation-driventransaction-manager="txManager" />
-    -->
+
+    <tx:annotation-driven transaction-manager="txManager" proxy-target-class="true"/>
+
+
 </beans>
