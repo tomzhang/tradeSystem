@@ -20,10 +20,12 @@ public class TestGrpcClient {
                 .build();
 
         TradeSystemGrpc.TradeSystemBlockingStub blockingStub = TradeSystemGrpc.newBlockingStub(channel).withDeadlineAfter(15, TimeUnit.SECONDS);
-        UserOrderRequest request = UserOrderRequest.newBuilder().setAccount("zzz666").setAmount("1").setAssertLimit("").setAssetPair("ETH-BTC").setOrderSide("BUY")
+        UserOrderRequest request = UserOrderRequest.newBuilder().setAccount("zzz666").setAmount("1").setAssertLimit("").setAssetPair("ETH-BTC").setOrderSide("SELL")
                 .setOrderType("PRICE_LIMIT").setPrice("1").build();
-        UserOrderReply reply = blockingStub.takeOrder(request);
-        System.out.println(reply.getState());
+        for (int i = 0; i < 10; i++) {
+            UserOrderReply reply = blockingStub.takeOrder(request);
+        }
+        //System.out.println(reply.getState());
 
 
     }

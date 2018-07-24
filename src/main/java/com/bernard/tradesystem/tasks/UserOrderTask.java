@@ -170,6 +170,8 @@ public class UserOrderTask implements Callable {
             response = client.getBlockingStub().take(cmd);
         } catch (Exception e) {
             logger.error("调用撮合系统失败", e);
+        } finally {
+            TradeCoreClientPool.returnObject(client);
         }
 
         return response;

@@ -143,6 +143,8 @@ public class UserCancelOrderTask implements Callable {
             response = client.getBlockingStub().cancel(cmd);
         } catch (Exception e) {
             logger.error("调用撮合系统撤单失败", e);
+        } finally {
+            TradeCoreClientPool.returnObject(client);
         }
 
         return response;
