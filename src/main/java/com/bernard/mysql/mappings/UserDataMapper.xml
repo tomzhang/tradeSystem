@@ -69,7 +69,7 @@
 	</select>
 
 	<select id="queryMatchOrders" resultMap="userOrderMap" parameterType="com.bernard.mysql.dto.Order">
-		SELECT * FROM T_USER_ORDER WHERE ORDER_ID=#{0} OR ORDER_ID =#{2}
+        SELECT * FROM T_USER_ORDER WHERE ORDER_ID=#{0} OR ORDER_ID =#{1}
 	</select>
 
 	<resultMap id="queryAssetResult" type="java.lang.String">

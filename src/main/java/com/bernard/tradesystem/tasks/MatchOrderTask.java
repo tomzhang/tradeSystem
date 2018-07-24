@@ -9,9 +9,11 @@ import com.sun.org.apache.xpath.internal.operations.Or;
 import io.grpc.stub.StreamObserver;
 import io.grpc.tradesystem.service.MatchOrderReply;
 import io.grpc.tradesystem.service.MatchOrderRequest;
+import io.grpc.tradesystem.service.UserOrderReply;
 import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -36,18 +38,32 @@ public class MatchOrderTask implements Callable {
     public Object call() throws Exception {
         logger.info("开始处理成交回报");
         //0.插入成交流水
-        userDataService.insertMatchFlow(matchOrderRequest.getMatchOrderWaterflow(),
-                matchOrderRequest.getSellSideOrderId(),
-                matchOrderRequest.getSellSideAccount(),
-                matchOrderRequest.getBuySideOrderId(),
-                matchOrderRequest.getBuySideAccount(),
-                matchOrderRequest.getMatchPrice(),
-                matchOrderRequest.getMatchAmount(),
-                new Date());
+        try {
+            userDataService.insertMatchFlow(matchOrderRequest.getMatchOrderWaterflow(),
+                    matchOrderRequest.getSellSideOrderId(),
+                    matchOrderRequest.getSellSideAccount(),
+                    matchOrderRequest.getBuySideOrderId(),
+                    matchOrderRequest.getBuySideAccount(),
+                    matchOrderRequest.getMatchPrice(),
+                    matchOrderRequest.getMatchAmount(),
+                    new Date());
+        } catch (Exception e) {
+            logger.error("插入成交流水失败", e);
+            replyErrorState();
+            return null;
+        }
         //1.查询订单
-        List<Order> matchOrders = userDataService.queryMatchOrders(matchOrderRequest.getBuySideOrderId(), matchOrderRequest.getSellSideOrderId());
-        if (matchOrders.size() != 2) {
-            logger.fatal("成交单号匹配错误");
+        List<Order> matchOrders = new ArrayList<>();
+        try {
+            matchOrders = userDataService.queryMatchOrders(matchOrderRequest.getBuySideOrderId(), matchOrderRequest.getSellSideOrderId());
+            if (matchOrders.size() != 2) {
+                logger.fatal("成交单号匹配错误");
+                replyErrorState();
+                return null;
+            }
+        } catch (Exception e) {
+            logger.error("查询成交订单失败", e);
+            replyErrorState();
             return null;
         }
         //2.处理订单
@@ -55,10 +71,11 @@ public class MatchOrderTask implements Callable {
             boolean handleOrderResult = handleOrder(order, new BigDecimal(matchOrderRequest.getMatchAmount()), new BigDecimal(matchOrderRequest.getMatchPrice()));
             if (handleOrderResult == false) {
                 logger.error("处理订单失败：" + order.toString());
+                replyErrorState();
                 return null;
             }
         }
-
+        replySucessState();
         return null;
     }
 
@@ -137,6 +154,20 @@ public class MatchOrderTask implements Callable {
             logger.error("订单异常");
             return false;
         }
+    }
+
+    private void replyErrorState() {
+        MatchOrderReply matchOrderReply = MatchOrderReply.newBuilder().setState(false).build();
+        responseObserver.onNext(matchOrderReply);
+        responseObserver.onCompleted();
+        return;
+    }
+
+    private void replySucessState() {
+        MatchOrderReply matchOrderReply = MatchOrderReply.newBuilder().setState(true).build();
+        responseObserver.onNext(matchOrderReply);
+        responseObserver.onCompleted();
+        return;
     }
 
 }
