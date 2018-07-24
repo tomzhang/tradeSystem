@@ -69,8 +69,15 @@ public class UserOrderTask implements Callable {
             BigDecimal needCoin = new BigDecimal(order.getAmount());
             boolean processResult = processUserOrder(order.getAccount(), cargoCoin, needCoin);
             if (processResult == true) {
-                sendOrderToTradeCore(cargoCoin, baseCoin);
-                replySucessState();
+                try {
+                    sendOrderToTradeCore(cargoCoin, baseCoin);
+                    replySucessState();
+                } catch (Exception e) {
+                    logger.error("插入订单失败", e);
+                    unLockAsset(order.getAccount(), cargoCoin, needCoin.toString(), new Date());
+                    replyErrorState();
+                }
+
             } else {
                 replyErrorState();
             }
@@ -85,7 +92,7 @@ public class UserOrderTask implements Callable {
      * @return 锁定成功返回true
      */
 
-    public boolean processUserOrder(String account, String coinToLock, BigDecimal amountToLock) {
+    private boolean processUserOrder(String account, String coinToLock, BigDecimal amountToLock) {
         UserAsset userAsset;
         try {
             userAsset = userDataService.queryUserAssert(order.getAccount(), coinToLock);

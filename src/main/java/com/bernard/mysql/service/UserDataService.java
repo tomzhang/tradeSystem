@@ -36,6 +36,8 @@ public interface UserDataService {
 
     int existTable(String tableName);
 
+    int insertUserCancelOrder(String orderId, String account, Date updateTime);
+
 
 
 

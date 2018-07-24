@@ -87,5 +87,10 @@ public class UserDataServiceImpl implements UserDataService {
         return userDataMapper.existTable(tableName);
     }
 
+    @Override
+    public int insertUserCancelOrder(String orderId, String account, Date updateTime) {
+        return userDataMapper.insertUserCancelOrder(orderId, account, updateTime);
+    }
+
 
 }

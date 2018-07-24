@@ -41,7 +41,7 @@ public class UserCancelOrderTask implements Callable {
         try {
             userOrder = userDataService.queryUserOrder(cancelOrderRequest.getOrderId(), cancelOrderRequest.getAccount());
         } catch (Exception e) {
-            logger.error("231", e);
+            logger.error("查询订单失败", e);
         }
         if (userOrder == null) {
             replyErrorState();
@@ -56,17 +56,34 @@ public class UserCancelOrderTask implements Callable {
         String baseCoin = assetPair.split("-")[1];
         String account = userOrder.getAccount();
         if (account.equalsIgnoreCase(cancelOrderRequest.getAccount()) == false) {
+            //TODO 撤单信息错误
             replyErrorState();
             return null;
         }
         BigDecimal remain = new BigDecimal(userOrder.getRemain());
         BigDecimal price = new BigDecimal(userOrder.getPrice());
         if (remain.compareTo(BigDecimal.ZERO) == 0) {
+            //TODO 返回撤单失败
             replyErrorState();
             logger.fatal("订单余额为0，但是未关闭！");
             return null;
         }
         //
+        //2.发送撤单请求至撮合系统
+        io.grpc.tradeCore.service.OrderSide rpcSide;
+        if (userOrder.getOrderSide() == OrderSide.BUY) {
+            rpcSide = io.grpc.tradeCore.service.OrderSide.BID;
+        } else {
+            rpcSide = io.grpc.tradeCore.service.OrderSide.ASK;
+        }
+        Response response = sendCancelToTradeCore(userOrder.getOrderID(), cargoCoin, baseCoin, account, rpcSide);
+        if (response == null || response.getCode() != 0) {
+            logger.error("撤单失败");
+            replyErrorState();
+            return null;
+        }
+
+        //3.更新余额
         if (userOrder.getOrderType() == OrderType.PRICE_LIMIT) {
             if (userOrder.getOrderSide() == OrderSide.BUY) {
                 //撤销买单 需要释放锁定的钱
@@ -81,16 +98,9 @@ public class UserCancelOrderTask implements Callable {
             logger.fatal("不支持，非限价订单");
             return null;
         }
-        //2.发送撤单请求至撮合系统
-        io.grpc.tradeCore.service.OrderSide rpcSide;
-        if (userOrder.getOrderSide() == OrderSide.BUY) {
-            rpcSide = io.grpc.tradeCore.service.OrderSide.BID;
-        } else {
-            rpcSide = io.grpc.tradeCore.service.OrderSide.ASK;
-        }
-        sendCancelToTradeCore(userOrder.getOrderID(), cargoCoin, baseCoin, account, rpcSide);
 
-        //3.更新用户订单
+
+        //4.更新用户订单
         userOrder.setState(OrderState.CANCLE);
         userOrder.setRemain("0");
         userOrder.setLockVersion(userOrder.getLockVersion() + 1);
@@ -99,6 +109,8 @@ public class UserCancelOrderTask implements Callable {
             logger.error("更新用户订单失败");
             return null;
         }
+        //5.插入用户撤单流水
+        userDataService.insertUserCancelOrder(cancelOrderRequest.getOrderId(), cancelOrderRequest.getAccount(), new Date());
         replySuccessState();
         return null;
     }
@@ -130,7 +142,7 @@ public class UserCancelOrderTask implements Callable {
         try {
             response = client.getBlockingStub().cancel(cmd);
         } catch (Exception e) {
-            logger.error("调用撮合系统失败", e);
+            logger.error("调用撮合系统撤单失败", e);
         }
 
         return response;

@@ -110,9 +110,17 @@
     </update>
 
 	<insert id="insertMatchFlow">
-		INSERT INTO T_MATCH_FLOW (ID,SELLSIDE_ORDER_ID,BUYSIDE_ORDER_ID,AMOUNT,PRICE,INSERT_TIME)
+		INSERT INTO T_MATCH_FLOW
+		(ID,SELLSIDE_ORDER_ID,SELLSIDE_ACCOUNT,BUYSIDE_ORDER_ID,BUYSIDE_ACCOUNT,PRICE,AMOUNT,INSERT_TIME)
 		VALUES
-		(#{0},#{1},#{2},#{4},#{3},#{5})
+		(#{0},#{1},#{2},#{4},#{3},#{5},#{6},#{7})
+	</insert>
+
+
+	<insert id="insertUserCancelOrder">
+		INSERT INTO T_USER_ORDER(ORDER_ID,ACCOUNT,CANCEL_TIME)
+		VALUES
+		(#{0},#{1},#{2})
 	</insert>
 
 

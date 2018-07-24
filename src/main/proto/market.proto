@@ -48,6 +48,7 @@ message CancelOrderCmd {
     string account = 2;
     AssetPair asset_pair = 3;
     OrderSide side = 4;
+    string amount = 5;
 }
 
 message CancelOrdResp {

@@ -55,6 +55,7 @@ public class MatchOrderTask implements Callable {
             boolean handleOrderResult = handleOrder(order, new BigDecimal(matchOrderRequest.getMatchAmount()), new BigDecimal(matchOrderRequest.getMatchPrice()));
             if (handleOrderResult == false) {
                 logger.error("处理订单失败：" + order.toString());
+                return null;
             }
         }
 
@@ -101,7 +102,11 @@ public class MatchOrderTask implements Callable {
             } else {
                 order.setState(OrderState.PARTITION);
             }
-            userDataService.updateUserOrder(order);
+            int updateCount = userDataService.updateUserOrder(order);
+            if (updateCount != 1) {
+                logger.fatal("更新订单失败");
+                return false;
+            }
             return true;
         } else if (order.getOrderSide() == OrderSide.SELL) {
             //卖出，货-》锁定的货钱少，钱总量增多
@@ -127,7 +132,6 @@ public class MatchOrderTask implements Callable {
                 order.setState(OrderState.PARTITION);
             }
             userDataService.updateUserOrder(order);
-
             return true;
         } else {
             logger.error("订单异常");

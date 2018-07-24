@@ -34,6 +34,8 @@ public interface UserDataMapper {
 
     int unlockUserAssertWhenFail(String account, String asset, String amountToUnlock, Date updateTime);
 
+    int insertUserCancelOrder(String orderId, String account, Date updateTime);
+
 
 
 
