@@ -17,6 +17,7 @@ public class Order {
     OrderState state;// 状态（未成交/部分成交/全部成交/手动撤单/超时撤单）
     String remain;// 未成交数量
     String AssertLimit; //市价买入最大金额
+    String feeRate;//手续费率
     int LockVersion;// 乐观锁版本号*/
 
     private Order() {
@@ -28,7 +29,7 @@ public class Order {
         this.LockVersion = 0;
     }
 
-    public Order(String account, String assetPair, OrderSide orderSide, OrderType orderType, String surviveTime, String amount, String price, String assertLimit) {
+    public Order(String account, String assetPair, OrderSide orderSide, OrderType orderType, String surviveTime, String amount, String price, String assertLimit, String feeRate) {
         this.orderID = UUID.randomUUID().toString();
         this.orderTime = System.currentTimeMillis() + "";
         this.account = account;
@@ -41,6 +42,7 @@ public class Order {
         this.price = price;
         this.AssertLimit = assertLimit;
         this.amount = amount;
+        this.feeRate = feeRate;
         this.LockVersion = 0;
     }
 
@@ -151,7 +153,7 @@ public class Order {
     public static Order fromUserOrderRequest(UserOrderRequest request) {
         //Order order = new Order(request.getAccount())
         Order order = new Order(request.getAccount(), request.getAssetPair(), OrderSide.valueOf(request.getOrderSide()),
-                OrderType.valueOf(request.getOrderType()), "", request.getAmount(), request.getPrice(), request.getAssertLimit());
+                OrderType.valueOf(request.getOrderType()), "", request.getAmount(), request.getPrice(), request.getAssertLimit(), request.getFeeRate());
         return order;
     }
 

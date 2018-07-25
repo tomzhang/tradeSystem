@@ -26,6 +26,7 @@ message UserOrderRequest {
   string assetPair = 5;
   string price = 6;
   string assertLimit = 7;
+  string feeRate = 8;
 }
 
 // The response message containing the greetings

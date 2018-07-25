@@ -7,11 +7,11 @@
 		INSERT INTO T_USER_ORDER
         (ORDER_ID,ORDER_TIME,ACCOUNT,ASSET_PAIR,ORDER_SIDE,
         ORDER_TYPE,SURVIVE_TIME,AMOUNT,PRICE,STATE,
-        REMAIN,ASSET_LIMIT,LOCK_VERSION)
+		REMAIN,ASSET_LIMIT,LOCK_VERSION,ORDER_FEE_RATE)
         VALUES
         (#{orderID},#{orderTime},#{account},#{assetPair},#{orderSide,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
         #{orderType,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{surviveTime},#{amount},#{price},#{state,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
-        #{remain},#{AssertLimit},#{LockVersion})
+		#{remain},#{AssertLimit},#{LockVersion},#{feeRate})
 	</insert>
 
 	<update id="updateUserOrder" parameterType="com.bernard.mysql.dto.Order">
@@ -62,6 +62,7 @@
 		<result property="remain" column="REMAIN"/>
 		<result property="AssertLimit" column="ASSET_LIMIT"/>
 		<result property="LockVersion" column="LOCK_VERSION"/>
+		<result property="feeRate" column="ORDER_FEE_RATE"/>
 	</resultMap>
 
 	<select id="queryUserOrder" resultMap="userOrderMap" parameterType="com.bernard.mysql.dto.Order">
