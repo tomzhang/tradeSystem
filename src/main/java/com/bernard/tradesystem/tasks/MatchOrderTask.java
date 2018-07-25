@@ -85,6 +85,7 @@ public class MatchOrderTask implements Callable {
         String cargoCoin = assetPair.split("-")[0];
         String baseCoin = assetPair.split("-")[1];
         String account = order.getAccount();
+        String feeRate = order.getFeeRate();
         BigDecimal orderPrice = new BigDecimal(order.getPrice());
         BigDecimal remain = new BigDecimal(order.getRemain());
         if (remain.compareTo(matchAmount) < 0) {

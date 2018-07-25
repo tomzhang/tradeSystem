@@ -150,6 +150,14 @@ public class Order {
         LockVersion = lockVersion;
     }
 
+    public String getFeeRate() {
+        return feeRate;
+    }
+
+    public void setFeeRate(String feeRate) {
+        this.feeRate = feeRate;
+    }
+
     public static Order fromUserOrderRequest(UserOrderRequest request) {
         //Order order = new Order(request.getAccount())
         Order order = new Order(request.getAccount(), request.getAssetPair(), OrderSide.valueOf(request.getOrderSide()),
@@ -173,6 +181,7 @@ public class Order {
                 ", state=" + state +
                 ", remain='" + remain + '\'' +
                 ", AssertLimit='" + AssertLimit + '\'' +
+                ", feeRate='" + feeRate + '\'' +
                 ", LockVersion=" + LockVersion +
                 '}';
     }
