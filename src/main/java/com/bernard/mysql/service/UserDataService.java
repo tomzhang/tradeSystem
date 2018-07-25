@@ -38,6 +38,9 @@ public interface UserDataService {
 
     int insertUserCancelOrder(String orderId, String account, Date updateTime);
 
+    int insertOrderFee(String orderId, String assetPair, String FEE, Date date, String matchFlow, String asset);
+
+
 
 
 

@@ -92,5 +92,10 @@ public class UserDataServiceImpl implements UserDataService {
         return userDataMapper.insertUserCancelOrder(orderId, account, updateTime);
     }
 
+    @Override
+    public int insertOrderFee(String orderId, String assetPair, String FEE, Date date, String matchFlow, String asset) {
+        return userDataMapper.insertOrderFee(orderId, assetPair, FEE, date, matchFlow, asset);
+    }
+
 
 }

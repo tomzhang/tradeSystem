@@ -124,5 +124,11 @@
 		(#{0},#{1},#{2})
 	</insert>
 
+	<insert id="insertOrderFee">
+		INSERT INTO T_FEE_FLOW (ORDER_ID,ASSET_PAIR,FEE,TIME,MATCH_FLOW_ID,ASSET)
+        VALUES
+        (#{0},#{1},#{2},#{3},#{4},#{5})
+	</insert>
+
 
 </mapper>
