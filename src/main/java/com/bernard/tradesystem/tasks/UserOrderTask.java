@@ -51,13 +51,18 @@ public class UserOrderTask implements Callable {
             boolean processResult = processUserOrder(order.getAccount(), baseCoin, neededCoin);
             if (processResult == true) {
                 try {
-                    sendOrderToTradeCore(cargoCoin, baseCoin);
+                    Response response = sendOrderToTradeCore(cargoCoin, baseCoin);
+                    if (response == null || response.getCode() != 0) {
+                        throw new RuntimeException("调用撮合系统失败");
+                    }
                     replySucessState();
                 } catch (Exception e) {
                     logger.error("插入订单失败", e);
                     //rollBack
                     unLockAsset(order.getAccount(), baseCoin, neededCoin.toString(), new Date());
-
+                    order.setState(OrderState.ERROR);
+                    order.setLockVersion(order.getLockVersion() + 1);
+                    userDataService.updateUserOrder(order);
                     replyErrorState();
                 }
             } else {
@@ -70,11 +75,17 @@ public class UserOrderTask implements Callable {
             boolean processResult = processUserOrder(order.getAccount(), cargoCoin, needCoin);
             if (processResult == true) {
                 try {
-                    sendOrderToTradeCore(cargoCoin, baseCoin);
+                    Response response = sendOrderToTradeCore(cargoCoin, baseCoin);
+                    if (response == null || response.getCode() != 0) {
+                        throw new RuntimeException("调用撮合系统失败");
+                    }
                     replySucessState();
                 } catch (Exception e) {
                     logger.error("插入订单失败", e);
                     unLockAsset(order.getAccount(), cargoCoin, needCoin.toString(), new Date());
+                    order.setState(OrderState.ERROR);
+                    order.setLockVersion(order.getLockVersion() + 1);
+                    userDataService.updateUserOrder(order);
                     replyErrorState();
                 }
 

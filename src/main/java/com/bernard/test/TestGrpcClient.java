@@ -21,16 +21,17 @@ public class TestGrpcClient {
                 .usePlaintext(true)
                 .build();
 
-        TradeSystemGrpc.TradeSystemBlockingStub blockingStub = TradeSystemGrpc.newBlockingStub(channel).withDeadlineAfter(15, TimeUnit.SECONDS);
+        TradeSystemGrpc.TradeSystemBlockingStub blockingStub = TradeSystemGrpc.newBlockingStub(channel).withDeadlineAfter(55, TimeUnit.SECONDS);
         UserOrderRequest request = UserOrderRequest.newBuilder().setAccount("zzz666").setAmount("1").setAssertLimit("").setAssetPair("ETH-BTC").setOrderSide("SELL")
-                .setOrderType("PRICE_LIMIT").setPrice("1").build();
-        /*for (int i = 0; i < 10; i++) {
+                .setOrderType("PRICE_LIMIT").setPrice("1").setFeeRate("0.003").build();
+        for (int i = 0; i < 1; i++) {
             UserOrderReply reply = blockingStub.takeOrder(request);
-        }*/
-        MatchOrderRequest request1 = MatchOrderRequest.newBuilder().setBuySideOrderId("f956e8b6-bb0d-4e2f-8da4-807a85ee0aa0")
+            System.out.println("收到回复" + i + ":" + reply.getState());
+        }
+       /* MatchOrderRequest request1 = MatchOrderRequest.newBuilder().setBuySideOrderId("f956e8b6-bb0d-4e2f-8da4-807a85ee0aa0")
                 .setBuySideAccount("zzz666").setSellSideOrderId("f64b72da-afb3-44aa-90bb-5445ad82576b")
                 .setSellSideAccount("zzz666").setMatchOrderWaterflow(System.currentTimeMillis() + "").setMatchAmount("1").setMatchPrice("1").build();
-        blockingStub.stepOrder(request1);
+        blockingStub.stepOrder(request1);*/
 
         //f956e8b6-bb0d-4e2f-8da4-807a85ee0aa0
         //f64b72da-afb3-44aa-90bb-5445ad82576b
