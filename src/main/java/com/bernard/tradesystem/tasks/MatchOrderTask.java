@@ -85,7 +85,13 @@ public class MatchOrderTask implements Callable {
         String cargoCoin = assetPair.split("-")[0];
         String baseCoin = assetPair.split("-")[1];
         String account = order.getAccount();
-        String feeRate = order.getFeeRate();
+        String feeRateString = order.getFeeRate();
+        BigDecimal feeRate;
+        if (feeRateString == null || feeRateString.isEmpty()) {
+            feeRate = new BigDecimal(0);
+        } else {
+            feeRate = new BigDecimal(feeRateString);
+        }
         BigDecimal orderPrice = new BigDecimal(order.getPrice());
         BigDecimal remain = new BigDecimal(order.getRemain());
         if (remain.compareTo(matchAmount) < 0) {
@@ -102,13 +108,21 @@ public class MatchOrderTask implements Callable {
             BigDecimal spendMoney = matchAmount.multiply(matchPrice);//实际花掉的钱
             int updateMoneyAmount = userDataService.updateUserAssert(account, baseCoin, spendMoney.multiply(new BigDecimal(-1)).toString(), preLockMoneyAmount.subtract(spendMoney).toString(), new Date());
             if (updateMoneyAmount != 1) {
-                logger.fatal("更新用户资产失败");
+                logger.fatal("1.更新用户资产失败");
                 return false;
             }
-            //2.货物增加
-            int updateCargoAmount = userDataService.updateUserAssert(account, cargoCoin, matchAmount.toString(), matchAmount.toString(), new Date());
+            //2.货物增加 //计算手续费
+            BigDecimal fee = matchAmount.multiply(feeRate);
+            BigDecimal amountToUser = matchAmount.subtract(fee);
+
+            int updateCargoAmount = userDataService.updateUserAssert(account, cargoCoin, amountToUser.toString(), amountToUser.toString(), new Date());
             if (updateCargoAmount != 1) {
-                logger.fatal("更新用户资产失败");
+                logger.fatal("2.更新用户资产失败");
+                return false;
+            }
+            int updateFeeFlow = userDataService.insertOrderFee(order.getOrderID(), order.getAssetPair(), fee.toString(), new Date(), matchOrderRequest.getMatchOrderWaterflow(), cargoCoin);
+            if (updateFeeFlow != 1) {
+                logger.fatal("3.更新手续费失败");
                 return false;
             }
             //3.更新订单
@@ -131,13 +145,20 @@ public class MatchOrderTask implements Callable {
             int updateCargoResult = userDataService.updateUserAssert(account, cargoCoin, matchAmount.multiply(new BigDecimal(-1)).toString(),
                     "0", new Date());
             if (updateCargoResult != 1) {
-                logger.fatal("更新资产失败");
+                logger.fatal("1.更新资产失败");
                 return false;
             }
-            String receiveMoney = matchAmount.multiply(matchPrice).toString();
-            int updateMoneyResult = userDataService.updateUserAssert(account, baseCoin, receiveMoney, receiveMoney, new Date());
+            BigDecimal receiveMoney = matchAmount.multiply(matchPrice);
+            BigDecimal fee = receiveMoney.multiply(feeRate);
+            BigDecimal moneyToUser = receiveMoney.subtract(fee);
+            int updateMoneyResult = userDataService.updateUserAssert(account, baseCoin, moneyToUser.toString(), moneyToUser.toString(), new Date());
             if (updateMoneyResult != 1) {
-                logger.fatal("更新资产失败");
+                logger.fatal("2.更新资产失败");
+                return false;
+            }
+            int updateFeeFlow = userDataService.insertOrderFee(order.getOrderID(), order.getAssetPair(), fee.toString(), new Date(), matchOrderRequest.getMatchOrderWaterflow(), baseCoin);
+            if (updateFeeFlow != 1) {
+                logger.fatal("3.插入手续费记录失败");
                 return false;
             }
             //更新订单
