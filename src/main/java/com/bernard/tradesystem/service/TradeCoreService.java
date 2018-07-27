@@ -11,11 +11,17 @@ public class TradeCoreService extends OrderGrpc.OrderImplBase {
 
     @Override
     public void take(TakeOrderCmd request, StreamObserver<Response> responseObserver) {
-        super.take(request, responseObserver);
+        //super.take(request, responseObserver);
+        System.out.println("收到签订单请求");
+        Response response = Response.newBuilder().setCode(0).setMessage("test").build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+        return;
     }
 
     @Override
     public void cancel(CancelOrderCmd request, StreamObserver<Response> responseObserver) {
-        super.cancel(request, responseObserver);
+        //super.cancel(request, responseObserver);
+
     }
 }

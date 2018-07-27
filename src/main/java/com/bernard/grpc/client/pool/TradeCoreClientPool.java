@@ -26,6 +26,8 @@ public class TradeCoreClientPool {
         poolConfig.setMinEvictableIdleTimeMillis(1000L * 60L * 30L);
         // 连接耗尽时是否阻塞,默认为true
         poolConfig.setBlockWhenExhausted(true);
+
+        poolConfig.setTestOnBorrow(true);
         // 连接池创建
         objectPool = new GenericObjectPool<>(new GrpcClientFactory(), poolConfig);
     }
@@ -36,7 +38,8 @@ public class TradeCoreClientPool {
     public static TradeCoreClient borrowObject() {
         try {
             TradeCoreClient clientSingle = objectPool.borrowObject();
-            logger.debug("总创建线程数"+objectPool.getCreatedCount());
+            logger.info("总创建线程数" + objectPool.getCreatedCount());
+
             return clientSingle;
         } catch (Exception e) {
             logger.error("链接池获取链接异常", e);
@@ -51,6 +54,7 @@ public class TradeCoreClientPool {
     private static TradeCoreClient createClient() {
         return new TradeCoreClient(GrpcClientFactory.host, GrpcClientFactory.port);
     }
+
 
     public static void returnObject(TradeCoreClient client) {
         objectPool.returnObject(client);

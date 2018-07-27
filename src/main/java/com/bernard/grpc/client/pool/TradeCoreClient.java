@@ -12,7 +12,9 @@ import java.util.concurrent.TimeUnit;
 public class TradeCoreClient {
 
     private final ManagedChannel channel;
-    private final OrderGrpc.OrderBlockingStub blockingStub;
+    private OrderGrpc.OrderBlockingStub blockingStub;
+    private long subTime;
+    private static final int aviTime = 15;
 
 
     public TradeCoreClient(String host, int port) {
@@ -20,7 +22,8 @@ public class TradeCoreClient {
                 .usePlaintext(true)
                 .build();
 
-        blockingStub = OrderGrpc.newBlockingStub(channel).withDeadlineAfter(15, TimeUnit.SECONDS);
+        blockingStub = OrderGrpc.newBlockingStub(channel).withDeadlineAfter(aviTime, TimeUnit.SECONDS);
+        subTime = System.currentTimeMillis();
     }
 
 
@@ -33,7 +36,14 @@ public class TradeCoreClient {
     }
 
     public OrderGrpc.OrderBlockingStub getBlockingStub() {
-        return blockingStub;
+        if (System.currentTimeMillis() - subTime > 10 * 1000) {
+            System.out.println("重建blockingstub");
+            subTime = System.currentTimeMillis();
+            blockingStub = OrderGrpc.newBlockingStub(channel).withDeadlineAfter(aviTime, TimeUnit.SECONDS);
+            return blockingStub;
+        } else {
+            return blockingStub;
+        }
     }
 
 

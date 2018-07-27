@@ -8,6 +8,8 @@ import com.bernard.mysql.dto.*;
 import com.bernard.mysql.dto.OrderSide;
 import com.bernard.mysql.dto.OrderType;
 import com.bernard.mysql.service.UserDataService;
+import io.grpc.ConnectivityState;
+import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import io.grpc.tradeCore.service.AssetPair;
 import io.grpc.tradeCore.service.Charge;
@@ -178,6 +180,9 @@ public class UserOrderTask implements Callable {
         TakeOrderCmd cmd = TakeOrderCmd.newBuilder().setAccount(order.getAccount()).setAssetPair(pair).setUid(order.getOrderID()).setCharge(charge).setSide(rpcSide).setType(rpcType).build();
         Response response = null;
         try {
+            ManagedChannel channel = client.getChannel();
+            ConnectivityState state = channel.getState(false);
+            System.out.println(state.toString());
             response = client.getBlockingStub().take(cmd);
         } catch (Exception e) {
             logger.error("调用撮合系统失败", e);
