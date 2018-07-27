@@ -1,0 +1,46 @@
+syntax = "proto3";
+package walletrpc;
+
+//1、提现接口
+//String transferOut(string asset, string fee,string pubKey,string sign,string fromaddress,string toaddr,double amount,string notes)
+//2. 充值接口
+//String transferIn(String asset, String pubKey,String sign,String addr,bigint amount,String notes)
+//3.绑定账户
+//3.String bindWallets(String asset,String account)
+
+// The wallet service definition.
+service WalletRPC {
+    rpc TransferOut (TransferOutRequest) returns (TransferOutReply) {}
+    rpc BindWallets (BindWalletsRequest) returns (BindWalletsReply) {}
+}
+
+// The request message.
+message TransferOutRequest {
+  string asset = 1;
+  string fee=2;
+  string pubKey=3;
+  string sign=4;
+  message TransferIn{
+    string fromaddress=1;
+    string toaddr=2;
+    double amount=3;
+    string notes=4;
+  }
+  TransferIn transferin=5;
+}
+
+// The response message
+message TransferOutReply {
+  string id = 1;
+}
+
+// The request message.
+message BindWalletsRequest {
+  string asset = 1;
+  string account=2;
+}
+
+// The response message
+message BindWalletsReply {
+  string address = 1;
+}

@@ -15,6 +15,8 @@ service TradeSystem {
     }
     rpc stepOrder (MatchOrderRequest) returns (MatchOrderReply) {
     }
+    //wallet transfer in
+    rpc TransferIn (TransferInRequest) returns (TransferInReply) {}
 }
 
 // The request message containing the user's name.
@@ -59,3 +61,20 @@ message MatchOrderReply {
     bool state = 1;
 }
 //撮合系统service
+
+
+
+// The request message.
+message TransferInRequest {
+  string asset = 1;
+  string fromAddress=2;
+  string toAddress=3;
+  double amount=4;
+  string notes=5;
+  string time=6;
+}
+
+// The response message
+message TransferInReply {
+  bool state = 1;
+}

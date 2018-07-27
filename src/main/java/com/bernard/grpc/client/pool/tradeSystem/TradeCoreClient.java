@@ -1,4 +1,4 @@
-package com.bernard.grpc.client.pool;
+package com.bernard.grpc.client.pool.tradeSystem;
 
 
 import io.grpc.ManagedChannel;

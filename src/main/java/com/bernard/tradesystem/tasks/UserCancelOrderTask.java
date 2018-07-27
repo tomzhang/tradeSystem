@@ -1,8 +1,8 @@
 package com.bernard.tradesystem.tasks;
 
 import com.bernard.App;
-import com.bernard.grpc.client.pool.TradeCoreClient;
-import com.bernard.grpc.client.pool.TradeCoreClientPool;
+import com.bernard.grpc.client.pool.tradeSystem.TradeCoreClient;
+import com.bernard.grpc.client.pool.tradeSystem.TradeCoreClientPool;
 import com.bernard.mysql.dto.Order;
 import com.bernard.mysql.dto.OrderSide;
 import com.bernard.mysql.dto.OrderState;
