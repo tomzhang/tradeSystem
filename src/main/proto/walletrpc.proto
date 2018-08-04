@@ -20,6 +20,7 @@ message TransferOutRequest {
   string fee=2;
   string pubKey=3;
   string sign=4;
+
   message TransferIn{
     string fromaddress=1;
     string toaddr=2;

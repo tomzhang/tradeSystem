@@ -3,7 +3,8 @@ package com.bernard.mysql.service.impl;
 
 import com.bernard.mysql.dao.UserDataMapper;
 import com.bernard.mysql.dto.Order;
-import com.bernard.mysql.dto.TransferIn;
+import com.bernard.mysql.dto.TransferFlow;
+
 import com.bernard.mysql.dto.UserAsset;
 import com.bernard.mysql.service.UserDataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,17 +52,20 @@ public class UserDataServiceImpl implements UserDataService {
     }
 
     @Override
+    public int decreaseUserAssert(String account, String asset, int oldVersion, String newTotal, String newAvi, Date date) {
+        return userDataMapper.decreaseUserAssert(account, asset, oldVersion, newTotal, newAvi, date);
+    }
+
+
+    @Override
     public int unlockUserAssertWhenFail(String account, String asset, String amountToUnlock, Date updateTime) {
-        userDataMapper.unlockUserAssertWhenFail(account, asset, amountToUnlock, updateTime);
-        return 0;
+        return userDataMapper.unlockUserAssertWhenFail(account, asset, amountToUnlock, updateTime);
     }
 
     @Override
     public int updateUserAssert(String account, String asset, String totalAmountToAdd, String aviToAdd, Date updateTime) {
         return userDataMapper.updateUserAssert(account, asset, totalAmountToAdd, aviToAdd, updateTime);
     }
-
-
 
 
     @Override
@@ -100,11 +104,10 @@ public class UserDataServiceImpl implements UserDataService {
     }
 
 
+
     @Override
-    public void transferIn(TransferIn transferIn) {
-        return;
-
-
+    public int updateUserChangeFlow(TransferFlow transferFlow) {
+        return userDataMapper.updateUserChangeFlow(transferFlow);
     }
 
 

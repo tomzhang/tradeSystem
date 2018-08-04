@@ -16,10 +16,13 @@ service TradeSystem {
     rpc stepOrder (MatchOrderRequest) returns (MatchOrderReply) {
     }
     //wallet transfer in
-    rpc TransferIn (TransferInRequest) returns (TransferInReply) {}
+    rpc transferIn (TransferInRequest) returns (TransferInReply) {
+    }
     //tradeWeb binding address && transfer out
-    rpc TransferOut (TransferOutRequest) returns (TransferOutReply) {}
-    rpc BindWallets (BindWalletsRequest) returns (BindWalletsReply) {}
+    rpc transferOut (TransferOutRequest) returns (TransferOutReply) {
+    }
+    rpc bindWallets (BindWalletsRequest) returns (BindWalletsReply) {
+    }
 }
 
 // The request message containing the user's name.
@@ -72,9 +75,10 @@ message TransferInRequest {
   string asset = 1;
   string fromAddress=2;
   string toAddress=3;
-  double amount=4;
+  string amount = 4;
   string notes=5;
   string time=6;
+  string account = 7;
 }
 
 // The response message
@@ -86,16 +90,13 @@ message TransferInReply {
 // The request message.
 message TransferOutRequest {
   string asset = 1;
-  string fee=2;
+  string feeRate = 2;
   string pubKey=3;
   string sign=4;
-  message TransferIn{
-    string fromaddress=1;
-    string toaddr=2;
-    double amount=3;
-    string notes=4;
-  }
-  TransferIn transferin=5;
+  string account = 5;
+  string amount = 6;
+  string toAddr = 7;
+
 }
 
 // The response message

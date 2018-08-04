@@ -1,7 +1,7 @@
 package com.bernard.mysql.service;
 
 import com.bernard.mysql.dto.Order;
-import com.bernard.mysql.dto.TransferIn;
+import com.bernard.mysql.dto.TransferFlow;
 import com.bernard.mysql.dto.UserAsset;
 
 import java.util.Date;
@@ -19,6 +19,8 @@ public interface UserDataService {
 
 
     int lockUserAssert(String account, String asset, String totalAmount, String oldAvi, String newAvi, int oldLock, int newLock, Date updateTime);
+
+    int decreaseUserAssert(String account, String asset, int oldVersion, String newTotal, String newAvi, Date date);
 
     int unlockUserAssertWhenFail(String account, String asset, String amountToUnlock, Date updateTime);
 
@@ -41,7 +43,8 @@ public interface UserDataService {
 
     int insertOrderFee(String orderId, String assetPair, String FEE, Date date, String matchFlow, String asset);
 
-    void transferIn(TransferIn transferIn);
+
+    int updateUserChangeFlow(TransferFlow transferFlow);
 
 
     //更新用户ETH资产

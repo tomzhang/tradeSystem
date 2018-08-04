@@ -36,6 +36,12 @@
 		ACCOUNT=#{param1} AND LOCK_VERSION =#{param6}
 	</update>
 
+	<update id="decreaseUserAssert">
+		UPDATE T_USER_ASSET_${param2} SET LOCK_VERSION =#{param3}+1, TOTAL_AMOUNT= #{param4},AIVILIABLE=#{param5},UPDATE_TIME=#{param6} WHERE
+		ACCOUNT=#{param1} AND LOCK_VERSION =#{param3}
+	</update>
+
+
 	<update id="updateUserAssert">
 		UPDATE T_USER_ASSET_${param2} SET LOCK_VERSION=LOCK_VERSION+1,AIVILIABLE=CONVERT(AIVILIABLE,DECIMAL(32,8))+CONVERT (#{param4},DECIMAL(32,8)),TOTAL_AMOUNT=CONVERT (TOTAL_AMOUNT,DECIMAL(32,8))+CONVERT (#{param3},DECIMAL(32,8)),UPDATE_TIME=#{param5} WHERE ACCOUNT=#{param1}
 	</update>
@@ -128,6 +134,12 @@
 		INSERT INTO T_FEE_FLOW (ORDER_ID,ASSET_PAIR,FEE,TIME,MATCH_FLOW_ID,ASSET)
         VALUES
         (#{0},#{1},#{2},#{3},#{4},#{5})
+	</insert>
+
+
+	<insert id="updateUserChangeFlow">
+		INSERT INTO T_USER_ASSET_CHANGE_FLOW (FROM_ADDRESS,TIME,TRANSFER_SIDE,LOCK_VERSION,ASSET,ACCOUNT,TO_ADDRESS)
+		VALUES (#{fromAddress},#{time},#{side,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{lockVersion},#{asset},#{account},#{toAddress})
 	</insert>
 
 

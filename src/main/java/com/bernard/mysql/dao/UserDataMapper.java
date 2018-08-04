@@ -1,6 +1,7 @@
 package com.bernard.mysql.dao;
 
 import com.bernard.mysql.dto.Order;
+import com.bernard.mysql.dto.TransferFlow;
 import com.bernard.mysql.dto.UserAsset;
 import org.mybatis.spring.annotation.MapperScan;
 
@@ -37,6 +38,10 @@ public interface UserDataMapper {
     int insertUserCancelOrder(String orderId, String account, Date updateTime);
 
     int insertOrderFee(String orderId, String assetPair, String FEE, Date date, String matchFlow, String asset);
+
+    int updateUserChangeFlow(TransferFlow transferFlow);
+
+    int decreaseUserAssert(String account, String asset, int oldVersion, String newTotal, String newAvi, Date date);
 
 
 
