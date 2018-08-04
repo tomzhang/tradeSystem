@@ -162,9 +162,7 @@ public class UserOrderTask implements Callable {
     private Response sendOrderToTradeCore(String cargoCoin, String baseCoin) throws RuntimeException {
         TradeCoreClient client = TradeCoreClientPool.borrowObject();
         AssetPair pair = AssetPair.newBuilder().setAsset(cargoCoin).setMoney(baseCoin).build();
-        //AssetPair pair = AssetPair.newBuilder().setAsset("asset").setMoney("money").build();
         Charge charge = Charge.newBuilder().setAmount(order.getAmount()).setPrice(order.getPrice()).build();
-        //io.grpc.tradesystem.service.OrderSide orderSide1 = io.grpc.tradesystem.service.OrderSide.ASK;
         io.grpc.tradeCore.service.OrderSide rpcSide;
         io.grpc.tradeCore.service.OrderType rpcType;
         if (order.getOrderSide() == OrderSide.BUY) {
@@ -184,6 +182,7 @@ public class UserOrderTask implements Callable {
             ConnectivityState state = channel.getState(false);
             System.out.println(state.toString());
             response = client.getBlockingStub().take(cmd);
+            // Thread.sleep(50000);
         } catch (Exception e) {
             logger.error("调用撮合系统失败", e);
         } finally {
