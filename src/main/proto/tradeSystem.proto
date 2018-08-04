@@ -17,6 +17,9 @@ service TradeSystem {
     }
     //wallet transfer in
     rpc TransferIn (TransferInRequest) returns (TransferInReply) {}
+    //tradeWeb binding address && transfer out
+    rpc TransferOut (TransferOutRequest) returns (TransferOutReply) {}
+    rpc BindWallets (BindWalletsRequest) returns (BindWalletsReply) {}
 }
 
 // The request message containing the user's name.
@@ -77,4 +80,36 @@ message TransferInRequest {
 // The response message
 message TransferInReply {
   bool state = 1;
+}
+
+
+// The request message.
+message TransferOutRequest {
+  string asset = 1;
+  string fee=2;
+  string pubKey=3;
+  string sign=4;
+  message TransferIn{
+    string fromaddress=1;
+    string toaddr=2;
+    double amount=3;
+    string notes=4;
+  }
+  TransferIn transferin=5;
+}
+
+// The response message
+message TransferOutReply {
+  string id = 1;
+}
+
+// The request message.
+message BindWalletsRequest {
+  string asset = 1;
+  string account=2;
+}
+
+// The response message
+message BindWalletsReply {
+  string address = 1;
 }

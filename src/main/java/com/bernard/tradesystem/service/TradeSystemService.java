@@ -2,10 +2,7 @@ package com.bernard.tradesystem.service;
 
 import com.bernard.mysql.dto.Order;
 import com.bernard.tradesystem.pool.TradeTaskServicePool;
-import com.bernard.tradesystem.tasks.MatchOrderTask;
-import com.bernard.tradesystem.tasks.TransferInTask;
-import com.bernard.tradesystem.tasks.UserCancelOrderTask;
-import com.bernard.tradesystem.tasks.UserOrderTask;
+import com.bernard.tradesystem.tasks.*;
 import io.grpc.stub.StreamObserver;
 import io.grpc.tradesystem.service.*;
 
@@ -40,6 +37,20 @@ public class TradeSystemService extends TradeSystemGrpc.TradeSystemImplBase {
     public void transferIn(TransferInRequest request, StreamObserver<TransferInReply> responseObserver) {
         TransferInTask transferInTask = new TransferInTask(request, responseObserver);
         FutureTask futureTask = new FutureTask(transferInTask);
+        TradeTaskServicePool.submitTask(futureTask);
+    }
+
+    @Override
+    public void transferOut(TransferOutRequest request, StreamObserver<TransferOutReply> responseObserver) {
+        TransferOutTask transferOutTask = new TransferOutTask(request, responseObserver);
+        FutureTask futureTask = new FutureTask(transferOutTask);
+        TradeTaskServicePool.submitTask(futureTask);
+    }
+
+    @Override
+    public void bindWallets(BindWalletsRequest request, StreamObserver<BindWalletsReply> responseObserver) {
+        BindingWalletTask bindingWalletTask = new BindingWalletTask(request, responseObserver);
+        FutureTask futureTask = new FutureTask(bindingWalletTask);
         TradeTaskServicePool.submitTask(futureTask);
     }
 }

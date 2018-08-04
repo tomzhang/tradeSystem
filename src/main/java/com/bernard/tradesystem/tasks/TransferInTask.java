@@ -1,6 +1,7 @@
 package com.bernard.tradesystem.tasks;
 
 import com.bernard.App;
+import com.bernard.mysql.dto.TransferIn;
 import com.bernard.mysql.service.UserDataService;
 import io.grpc.stub.StreamObserver;
 import io.grpc.tradesystem.service.TransferInReply;
@@ -28,6 +29,14 @@ public class TransferInTask implements Callable {
     @Override
     public Object call() throws Exception {
         logger.info("开始处理入账");
+        TransferIn transferIn = new TransferIn();
+        transferIn.setAmount(transferInRequest.getAmount());
+        transferIn.setAsset(transferInRequest.getAsset());
+        transferIn.setFromAddress(transferInRequest.getFromAddress());
+        transferIn.setToAddress(transferInRequest.getToAddress());
+        transferIn.setNotes(transferInRequest.getNotes());
+        transferIn.setTime(transferInRequest.getTime());
+        userDataService.transferIn(transferIn);
         replySucessState();
         return null;
     }
