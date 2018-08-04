@@ -99,6 +99,7 @@ public class UserDataServiceImpl implements UserDataService {
         return userDataMapper.insertOrderFee(orderId, assetPair, FEE, date, matchFlow, asset);
     }
 
+
     @Override
     public void transferIn(TransferIn transferIn) {
 
