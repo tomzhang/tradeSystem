@@ -3,6 +3,7 @@ package com.bernard.mysql.service.impl;
 
 import com.bernard.mysql.dao.UserDataMapper;
 import com.bernard.mysql.dto.Order;
+import com.bernard.mysql.dto.TransferIn;
 import com.bernard.mysql.dto.UserAsset;
 import com.bernard.mysql.service.UserDataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +96,11 @@ public class UserDataServiceImpl implements UserDataService {
     @Override
     public int insertOrderFee(String orderId, String assetPair, String FEE, Date date, String matchFlow, String asset) {
         return userDataMapper.insertOrderFee(orderId, assetPair, FEE, date, matchFlow, asset);
+    }
+
+    @Override
+    public void transferIn(TransferIn transferIn) {
+
     }
 
 
