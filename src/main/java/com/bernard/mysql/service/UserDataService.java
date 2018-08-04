@@ -1,6 +1,7 @@
 package com.bernard.mysql.service;
 
 import com.bernard.mysql.dto.Order;
+import com.bernard.mysql.dto.TransferIn;
 import com.bernard.mysql.dto.UserAsset;
 
 import java.util.Date;
@@ -40,8 +41,7 @@ public interface UserDataService {
 
     int insertOrderFee(String orderId, String assetPair, String FEE, Date date, String matchFlow, String asset);
 
-
-
+    void transferIn(TransferIn transferIn);
 
 
     //更新用户ETH资产
