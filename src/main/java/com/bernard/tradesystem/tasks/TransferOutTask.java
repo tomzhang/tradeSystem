@@ -33,7 +33,6 @@ public class TransferOutTask implements Callable {
 
     @Override
     public Object call() throws Exception {
-        logger.info("开始处理提币");
         TransferFlow transferOutFlow = new TransferFlow();
         transferOutFlow.setAccount(transferOutRequest.getAccount());
         transferOutFlow.setLockVersion(0);
@@ -42,8 +41,9 @@ public class TransferOutTask implements Callable {
         transferOutFlow.setAsset(transferOutRequest.getAsset());
         transferOutFlow.setToAddress(transferOutRequest.getToAddr());
         transferOutFlow.setTime(new Date());
+        logger.info("开始处理提币请求:" + transferOutFlow.toString());
 
-        //2.扣钱
+        //2.交易余额，稳定以后可以用缓存数据以加快访问速度。
         UserAsset userAsset = userDataService.queryUserAssert(transferOutFlow.getAccount(), transferOutFlow.getAsset());
         BigDecimal avi = new BigDecimal(userAsset.getAviliable());
         if (avi.compareTo(new BigDecimal(transferOutFlow.getAmount())) <= 0) {
@@ -55,7 +55,7 @@ public class TransferOutTask implements Callable {
         }
         BigDecimal newAvi = avi.subtract(new BigDecimal(transferOutFlow.getAmount())).setScale(8, BigDecimal.ROUND_DOWN);
         BigDecimal newTotal = new BigDecimal(userAsset.getTotalAmount()).subtract(new BigDecimal(transferOutFlow.getAmount())).setScale(8, BigDecimal.ROUND_DOWN);
-        userDataService.decreaseUserAssert(transferOutFlow.getAccount(), transferOutFlow.getAsset(), userAsset.getLockVersion(), newTotal.toString(), newAvi.toString());
+        userDataService.decreaseUserAssert(transferOutFlow.getAccount(), transferOutFlow.getAsset(), userAsset.getLockVersion(), newTotal.toString(), newAvi.toString(), new Date());
         //3.通知钱包转账
 
         replySucessState();

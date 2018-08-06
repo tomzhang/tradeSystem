@@ -43,7 +43,7 @@ public class TransferInTask implements Callable {
         transferIn.setSuccessState(true);
         logger.info("开始处理入账:" + transferIn.toString());
 
-        //1.更新数据库增加钱
+        //1.更新数据库增加钱,强制增加，没有采用乐观锁
         int updateMoneyResult = userDataService.updateUserAssert(transferIn.getAccount(), transferIn.getAsset(), transferIn.getAmount(), transferIn.getAmount(), new Date());
         if (updateMoneyResult != 1) {
             logger.fatal("增加用户金额失败");
@@ -55,6 +55,7 @@ public class TransferInTask implements Callable {
         if (updateChangeFlowCount != 1) {
             logger.error("插入转账流水失败");
             replyErrorState();
+            return null;
         }
         replySucessState();
         return null;
