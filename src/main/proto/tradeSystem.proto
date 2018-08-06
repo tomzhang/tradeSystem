@@ -9,18 +9,23 @@ package tradeService;
 
 //柜台service
 service TradeSystem {
-    // Sends a greeting
+    // 下单接口
     rpc takeOrder (UserOrderRequest) returns (UserOrderReply) {}
+
+    //撤单接口
     rpc cancelOrder (CancelOrderRequest) returns (CancelOrderReply) {
     }
+
+    //撮合系统成交回报
     rpc stepOrder (MatchOrderRequest) returns (MatchOrderReply) {
     }
-    //wallet transfer in
+    //钱包系统转入通知
     rpc transferIn (TransferInRequest) returns (TransferInReply) {
     }
-    //tradeWeb binding address && transfer out
+    //提现接口
     rpc transferOut (TransferOutRequest) returns (TransferOutReply) {
     }
+
     rpc bindWallets (BindWalletsRequest) returns (BindWalletsReply) {
     }
 }
