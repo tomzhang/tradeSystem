@@ -3,12 +3,14 @@ package com.bernard.tradesystem.tasks;
 import com.bernard.App;
 import com.bernard.mysql.dto.TransferFlow;
 import com.bernard.mysql.dto.TransferSide;
+import com.bernard.mysql.dto.UserAsset;
 import com.bernard.mysql.service.UserDataService;
 import io.grpc.stub.StreamObserver;
 import io.grpc.tradesystem.service.TransferInReply;
 import io.grpc.tradesystem.service.TransferInRequest;
 import org.apache.log4j.Logger;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.concurrent.Callable;
 
@@ -46,9 +48,15 @@ public class TransferInTask implements Callable {
         //1.更新数据库增加钱,强制增加，没有采用乐观锁
         int updateMoneyResult = userDataService.updateUserAssert(transferIn.getAccount(), transferIn.getAsset(), transferIn.getAmount(), transferIn.getAmount(), new Date());
         if (updateMoneyResult != 1) {
-            logger.fatal("增加用户金额失败");
-            replyErrorState();
-            return null;
+            Boolean iniResult = false;
+            if (updateMoneyResult == 0) {
+                iniResult = tryToInitUserAsset(transferIn.getAsset(), transferIn.getAccount(), new BigDecimal(transferIn.getAmount()));
+            }
+            if (iniResult == false) {
+                logger.fatal("增加用户金额失败");
+                replyErrorState();
+                return null;
+            }
         }
         //2.记录转入流水
         int updateChangeFlowCount = userDataService.updateUserChangeFlow(transferIn);
@@ -73,6 +81,28 @@ public class TransferInTask implements Callable {
         responseObserver.onNext(transferInReply);
         responseObserver.onCompleted();
         return;
+    }
+
+
+    private boolean tryToInitUserAsset(String asset, String account, BigDecimal amountToUser) {
+        UserAsset userAsset = userDataService.queryUserAssert(account, asset);
+        if (userAsset == null) {
+            logger.info("用户:" + asset + "账户未初始化，自动初始化并转入份额");
+            UserAsset newUserAssert = new UserAsset();
+            newUserAssert.setAccount(account);
+            newUserAssert.setAviliable(amountToUser.toString());
+            newUserAssert.setTotalAmount(amountToUser.toString());
+            newUserAssert.setLiquidationTime(new Date());
+            newUserAssert.setUpdateTime(new Date());
+            newUserAssert.setLockVersion(0);
+            newUserAssert.setAsset(asset);
+            userDataService.insertUserAsset(newUserAssert);
+            return true;
+        } else {
+            logger.error("用户已初始化。");
+            return false;
+        }
+
     }
 
 }
