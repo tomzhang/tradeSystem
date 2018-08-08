@@ -43,6 +43,8 @@ public interface UserDataMapper {
 
     int decreaseUserAssert(String account, String asset, int oldVersion, String newTotal, String newAvi, Date date);
 
+    int insertUserAsset(UserAsset userAsset);
+
 
 
 

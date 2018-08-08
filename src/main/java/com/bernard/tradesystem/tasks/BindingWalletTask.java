@@ -1,7 +1,6 @@
 package com.bernard.tradesystem.tasks;
 
 import com.bernard.App;
-import com.bernard.mysql.dto.TransferIn;
 import com.bernard.mysql.service.UserDataService;
 import io.grpc.stub.StreamObserver;
 import io.grpc.tradesystem.service.BindWalletsReply;

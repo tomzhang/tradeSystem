@@ -45,6 +45,9 @@ public class App
     private static void loadCoinfig() {
         UserDataService userDataService = (UserDataService) context.getBean("userDataServiceImpl");
         //
+
+        //
+
         List<String> assets = userDataService.queryAllAsset();
         for (String asset : assets) {
             AssetCoinfig.assetMap.put(asset, "");

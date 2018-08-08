@@ -1,12 +1,23 @@
 package com.bernard.mysql.dto;
 
+import java.util.Date;
+
 public class UserAsset {
+    private String asset;
     private String account;
     private String totalAmount;
     private String aviliable;
     private int lockVersion;
-    private String updateTime;
-    private String liquidationTime;
+    private Date updateTime;
+    private Date liquidationTime;
+
+    public String getAsset() {
+        return asset;
+    }
+
+    public void setAsset(String asset) {
+        this.asset = asset;
+    }
 
     public String getAccount() {
         return account;
@@ -40,31 +51,32 @@ public class UserAsset {
         this.lockVersion = lockVersion;
     }
 
-    public String getUpdateTime() {
+    public Date getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(String updateTime) {
+    public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
 
-    public String getLiquidationTime() {
+    public Date getLiquidationTime() {
         return liquidationTime;
     }
 
-    public void setLiquidationTime(String liquidationTime) {
+    public void setLiquidationTime(Date liquidationTime) {
         this.liquidationTime = liquidationTime;
     }
 
     @Override
     public String toString() {
         return "UserAsset{" +
-                "account='" + account + '\'' +
+                "asset='" + asset + '\'' +
+                ", account='" + account + '\'' +
                 ", totalAmount='" + totalAmount + '\'' +
                 ", aviliable='" + aviliable + '\'' +
                 ", lockVersion=" + lockVersion +
-                ", updateTime='" + updateTime + '\'' +
-                ", liquidationTime='" + liquidationTime + '\'' +
+                ", updateTime=" + updateTime +
+                ", liquidationTime=" + liquidationTime +
                 '}';
     }
 }

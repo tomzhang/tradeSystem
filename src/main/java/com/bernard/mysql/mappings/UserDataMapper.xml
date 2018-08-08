@@ -142,5 +142,11 @@
 		VALUES (#{fromAddress},#{time},#{side,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{lockVersion},#{asset},#{account},#{toAddress})
 	</insert>
 
+	<insert id="insertUserAsset" parameterType="com.bernard.mysql.dto.UserAsset">
+		INSERT INTO T_USER_ASSET_${asset} (ACCOUNT,TOTAL_AMOUNT,AIVILIABLE,LOCK_VERSION,UPDATE_TIME,LIQUIDATION_TIME)
+		VALUES
+		(#{account},#{totalAmount},#{aviliable},#{lockVersion},#{updateTime},#{liquidationTime})
+	</insert>
+
 
 </mapper>

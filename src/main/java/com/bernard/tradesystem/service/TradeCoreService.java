@@ -22,6 +22,10 @@ public class TradeCoreService extends OrderGrpc.OrderImplBase {
     @Override
     public void cancel(CancelOrderCmd request, StreamObserver<Response> responseObserver) {
         //super.cancel(request, responseObserver);
+        System.out.println("收到撤单请求");
+        Response response = Response.newBuilder().setCode(0).setMessage("OGOGGO").build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
 
     }
 }

@@ -43,7 +43,7 @@ public class UserOrderTask implements Callable {
     @Override
     @Transactional
     public Object call() throws Exception {
-        logger.info("开始处理用户订单");
+        logger.info("开始处理用户订单:" + order.toString());
         String assetPair = order.getAssetPair();
         String cargoCoin = assetPair.split("-")[0];
         String baseCoin = assetPair.split("-")[1];
@@ -145,6 +145,7 @@ public class UserOrderTask implements Callable {
     }
 
     private void replyErrorState() {
+        logger.info("下单失败");
         UserOrderReply userOrderReply = UserOrderReply.newBuilder().setState(false).setOrderId(order.getOrderID()).build();
         responseObserver.onNext(userOrderReply);
         responseObserver.onCompleted();
@@ -152,6 +153,7 @@ public class UserOrderTask implements Callable {
     }
 
     private void replySucessState() {
+        logger.info("下单成功");
         UserOrderReply userOrderReply = UserOrderReply.newBuilder().setState(true).setOrderId(order.getOrderID()).build();
         responseObserver.onNext(userOrderReply);
         responseObserver.onCompleted();

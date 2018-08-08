@@ -4,6 +4,7 @@ import com.bernard.App;
 import com.bernard.mysql.dto.Order;
 import com.bernard.mysql.dto.OrderSide;
 import com.bernard.mysql.dto.OrderState;
+import com.bernard.mysql.dto.UserAsset;
 import com.bernard.mysql.service.UserDataService;
 import com.sun.org.apache.xpath.internal.operations.Or;
 import io.grpc.stub.StreamObserver;
@@ -107,6 +108,7 @@ public class MatchOrderTask implements Callable {
             BigDecimal preLockMoneyAmount = orderPrice.multiply(matchAmount);//预先锁定的钱
             BigDecimal spendMoney = matchAmount.multiply(matchPrice);//实际花掉的钱
             int updateMoneyAmount = userDataService.updateUserAssert(account, baseCoin, spendMoney.multiply(new BigDecimal(-1)).toString(), preLockMoneyAmount.subtract(spendMoney).toString(), new Date());
+            //买入成交用户的钱记录未初始化的情况，因为下单的时候就锁定钱
             if (updateMoneyAmount != 1) {
                 logger.fatal("1.更新用户资产失败");
                 return false;
@@ -117,8 +119,14 @@ public class MatchOrderTask implements Callable {
 
             int updateCargoAmount = userDataService.updateUserAssert(account, cargoCoin, amountToUser.toString(), amountToUser.toString(), new Date());
             if (updateCargoAmount != 1) {
-                logger.fatal("2.更新用户资产失败");
-                return false;
+                Boolean initResult = false;
+                if (updateCargoAmount == 0) {
+                    initResult = tryToInitUserAsset(cargoCoin, account, amountToUser);
+                }
+                if (initResult == false) {
+                    logger.fatal("2.更新用户资产失败");
+                    return false;
+                }
             }
             int updateFeeFlow = userDataService.insertOrderFee(order.getOrderID(), order.getAssetPair(), fee.toString(), new Date(), matchOrderRequest.getMatchOrderWaterflow(), cargoCoin);
             if (updateFeeFlow != 1) {
@@ -153,8 +161,15 @@ public class MatchOrderTask implements Callable {
             BigDecimal moneyToUser = receiveMoney.subtract(fee);
             int updateMoneyResult = userDataService.updateUserAssert(account, baseCoin, moneyToUser.toString(), moneyToUser.toString(), new Date());
             if (updateMoneyResult != 1) {
-                logger.fatal("2.更新资产失败");
-                return false;
+                boolean initResult = false;
+                if (updateMoneyResult == 0) {
+                    logger.debug("用户资产未初始化");
+                    initResult = tryToInitUserAsset(baseCoin, account, moneyToUser);
+                }
+                if (initResult == false) {
+                    logger.fatal("2.更新资产失败");
+                    return false;
+                }
             }
             int updateFeeFlow = userDataService.insertOrderFee(order.getOrderID(), order.getAssetPair(), fee.toString(), new Date(), matchOrderRequest.getMatchOrderWaterflow(), baseCoin);
             if (updateFeeFlow != 1) {
@@ -190,6 +205,27 @@ public class MatchOrderTask implements Callable {
         responseObserver.onNext(matchOrderReply);
         responseObserver.onCompleted();
         return;
+    }
+
+    private boolean tryToInitUserAsset(String asset, String account, BigDecimal amountToUser) {
+        UserAsset userAsset = userDataService.queryUserAssert(account, asset);
+        if (userAsset == null) {
+            logger.info("用户:" + asset + "账户未初始化，自动初始化并转入成交份额");
+            UserAsset newUserAssert = new UserAsset();
+            newUserAssert.setAccount(account);
+            newUserAssert.setAviliable(amountToUser.toString());
+            newUserAssert.setTotalAmount(amountToUser.toString());
+            newUserAssert.setLiquidationTime(new Date());
+            newUserAssert.setUpdateTime(new Date());
+            newUserAssert.setLockVersion(0);
+            newUserAssert.setAsset(asset);
+            userDataService.insertUserAsset(newUserAssert);
+            return true;
+        } else {
+            logger.error("用户已初始化。");
+            return false;
+        }
+
     }
 
 }

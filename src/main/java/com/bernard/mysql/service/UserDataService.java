@@ -8,14 +8,14 @@ import java.util.Date;
 import java.util.List;
 
 public interface UserDataService {
-    public void insertUserOrder(Order userOrder);
+    void insertUserOrder(Order userOrder);
 
     int updateUserOrder(Order userOrder);
 
     int insertMatchFlow(String flowId, String sellSideOrderId, String sellSideOrderAccount, String buySideOrderId, String buySideOrderAccount, String price, String amount, Date date);
 
 
-    public UserAsset queryUserAssert(String account, String asset);
+    UserAsset queryUserAssert(String account, String asset);
 
 
     int lockUserAssert(String account, String asset, String totalAmount, String oldAvi, String newAvi, int oldLock, int newLock, Date updateTime);
@@ -45,6 +45,9 @@ public interface UserDataService {
 
 
     int updateUserChangeFlow(TransferFlow transferFlow);
+
+    int insertUserAsset(UserAsset userAsset);
+
 
 
     //更新用户ETH资产

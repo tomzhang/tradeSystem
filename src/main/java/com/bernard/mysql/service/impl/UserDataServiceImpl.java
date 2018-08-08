@@ -110,5 +110,9 @@ public class UserDataServiceImpl implements UserDataService {
         return userDataMapper.updateUserChangeFlow(transferFlow);
     }
 
-
+    @Override
+    public int insertUserAsset(UserAsset userAsset) {
+        userDataMapper.insertUserAsset(userAsset);
+        return 0;
+    }
 }
