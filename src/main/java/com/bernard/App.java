@@ -61,7 +61,7 @@ public class App
             int isOk = userDataService.existTable("T_USER_ASSET_" + asset);
             if (isOk == 0) {
                 logger.info("发现新增资产种类，新建表：" + "T_USER_ASSET_" + asset);
-                //userDataService.
+                userDataService.createNewTable("T_USER_ASSET_" + asset);
 
             }
         }

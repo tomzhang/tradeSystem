@@ -1,9 +1,10 @@
+/*
 package com.bernard.grpc.client.pool.wallet;
 
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import walletrpc.WalletRPCGrpc;
+
 
 import java.util.concurrent.TimeUnit;
 
@@ -43,4 +44,4 @@ public class WalletClient {
         }
     }
 
-}
+}*/

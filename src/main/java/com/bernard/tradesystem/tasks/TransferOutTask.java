@@ -57,20 +57,20 @@ public class TransferOutTask implements Callable {
         BigDecimal newTotal = new BigDecimal(userAsset.getTotalAmount()).subtract(new BigDecimal(transferOutFlow.getAmount())).setScale(8, BigDecimal.ROUND_DOWN);
         userDataService.decreaseUserAssert(transferOutFlow.getAccount(), transferOutFlow.getAsset(), userAsset.getLockVersion(), newTotal.toString(), newAvi.toString(), new Date());
         //3.通知钱包转账
-
+        userDataService.updateUserChangeFlow(transferOutFlow);
         replySucessState();
         return null;
     }
 
     private void replyErrorState() {
-        TransferOutReply transferOutReply = TransferOutReply.newBuilder().setId("").build();
+        TransferOutReply transferOutReply = TransferOutReply.newBuilder().setState(false).build();
         responseObserver.onNext(transferOutReply);
         responseObserver.onCompleted();
         return;
     }
 
     private void replySucessState() {
-        TransferOutReply transferOutReply = TransferOutReply.newBuilder().setId("").build();
+        TransferOutReply transferOutReply = TransferOutReply.newBuilder().setState(true).build();
         responseObserver.onNext(transferOutReply);
         responseObserver.onCompleted();
         return;

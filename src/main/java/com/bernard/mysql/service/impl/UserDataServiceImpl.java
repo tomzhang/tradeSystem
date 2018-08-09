@@ -112,7 +112,11 @@ public class UserDataServiceImpl implements UserDataService {
 
     @Override
     public int insertUserAsset(UserAsset userAsset) {
-        userDataMapper.insertUserAsset(userAsset);
-        return 0;
+        return userDataMapper.insertUserAsset(userAsset);
+    }
+
+    @Override
+    public int createNewTable(String tableName) {
+        return userDataMapper.createNewTable(tableName);
     }
 }

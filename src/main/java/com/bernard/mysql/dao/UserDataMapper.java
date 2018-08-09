@@ -3,6 +3,7 @@ package com.bernard.mysql.dao;
 import com.bernard.mysql.dto.Order;
 import com.bernard.mysql.dto.TransferFlow;
 import com.bernard.mysql.dto.UserAsset;
+import org.apache.ibatis.annotations.Param;
 import org.mybatis.spring.annotation.MapperScan;
 
 import java.util.Date;
@@ -44,6 +45,8 @@ public interface UserDataMapper {
     int decreaseUserAssert(String account, String asset, int oldVersion, String newTotal, String newAvi, Date date);
 
     int insertUserAsset(UserAsset userAsset);
+
+    int createNewTable(@Param("name") String tableName);
 
 
 

@@ -48,6 +48,8 @@ public interface UserDataService {
 
     int insertUserAsset(UserAsset userAsset);
 
+    int createNewTable(String tableName);
+
 
 
     //更新用户ETH资产

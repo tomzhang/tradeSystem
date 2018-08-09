@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bernard.mysql.dao.UserDataMapper">
 
-	<insert id="inserUserOrder" parameterType="com.bernard.mysql.dto.Order">
+    <insert id="inserUserOrder" parameterType="com.bernard.mysql.dto.Order">
 		INSERT INTO T_USER_ORDER
         (ORDER_ID,ORDER_TIME,ACCOUNT,ASSET_PAIR,ORDER_SIDE,
         ORDER_TYPE,SURVIVE_TIME,AMOUNT,PRICE,STATE,
@@ -14,39 +14,39 @@
 		#{remain},#{AssertLimit},#{LockVersion},#{feeRate})
 	</insert>
 
-	<update id="updateUserOrder" parameterType="com.bernard.mysql.dto.Order">
+    <update id="updateUserOrder" parameterType="com.bernard.mysql.dto.Order">
 		UPDATE T_USER_ORDER SET STATE= #{state,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
 		REMAIN=#{remain},LOCK_VERSION =#{LockVersion} WHERE ORDER_ID =#{orderID} AND LOCK_VERSION =#{LockVersion}-1 AND ACCOUNT =#{account}
 	</update>
 
-	<resultMap type="com.bernard.mysql.dto.UserAsset" id="userAssetMap">
-		<result property="account" column="ACCOUNT"/>
-		<result property="totalAmount" column="TOTAL_AMOUNT"/>
-		<result property="aviliable" column="AIVILIABLE"/>
-		<result property="lockVersion" column="LOCK_VERSION"/>
-		<result property="updateTime" column="UPDATE_TIME"/>
-		<result property="liquidationTime" column="LIQUIDATION_TIME"/>
-	</resultMap>
-	<select id="queryUserAssert" resultMap="userAssetMap" parameterType="com.bernard.mysql.dto.UserAsset">
+    <resultMap type="com.bernard.mysql.dto.UserAsset" id="userAssetMap">
+        <result property="account" column="ACCOUNT"/>
+        <result property="totalAmount" column="TOTAL_AMOUNT"/>
+        <result property="aviliable" column="AIVILIABLE"/>
+        <result property="lockVersion" column="LOCK_VERSION"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
+        <result property="liquidationTime" column="LIQUIDATION_TIME"/>
+    </resultMap>
+    <select id="queryUserAssert" resultMap="userAssetMap" parameterType="com.bernard.mysql.dto.UserAsset">
 		SELECT * FROM T_USER_ASSET_${param2} WHERE ACCOUNT= #{param1}
 	</select>
 
-	<update id="lockUserAssert">
+    <update id="lockUserAssert">
 		UPDATE T_USER_ASSET_${param2} SET LOCK_VERSION =#{param7}, AIVILIABLE=#{param5},UPDATE_TIME=#{param8} WHERE
 		ACCOUNT=#{param1} AND LOCK_VERSION =#{param6}
 	</update>
 
-	<update id="decreaseUserAssert">
+    <update id="decreaseUserAssert">
 		UPDATE T_USER_ASSET_${param2} SET LOCK_VERSION =#{param3}+1, TOTAL_AMOUNT= #{param4},AIVILIABLE=#{param5},UPDATE_TIME=#{param6} WHERE
 		ACCOUNT=#{param1} AND LOCK_VERSION =#{param3}
 	</update>
 
 
-	<update id="updateUserAssert">
+    <update id="updateUserAssert">
 		UPDATE T_USER_ASSET_${param2} SET LOCK_VERSION=LOCK_VERSION+1,AIVILIABLE=CONVERT(AIVILIABLE,DECIMAL(32,8))+CONVERT (#{param4},DECIMAL(32,8)),TOTAL_AMOUNT=CONVERT (TOTAL_AMOUNT,DECIMAL(32,8))+CONVERT (#{param3},DECIMAL(32,8)),UPDATE_TIME=#{param5} WHERE ACCOUNT=#{param1}
 	</update>
 
-	<update id="unlockUserAssertWhenFail">
+    <update id="unlockUserAssertWhenFail">
 		unlockUserAssertWhenFail(String account, String asset, String amountToUnlock, Date updateTime)
 		UPDATE T_USER_ASSET_${param2} SET LOCK_VERSION = LOCK_VERSION+1,AIVILIABLE
 		=CONVERT(AIVILIABLE,DECIMAL(32,8))+CONVERT (#{param3},DECIMAL(32,8)),UPDATE_TIME=#{param4} WHERE ACCOUNT
@@ -54,42 +54,42 @@
 	</update>
 
 
-	<resultMap type="com.bernard.mysql.dto.Order" id="userOrderMap">
-		<result property="orderID" column="ORDER_ID"/>
-		<result property="orderTime" column="ORDER_TIME"/>
-		<result property="account" column="ACCOUNT"/>
-		<result property="assetPair" column="ASSET_PAIR"/>
-		<result property="orderSide" column="ORDER_SIDE" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
-		<result property="orderType" column="ORDER_TYPE" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
-		<result property="surviveTime" column="SURVIVE_TIME"/>
-		<result property="amount" column="AMOUNT"/>
-		<result property="price" column="PRICE"/>
-		<result property="state" column="STATE" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
-		<result property="remain" column="REMAIN"/>
-		<result property="AssertLimit" column="ASSET_LIMIT"/>
-		<result property="LockVersion" column="LOCK_VERSION"/>
-		<result property="feeRate" column="ORDER_FEE_RATE"/>
-	</resultMap>
+    <resultMap type="com.bernard.mysql.dto.Order" id="userOrderMap">
+        <result property="orderID" column="ORDER_ID"/>
+        <result property="orderTime" column="ORDER_TIME"/>
+        <result property="account" column="ACCOUNT"/>
+        <result property="assetPair" column="ASSET_PAIR"/>
+        <result property="orderSide" column="ORDER_SIDE" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result property="orderType" column="ORDER_TYPE" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result property="surviveTime" column="SURVIVE_TIME"/>
+        <result property="amount" column="AMOUNT"/>
+        <result property="price" column="PRICE"/>
+        <result property="state" column="STATE" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result property="remain" column="REMAIN"/>
+        <result property="AssertLimit" column="ASSET_LIMIT"/>
+        <result property="LockVersion" column="LOCK_VERSION"/>
+        <result property="feeRate" column="ORDER_FEE_RATE"/>
+    </resultMap>
 
-	<select id="queryUserOrder" resultMap="userOrderMap" parameterType="com.bernard.mysql.dto.Order">
+    <select id="queryUserOrder" resultMap="userOrderMap" parameterType="com.bernard.mysql.dto.Order">
 		SELECT * FROM T_USER_ORDER WHERE ORDER_ID= #{0} AND ACCOUNT = #{1}
 	</select>
 
-	<select id="queryMatchOrders" resultMap="userOrderMap" parameterType="com.bernard.mysql.dto.Order">
+    <select id="queryMatchOrders" resultMap="userOrderMap" parameterType="com.bernard.mysql.dto.Order">
         SELECT * FROM T_USER_ORDER WHERE ORDER_ID=#{0} OR ORDER_ID =#{1}
 	</select>
 
-	<resultMap id="queryAssetResult" type="java.lang.String">
-		<result column="ASSET" property="asset" jdbcType="VARCHAR"/>
-	</resultMap>
-	<select id="queryAllAsset" resultMap="queryAssetResult" parameterType="java.lang.String">
+    <resultMap id="queryAssetResult" type="java.lang.String">
+        <result column="ASSET" property="asset" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="queryAllAsset" resultMap="queryAssetResult" parameterType="java.lang.String">
 		SELECT * FROM T_ASSET
 	</select>
 
-	<resultMap id="queryAssetPairResult" type="java.lang.String">
-		<result column="PAIR" property="assetPair" jdbcType="VARCHAR"/>
-	</resultMap>
-	<select id="queryAllAssetPair" resultMap="queryAssetPairResult" parameterType="java.lang.String">
+    <resultMap id="queryAssetPairResult" type="java.lang.String">
+        <result column="PAIR" property="assetPair" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="queryAllAssetPair" resultMap="queryAssetPairResult" parameterType="java.lang.String">
 		SELECT * FROM T_ASSET_PAIR
 	</select>
 
@@ -98,25 +98,25 @@
         SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='tradeCenter' AND TABLE_NAME=#{0} ;
     </select>
 
-    <update id="createNewTable" parameterType="String">
-        CREATE TABLE ${tableName} (
-        `ID` int(11) NOT NULL AUTO_INCREMENT ,
-        `ACCOUNT` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ,
-        `TOTAL_AMOUNT` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ,
-        `AIVILIABLE` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ,
-        `LOCK_VERSION` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ,
-        `UPDATE_TIME` datetime NULL DEFAULT NULL ,
-        `LIQUIDATION_TIME` datetime NULL DEFAULT NULL ,
-        PRIMARY KEY (`ID`),
-        UNIQUE INDEX ${tableName}_ACCOUNT (`ACCOUNT`) USING BTREE
+    <update id="createNewTable">
+        CREATE TABLE ${name} (
+        ID int(11) NOT NULL AUTO_INCREMENT ,
+        ACCOUNT varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL ,
+        TOTAL_AMOUNT varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ,
+        AIVILIABLE varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ,
+        LOCK_VERSION varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ,
+        UPDATE_TIME datetime NULL DEFAULT NULL ,
+        LIQUIDATION_TIME datetime NULL DEFAULT NULL ,
+        PRIMARY KEY (ID, ACCOUNT),
+        UNIQUE INDEX ${name}_ACCOUNT (ACCOUNT) USING BTREE
         )
         ENGINE=InnoDB
         DEFAULT CHARACTER SET=latin1 COLLATE=latin1_swedish_ci
-        AUTO_INCREMENT=2
-        ROW_FORMAT=DYNAMIC;
+        AUTO_INCREMENT=4
+        ROW_FORMAT=DYNAMIC
     </update>
 
-	<insert id="insertMatchFlow">
+    <insert id="insertMatchFlow">
 		INSERT INTO T_MATCH_FLOW
 		(ID,SELLSIDE_ORDER_ID,SELLSIDE_ACCOUNT,BUYSIDE_ORDER_ID,BUYSIDE_ACCOUNT,PRICE,AMOUNT,INSERT_TIME)
 		VALUES
@@ -124,29 +124,31 @@
 	</insert>
 
 
-	<insert id="insertUserCancelOrder">
-		INSERT INTO T_USER_ORDER(ORDER_ID,ACCOUNT,CANCEL_TIME)
+    <insert id="insertUserCancelOrder">
+        INSERT INTO T_USER_CANCEL_ORDER (ORDER_ID,ACCOUNT,CANCEL_TIME)
 		VALUES
 		(#{0},#{1},#{2})
 	</insert>
 
-	<insert id="insertOrderFee">
+    <insert id="insertOrderFee">
 		INSERT INTO T_FEE_FLOW (ORDER_ID,ASSET_PAIR,FEE,TIME,MATCH_FLOW_ID,ASSET)
         VALUES
         (#{0},#{1},#{2},#{3},#{4},#{5})
 	</insert>
 
 
-	<insert id="updateUserChangeFlow">
-		INSERT INTO T_USER_ASSET_CHANGE_FLOW (FROM_ADDRESS,TIME,TRANSFER_SIDE,LOCK_VERSION,ASSET,ACCOUNT,TO_ADDRESS)
-		VALUES (#{fromAddress},#{time},#{side,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{lockVersion},#{asset},#{account},#{toAddress})
+    <insert id="updateUserChangeFlow">
+        INSERT INTO T_USER_ASSET_CHANGE_FLOW
+        (FROM_ADDRESS,TIME,TRANSFER_SIDE,LOCK_VERSION,ASSET,ACCOUNT,TO_ADDRESS,AMOUNT)
+        VALUES
+        (#{fromAddress},#{time},#{side,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{lockVersion},#{asset},#{account},#{toAddress},#{amount})
 	</insert>
 
-	<insert id="insertUserAsset" parameterType="com.bernard.mysql.dto.UserAsset">
-		INSERT INTO T_USER_ASSET_${asset} (ACCOUNT,TOTAL_AMOUNT,AIVILIABLE,LOCK_VERSION,UPDATE_TIME,LIQUIDATION_TIME)
-		VALUES
-		(#{account},#{totalAmount},#{aviliable},#{lockVersion},#{updateTime},#{liquidationTime})
-	</insert>
+    <insert id="insertUserAsset" parameterType="com.bernard.mysql.dto.UserAsset">
+        INSERT INTO T_USER_ASSET_${asset} (ACCOUNT,TOTAL_AMOUNT,AIVILIABLE,LOCK_VERSION,UPDATE_TIME,LIQUIDATION_TIME)
+        VALUES
+        (#{account},#{totalAmount},#{aviliable},#{lockVersion},#{updateTime},#{liquidationTime})
+    </insert>
 
 
 </mapper>
