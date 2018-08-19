@@ -30,7 +30,7 @@ public class BindingWalletTask implements Callable {
     @Override
     public Object call() throws Exception {
         logger.info("开始处理入账");
-        replySucessState();
+        replySuccessState();
         return null;
     }
 
@@ -41,7 +41,7 @@ public class BindingWalletTask implements Callable {
         return;
     }
 
-    private void replySucessState() {
+    private void replySuccessState() {
         BindWalletsReply bindWalletsReply = BindWalletsReply.newBuilder().setAddress("").build();
         responseObserver.onNext(bindWalletsReply);
         responseObserver.onCompleted();

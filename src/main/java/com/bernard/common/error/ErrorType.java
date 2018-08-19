@@ -1,7 +1,16 @@
 package com.bernard.common.error;
 
 public enum ErrorType {
-    Insufficient("Insufficient balance", 10000);
+    //下单
+    Insufficient("Insufficient Balance", 10000),
+    FrequencyLimit("Order Frequency Limit", 10001),
+    InternalError("Internal Error", 10002),
+    UnsupportedAsset("Unsupported Asset", 10003),
+    AccountError("Account Error", 10004),
+    //撤单
+    OrderError("Order Error", 10005);
+
+
 
     private String message;
     private int code;
