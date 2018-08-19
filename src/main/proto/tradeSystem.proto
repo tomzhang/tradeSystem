@@ -115,7 +115,6 @@ message TransferOutReply {
     bool state = 1;
     string errorMessage = 2;
     string errorCode = 3;
-
 }
 
 // The request message.

@@ -57,17 +57,16 @@ public class UserOrderTask implements Callable {
                     if (response == null || response.getCode() != 0) {
                         throw new RuntimeException("调用撮合系统失败");
                     }
-                    replySucessState();
+                    replySuccessState();
                 } catch (Exception e) {
                     logger.error("插入订单失败", e);
                     unLockAsset(order.getAccount(), baseCoin, neededCoin.toString(), new Date());
                     order.setState(OrderState.ERROR);
                     order.setLockVersion(order.getLockVersion() + 1);
                     userDataService.updateUserOrder(order);
-                    replyErrorState();
+                    replyErrorState(ErrorType.InternalError.getCode() + "", ErrorType.InternalError.getMessage());
                 }
             } else {
-                replyErrorState();
                 return null;
             }
         } else {
@@ -80,18 +79,18 @@ public class UserOrderTask implements Callable {
                     if (response == null || response.getCode() != 0) {
                         throw new RuntimeException("调用撮合系统失败");
                     }
-                    replySucessState();
+                    replySuccessState();
                 } catch (Exception e) {
                     logger.error("插入订单失败", e);
                     unLockAsset(order.getAccount(), cargoCoin, needCoin.toString(), new Date());
                     order.setState(OrderState.ERROR);
                     order.setLockVersion(order.getLockVersion() + 1);
                     userDataService.updateUserOrder(order);
-                    replyErrorState();
+                    replyErrorState(ErrorType.InternalError.getCode() + "", ErrorType.InternalError.getMessage());
                 }
 
             } else {
-                replyErrorState();
+                return null;
             }
         }
         return null;
@@ -110,15 +109,18 @@ public class UserOrderTask implements Callable {
             userAsset = userDataService.queryUserAssert(order.getAccount(), coinToLock);
         } catch (Exception e) {
             logger.error("查询数据库失败", e);
+            replyErrorState(ErrorType.UnsupportedAsset.getCode() + "", ErrorType.UnsupportedAsset.getMessage());
             return false;
         }
         if (userAsset == null) {
             logger.error("查询个人资产失败：coin:" + coinToLock);
+            replyErrorState(ErrorType.Insufficient.getCode() + "", ErrorType.Insufficient.getMessage());
             return false;
         }
         BigDecimal available = new BigDecimal(userAsset.getAviliable());
         if (available.compareTo(amountToLock) < 0) {
             logger.error(ErrorType.Insufficient.getMessage());
+            replyErrorState(ErrorType.Insufficient.getCode() + "", ErrorType.Insufficient.getMessage());
             return false;
         }
         int updateCount = userDataService.lockUserAssert(account, coinToLock, userAsset.getTotalAmount(), available.toString(), available.subtract(amountToLock).toString(), userAsset.getLockVersion(), userAsset.getLockVersion() + 1, new Date());
@@ -130,11 +132,13 @@ public class UserOrderTask implements Callable {
             BigDecimal newAvailable = new BigDecimal(newAsset.getAviliable());
             if (newAvailable.compareTo(amountToLock) < 0) {
                 logger.error(ErrorType.Insufficient.getMessage());
+                replyErrorState(ErrorType.Insufficient.getCode() + "", ErrorType.Insufficient.getMessage());
                 return false;
             }
             int newUpdateCount = userDataService.lockUserAssert(account, coinToLock, newAsset.getTotalAmount(), newAvailable.toString(), newAvailable.subtract(amountToLock).toString(), newAsset.getLockVersion(), newAsset.getLockVersion() + 1, new Date());
             if (newUpdateCount != 1) {
                 logger.fatal("锁定用户资产重试失败," + order.toString());
+                replyErrorState(ErrorType.FrequencyLimit.getCode() + "", ErrorType.FrequencyLimit.getMessage());
                 return false;
             }
         }
@@ -143,15 +147,15 @@ public class UserOrderTask implements Callable {
 
     }
 
-    private void replyErrorState() {
+    private void replyErrorState(String errorCode, String errorMessage) {
         logger.info("下单失败");
-        UserOrderReply userOrderReply = UserOrderReply.newBuilder().setState(false).setOrderId(order.getOrderID()).build();
+        UserOrderReply userOrderReply = UserOrderReply.newBuilder().setState(false).setOrderId(order.getOrderID()).setErrorCode(errorCode).setErrorMessage(errorMessage).build();
         responseObserver.onNext(userOrderReply);
         responseObserver.onCompleted();
         return;
     }
 
-    private void replySucessState() {
+    private void replySuccessState() {
         logger.info("下单成功");
         UserOrderReply userOrderReply = UserOrderReply.newBuilder().setState(true).setOrderId(order.getOrderID()).build();
         responseObserver.onNext(userOrderReply);
