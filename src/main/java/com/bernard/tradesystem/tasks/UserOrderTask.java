@@ -60,7 +60,6 @@ public class UserOrderTask implements Callable {
                     replySucessState();
                 } catch (Exception e) {
                     logger.error("插入订单失败", e);
-                    //rollBack
                     unLockAsset(order.getAccount(), baseCoin, neededCoin.toString(), new Date());
                     order.setState(OrderState.ERROR);
                     order.setLockVersion(order.getLockVersion() + 1);
@@ -184,7 +183,6 @@ public class UserOrderTask implements Callable {
             ConnectivityState state = channel.getState(false);
             System.out.println(state.toString());
             response = client.getBlockingStub().take(cmd);
-            // Thread.sleep(50000);
         } catch (Exception e) {
             logger.error("调用撮合系统失败", e);
         } finally {

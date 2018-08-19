@@ -53,7 +53,7 @@ public class TransferInTask implements Callable {
                 iniResult = tryToInitUserAsset(transferIn.getAsset(), transferIn.getAccount(), new BigDecimal(transferIn.getAmount()));
             }
             if (iniResult == false) {
-                logger.fatal("增加用户金额失败");
+                logger.fatal("增加用户金额失败." + transferIn.toString());
                 replyErrorState();
                 return null;
             }
@@ -61,9 +61,7 @@ public class TransferInTask implements Callable {
         //2.记录转入流水
         int updateChangeFlowCount = userDataService.updateUserChangeFlow(transferIn);
         if (updateChangeFlowCount != 1) {
-            logger.error("插入转账流水失败");
-            replyErrorState();
-            return null;
+            logger.fatal("插入转账流水失败，但是用户资金已增加");
         }
         replySucessState();
         return null;
