@@ -58,7 +58,7 @@ public class TransferOutTask implements Callable {
         userDataService.decreaseUserAssert(transferOutFlow.getAccount(), transferOutFlow.getAsset(), userAsset.getLockVersion(), newTotal.toString(), newAvi.toString(), new Date());
         //3.通知钱包转账
         userDataService.updateUserChangeFlow(transferOutFlow);
-        replySucessState();
+        replySuccessState();
         return null;
     }
 
@@ -69,7 +69,7 @@ public class TransferOutTask implements Callable {
         return;
     }
 
-    private void replySucessState() {
+    private void replySuccessState() {
         TransferOutReply transferOutReply = TransferOutReply.newBuilder().setState(true).build();
         responseObserver.onNext(transferOutReply);
         responseObserver.onCompleted();

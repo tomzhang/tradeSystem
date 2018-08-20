@@ -26,7 +26,7 @@ service TradeSystem {
     rpc transferOut (TransferOutRequest) returns (TransferOutReply) {
     }
 
-    rpc bindWallets (BindWalletsRequest) returns (BindWalletsReply) {
+    rpc getAddr (GetTransferInAddrRequest) returns (GetTransferInAddrReply) {
     }
 }
 
@@ -82,12 +82,10 @@ message MatchOrderReply {
 // The request message.
 message TransferInRequest {
   string asset = 1;
-  string fromAddress=2;
-  string toAddress=3;
+  string addr = 2;
   string amount = 4;
   string notes=5;
   string time=6;
-  string account = 7;
 }
 
 // The response message
@@ -118,12 +116,15 @@ message TransferOutReply {
 }
 
 // The request message.
-message BindWalletsRequest {
+message GetTransferInAddrRequest {
   string asset = 1;
   string account=2;
 }
 
 // The response message
-message BindWalletsReply {
-  string address = 1;
+message GetTransferInAddrReply {
+    bool state = 1;
+    string addr = 2;
+    string errorCode = 3;
+    string errorMessage = 4;
 }
