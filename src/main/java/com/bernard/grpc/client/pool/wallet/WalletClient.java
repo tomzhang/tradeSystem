@@ -1,26 +1,28 @@
-/*
 package com.bernard.grpc.client.pool.wallet;
-
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.walletcore.service.WalletServiceGrpc;
 
 
 import java.util.concurrent.TimeUnit;
 
 
+
 public class WalletClient {
 
     private final ManagedChannel channel;
-    private WalletRPCGrpc.WalletRPCBlockingStub blockingStub;
+    private WalletServiceGrpc.WalletServiceBlockingStub blockingStub;
     private long subTime;
     private static final int aviTime = 15;
 
 
     public WalletClient(String host, int port) {
-        channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext(true).build();
+        channel = ManagedChannelBuilder.forAddress(host, port)
+                .usePlaintext(true)
+                .build();
 
-        blockingStub = WalletRPCGrpc.newBlockingStub(channel).withDeadlineAfter(aviTime, TimeUnit.SECONDS);
+        blockingStub = WalletServiceGrpc.newBlockingStub(channel).withDeadlineAfter(aviTime, TimeUnit.SECONDS);
         subTime = System.currentTimeMillis();
     }
 
@@ -33,15 +35,14 @@ public class WalletClient {
         return channel;
     }
 
-    public WalletRPCGrpc.WalletRPCBlockingStub getBlockingStub() {
+    public WalletServiceGrpc.WalletServiceBlockingStub getBlockingStub() {
         if (System.currentTimeMillis() - subTime > 10 * 1000) {
-            System.out.println("重建blockingstub");
+            //System.out.println("重建blockingstub");
             subTime = System.currentTimeMillis();
-            blockingStub = WalletRPCGrpc.newBlockingStub(channel).withDeadlineAfter(aviTime, TimeUnit.SECONDS);
+            blockingStub = WalletServiceGrpc.newBlockingStub(channel).withDeadlineAfter(aviTime, TimeUnit.SECONDS);
             return blockingStub;
         } else {
             return blockingStub;
         }
     }
-
-}*/
+}

@@ -150,5 +150,22 @@
         (#{account},#{totalAmount},#{aviliable},#{lockVersion},#{updateTime},#{liquidationTime})
     </insert>
 
+    <select id="queryUserAddr">
+        SELECT ADDRESS FROM T_USER_TRANSFERIN_ADDR_${asset} WHERE ACCOUNT =#{account}
+    </select>
+
+
+    <update id="createAddrTable">
+        CREATE TABLE ${name} (
+        `ACCOUNT` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+        `ADDR` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+        `CREATETIME` datetime NULL DEFAULT NULL ,
+        PRIMARY KEY (`ACCOUNT`)
+        )
+        ENGINE=InnoDB
+        DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+        ROW_FORMAT=DYNAMIC;
+    </update>
+
 
 </mapper>

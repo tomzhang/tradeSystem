@@ -116,14 +116,14 @@ public class UserCancelOrderTask implements Callable {
     }
 
     private void replyErrorState() {
-        CancelOrderReply cancelOrderReply = CancelOrderReply.newBuilder().setState(false).setMessage(false).build();
+        CancelOrderReply cancelOrderReply = CancelOrderReply.newBuilder().setState(false).setErrorMessage("123").build();
         responseObserver.onNext(cancelOrderReply);
         responseObserver.onCompleted();
         return;
     }
 
     private void replySuccessState() {
-        CancelOrderReply cancelOrderReply = CancelOrderReply.newBuilder().setState(true).setMessage(true).build();
+        CancelOrderReply cancelOrderReply = CancelOrderReply.newBuilder().setState(true).build();
         responseObserver.onNext(cancelOrderReply);
         responseObserver.onCompleted();
         return;

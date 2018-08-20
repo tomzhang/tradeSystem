@@ -60,6 +60,11 @@ public class App
                 userDataService.createNewTable("T_USER_ASSET_" + asset);
 
             }
+            int hasAddrTable = userDataService.existTable("T_USER_TRANSFERIN_ADDR_" + asset);
+            if (hasAddrTable == 0) {
+                logger.info("发现新增用户地址表，新建表：T_USER_TRANSFERIN_ADDR_" + asset);
+                userDataService.createAddrTable("T_USER_TRANSFERIN_ADDR_" + asset);
+            }
         }
 
     }

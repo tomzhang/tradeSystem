@@ -48,6 +48,10 @@ public interface UserDataMapper {
 
     int createNewTable(@Param("name") String tableName);
 
+    String queryUserAddr(@Param("account") String account, @Param("asset") String asset);
+
+    int createAddrTable(@Param("name") String tableName);
+
 
 
 

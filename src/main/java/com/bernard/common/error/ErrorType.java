@@ -8,7 +8,9 @@ public enum ErrorType {
     UnsupportedAsset("Unsupported Asset", 10003),
     AccountError("Account Error", 10004),
     //撤单
-    OrderError("Order Error", 10005);
+    OrderError("Order Error", 10005),
+    //
+    MatchAccoutError("Match account addr Error", 10006);
 
 
 

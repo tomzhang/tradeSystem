@@ -1,4 +1,3 @@
-/*
 package com.bernard.grpc.client.pool.wallet;
 
 import org.apache.commons.pool2.impl.GenericObjectPool;
@@ -33,11 +32,9 @@ public class WalletClientPool {
         objectPool = new GenericObjectPool<>(new WalletClientFactory(), poolConfig);
     }
 
-    */
-/**
- * 从连接池获取对象
- *//*
-
+    /**
+     * 从连接池获取对象
+     */
     public static WalletClient borrowObject() {
         try {
             WalletClient clientSingle = objectPool.borrowObject();
@@ -51,11 +48,9 @@ public class WalletClientPool {
         return createClient();
     }
 
-    */
-/**
- * 当连接池异常,则主动创建对象
- *//*
-
+    /**
+     * 当连接池异常,则主动创建对象
+     */
     private static WalletClient createClient() {
         return new WalletClient(WalletClientFactory.host, WalletClientFactory.port);
     }
@@ -66,5 +61,4 @@ public class WalletClientPool {
     }
 
 
-
-}*/
+}

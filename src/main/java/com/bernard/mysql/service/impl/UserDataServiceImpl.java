@@ -103,8 +103,6 @@ public class UserDataServiceImpl implements UserDataService {
         return userDataMapper.insertOrderFee(orderId, assetPair, FEE, date, matchFlow, asset);
     }
 
-
-
     @Override
     public int updateUserChangeFlow(TransferFlow transferFlow) {
         return userDataMapper.updateUserChangeFlow(transferFlow);
@@ -119,4 +117,16 @@ public class UserDataServiceImpl implements UserDataService {
     public int createNewTable(String tableName) {
         return userDataMapper.createNewTable(tableName);
     }
+
+    @Override
+    public String queryUserAddr(String account, String asset) {
+        return userDataMapper.queryUserAddr(account, asset);
+    }
+
+    @Override
+    public int createAddrTable(String tableName) {
+        return userDataMapper.createAddrTable(tableName);
+    }
+
+
 }

@@ -50,6 +50,11 @@ public interface UserDataService {
 
     int createNewTable(String tableName);
 
+    String queryUserAddr(String account, String asset);
+
+    int createAddrTable(String tableName);
+
+
 
 
     //更新用户ETH资产

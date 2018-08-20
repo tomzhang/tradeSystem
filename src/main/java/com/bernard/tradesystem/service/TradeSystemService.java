@@ -48,9 +48,9 @@ public class TradeSystemService extends TradeSystemGrpc.TradeSystemImplBase {
     }
 
     @Override
-    public void bindWallets(BindWalletsRequest request, StreamObserver<BindWalletsReply> responseObserver) {
-        BindingWalletTask bindingWalletTask = new BindingWalletTask(request, responseObserver);
-        FutureTask futureTask = new FutureTask(bindingWalletTask);
+    public void getAddr(GetTransferInAddrRequest request, StreamObserver<GetTransferInAddrReply> responseObserver) {
+        GetTransferAddrTask getTransferAddrTask = new GetTransferAddrTask(request, responseObserver);
+        FutureTask futureTask = new FutureTask(getTransferAddrTask);
         TradeTaskServicePool.submitTask(futureTask);
     }
 }

@@ -35,13 +35,13 @@ public class TransferInTask implements Callable {
         TransferFlow transferIn = new TransferFlow();
         transferIn.setAmount(String.valueOf(transferInRequest.getAmount()));
         transferIn.setAsset(transferInRequest.getAsset());
-        transferIn.setFromAddress(transferInRequest.getFromAddress());
-        transferIn.setToAddress(transferInRequest.getToAddress());
+        transferIn.setFromAddress("");
+        transferIn.setToAddress(transferInRequest.getAddr());
         transferIn.setNotes(transferInRequest.getNotes());
         transferIn.setTime(new Date());
         transferIn.setSide(TransferSide.IN);
         transferIn.setLockVersion(0);
-        transferIn.setAccount(transferInRequest.getAccount());
+        transferIn.setAccount("");
         transferIn.setSuccessState(true);
         logger.info("开始处理入账:" + transferIn.toString());
 

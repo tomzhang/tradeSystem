@@ -1,4 +1,4 @@
-/*package com.bernard.grpc.client.pool.wallet;
+package com.bernard.grpc.client.pool.wallet;
 
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
@@ -13,8 +13,8 @@ public class WalletClientFactory extends BasePooledObjectFactory<WalletClient> {
     }
 
     @Override
-    public PooledObject<WalletClient> wrap(WalletClient walletClient) {
-        return  new DefaultPooledObject<>(walletClient);
+    public PooledObject<WalletClient> wrap(WalletClient helloWorldClient) {
+        return new DefaultPooledObject<>(helloWorldClient);
         //return null;
     }
 
@@ -25,4 +25,4 @@ public class WalletClientFactory extends BasePooledObjectFactory<WalletClient> {
     }
 
 
-}*/
+}
