@@ -95,7 +95,7 @@
 
 
     <select id="existTable" parameterType="String" resultType="Integer">
-        SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='tradeCenter' AND TABLE_NAME=#{0} ;
+        SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='tradeSystem' AND TABLE_NAME=#{0} ;
     </select>
 
     <update id="createNewTable">

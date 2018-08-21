@@ -49,7 +49,14 @@ public class GetTransferAddrTask implements Callable {
             //TODO 调用钱包 生成地址
             WalletClient walletClient = WalletClientPool.borrowObject();
             BindWalletsRequest request = BindWalletsRequest.newBuilder().setAccount(getTransferInAddrRequest.getAccount()).setAsset(getTransferInAddrRequest.getAsset()).build();
-            BindWalletsReply reply = walletClient.getBlockingStub().bindWallets(request);
+            BindWalletsReply reply = null;
+            try {
+                reply = walletClient.getBlockingStub().bindWallets(request);
+            } catch (Exception e) {
+                logger.fatal("调用钱包错误", e);
+            } finally {
+                WalletClientPool.returnObject(walletClient);
+            }
             String newAddr = reply.getAddress();
             //TODO 插入地址
             if (newAddr != null && newAddr.isEmpty() == false) {
