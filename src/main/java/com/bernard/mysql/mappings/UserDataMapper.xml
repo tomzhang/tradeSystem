@@ -150,8 +150,8 @@
         (#{account},#{totalAmount},#{aviliable},#{lockVersion},#{updateTime},#{liquidationTime})
     </insert>
 
-    <select id="queryUserAddr">
-        SELECT ADDRESS FROM T_USER_TRANSFERIN_ADDR_${asset} WHERE ACCOUNT =#{account}
+    <select id="queryUserAddr" resultType="String">
+        SELECT ADDR FROM T_USER_TRANSFERIN_ADDR_${asset} WHERE ACCOUNT =#{account}
     </select>
 
 
@@ -166,6 +166,15 @@
         DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
         ROW_FORMAT=DYNAMIC;
     </update>
+
+    <insert id="insertUserTransferInAddr">
+        INSERT INTO T_USER_TRANSFERIN_ADDR_${asset} (ACCOUNT,ADDR,CREATETIME) VALUES (#{account},#{addr},#{time})
+    </insert>
+
+
+    <select id="queryUserAccountByAddr" resultType="String">
+        SELECT ACCOUNT FROM T_USER_TRANSFERIN_ADDR_${asset} WHERE ADDR= #{addr}
+    </select>
 
 
 </mapper>

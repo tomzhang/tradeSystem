@@ -54,6 +54,10 @@ public interface UserDataService {
 
     int createAddrTable(String tableName);
 
+    String queryAccountByAddr(String addr, String asset);
+
+    int insertUserTransferInAddr(String account, String asset, String addr, Date time);
+
 
 
 

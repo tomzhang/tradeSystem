@@ -52,6 +52,13 @@ public interface UserDataMapper {
 
     int createAddrTable(@Param("name") String tableName);
 
+    int insertUserTransferInAddr(@Param("account") String account, @Param("asset") String asset, @Param("addr") String addr, @Param("time") Date time);
+
+    String queryUserAccountByAddr(@Param("addr") String addr, @Param("asset") String asset);
+
+
+
+
 
 
 

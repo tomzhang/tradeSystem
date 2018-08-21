@@ -1,6 +1,7 @@
 package com.bernard.tradesystem.tasks;
 
 import com.bernard.App;
+import com.bernard.common.error.ErrorType;
 import com.bernard.mysql.dto.TransferFlow;
 import com.bernard.mysql.dto.TransferSide;
 import com.bernard.mysql.dto.UserAsset;
@@ -44,17 +45,26 @@ public class TransferInTask implements Callable {
         transferIn.setAccount("");
         transferIn.setSuccessState(true);
         logger.info("开始处理入账:" + transferIn.toString());
+        //0.根据地址查询账号
+        String account = userDataService.queryAccountByAddr(transferInRequest.getAddr(), transferInRequest.getAsset());
+        if (account == null || account.isEmpty()) {
+            logger.error("地址对应账号不存在");
+            replyErrorState(ErrorType.MatchAccoutError.getCode() + "", ErrorType.MatchAccoutError.getMessage());
+            return null;
+        }
+        transferIn.setAccount(account);
 
         //1.更新数据库增加钱,强制增加，没有采用乐观锁
         int updateMoneyResult = userDataService.updateUserAssert(transferIn.getAccount(), transferIn.getAsset(), transferIn.getAmount(), transferIn.getAmount(), new Date());
         if (updateMoneyResult != 1) {
             Boolean iniResult = false;
             if (updateMoneyResult == 0) {
+                logger.info("用户资产未初始化，尝试初始化");
                 iniResult = tryToInitUserAsset(transferIn.getAsset(), transferIn.getAccount(), new BigDecimal(transferIn.getAmount()));
             }
             if (iniResult == false) {
                 logger.fatal("增加用户金额失败." + transferIn.toString());
-                replyErrorState();
+                replyErrorState(ErrorType.InternalError.getCode() + "", ErrorType.InternalError.getMessage());
                 return null;
             }
         }
@@ -63,18 +73,18 @@ public class TransferInTask implements Callable {
         if (updateChangeFlowCount != 1) {
             logger.fatal("插入转账流水失败，但是用户资金已增加");
         }
-        replySucessState();
+        replySuccessState();
         return null;
     }
 
-    private void replyErrorState() {
-        TransferInReply transferInReply = TransferInReply.newBuilder().setState(false).build();
+    private void replyErrorState(String errorCode, String errorMessage) {
+        TransferInReply transferInReply = TransferInReply.newBuilder().setState(false).setErrorCode(errorCode).setErrorMessage(errorMessage).build();
         responseObserver.onNext(transferInReply);
         responseObserver.onCompleted();
         return;
     }
 
-    private void replySucessState() {
+    private void replySuccessState() {
         TransferInReply transferInReply = TransferInReply.newBuilder().setState(true).build();
         responseObserver.onNext(transferInReply);
         responseObserver.onCompleted();

@@ -128,5 +128,15 @@ public class UserDataServiceImpl implements UserDataService {
         return userDataMapper.createAddrTable(tableName);
     }
 
+    @Override
+    public String queryAccountByAddr(String addr, String asset) {
+        return userDataMapper.queryUserAccountByAddr(addr, asset);
+    }
+
+    @Override
+    public int insertUserTransferInAddr(String account, String asset, String addr, Date time) {
+        return userDataMapper.insertUserTransferInAddr(account, asset, addr, time);
+    }
+
 
 }

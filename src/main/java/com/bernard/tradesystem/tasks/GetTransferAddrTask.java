@@ -2,14 +2,19 @@ package com.bernard.tradesystem.tasks;
 
 import com.bernard.App;
 import com.bernard.common.error.ErrorType;
+import com.bernard.grpc.client.pool.wallet.WalletClient;
+import com.bernard.grpc.client.pool.wallet.WalletClientPool;
 import com.bernard.mysql.service.UserDataService;
 import io.grpc.stub.StreamObserver;
 import io.grpc.tradesystem.service.GetTransferInAddrReply;
 import io.grpc.tradesystem.service.GetTransferInAddrRequest;
 import io.grpc.tradesystem.service.TransferInReply;
 import io.grpc.tradesystem.service.TransferInRequest;
+import io.grpc.walletcore.service.BindWalletsReply;
+import io.grpc.walletcore.service.BindWalletsRequest;
 import org.apache.log4j.Logger;
 
+import java.util.Date;
 import java.util.concurrent.Callable;
 
 public class GetTransferAddrTask implements Callable {
@@ -32,13 +37,30 @@ public class GetTransferAddrTask implements Callable {
     public Object call() throws Exception {
 
         // replySuccessState();
-        String addr = userDataService.queryUserAddr(getTransferInAddrRequest.getAccount(), getTransferInAddrRequest.getAsset());
+        String addr = null;
+        try {
+            addr = userDataService.queryUserAddr(getTransferInAddrRequest.getAccount(), getTransferInAddrRequest.getAsset());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //  String addr = userDataService.queryUserAddr(getTransferInAddrRequest.getAccount(), getTransferInAddrRequest.getAsset());
         if (addr == null) {
             //TODO 调用钱包 生成地址
+            WalletClient walletClient = WalletClientPool.borrowObject();
+            BindWalletsRequest request = BindWalletsRequest.newBuilder().setAccount(getTransferInAddrRequest.getAccount()).setAsset(getTransferInAddrRequest.getAsset()).build();
+            BindWalletsReply reply = walletClient.getBlockingStub().bindWallets(request);
+            String newAddr = reply.getAddress();
             //TODO 插入地址
+            if (newAddr != null && newAddr.isEmpty() == false) {
+                userDataService.insertUserTransferInAddr(getTransferInAddrRequest.getAccount(), getTransferInAddrRequest.getAsset(), newAddr, new Date());
+            } else {
+                logger.error("钱包生成地址为空");
+                replyErrorState(ErrorType.InternalError.getCode() + "", ErrorType.InternalError.getMessage());
+                return null;
+            }
             //TODO 返回
-            logger.error("匹配地址失败：" + getTransferInAddrRequest.getAsset() + " " + getTransferInAddrRequest.getAccount());
-            replyErrorState(ErrorType.MatchAccoutError.getCode() + "", ErrorType.MatchAccoutError.getMessage());
+            replySuccessState(newAddr);
             return null;
         } else {
             replySuccessState(addr);
