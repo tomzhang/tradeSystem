@@ -90,7 +90,7 @@
         <result column="PAIR" property="assetPair" jdbcType="VARCHAR"/>
     </resultMap>
     <select id="queryAllAssetPair" resultMap="queryAssetPairResult" parameterType="java.lang.String">
-		SELECT * FROM T_ASSET_PAIR
+		SELECT t.PAIR FROM T_ASSET_PAIR t
 	</select>
 
 
