@@ -74,7 +74,7 @@ public class MatchOrderTask implements Callable {
                 return null;
             }
         }
-        replySucessState();
+        replySuccessState();
         return null;
     }
 
@@ -198,7 +198,7 @@ public class MatchOrderTask implements Callable {
         return;
     }
 
-    private void replySucessState() {
+    private void replySuccessState() {
         MatchOrderReply matchOrderReply = MatchOrderReply.newBuilder().setState(true).build();
         responseObserver.onNext(matchOrderReply);
         responseObserver.onCompleted();
