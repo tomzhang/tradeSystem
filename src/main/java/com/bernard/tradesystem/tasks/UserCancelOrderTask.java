@@ -76,7 +76,7 @@ public class UserCancelOrderTask implements Callable {
         } else {
             rpcSide = io.grpc.tradeCore.service.OrderSide.ASK;
         }
-        Response response = sendCancelToTradeCore(userOrder.getOrderID(), cargoCoin, baseCoin, account, rpcSide);
+        Response response = sendCancelToTradeCore(userOrder.getOrderID(), cargoCoin, baseCoin, account, rpcSide, remain.toString());
         if (response == null || response.getCode() != 0) {
             logger.error("撤单失败");
             replyErrorState();
@@ -129,7 +129,7 @@ public class UserCancelOrderTask implements Callable {
         return;
     }
 
-    private Response sendCancelToTradeCore(String orderid, String cargoCoin, String baseCoin, String account, io.grpc.tradeCore.service.OrderSide rpcSide) {
+    private Response sendCancelToTradeCore(String orderid, String cargoCoin, String baseCoin, String account, io.grpc.tradeCore.service.OrderSide rpcSide, String amount) {
         TradeCoreClient client = TradeCoreClientPool.borrowObject();
         AssetPair pair = AssetPair.newBuilder().setAsset(cargoCoin).setMoney(baseCoin).build();
         //AssetPair pair = AssetPair.newBuilder().setAsset("asset").setMoney("money").build();
@@ -137,7 +137,7 @@ public class UserCancelOrderTask implements Callable {
         //io.grpc.tradesystem.service.OrderSide orderSide1 = io.grpc.tradesystem.service.OrderSide.ASK;
 
 
-        CancelOrderCmd cmd = CancelOrderCmd.newBuilder().setAccount(account).setAssetPair(pair).setUid(orderid).setSide(rpcSide).build();
+        CancelOrderCmd cmd = CancelOrderCmd.newBuilder().setAccount(account).setAssetPair(pair).setUid(orderid).setSide(rpcSide).setAccount(account).setAmount(amount).build();
         Response response = null;
         try {
             response = client.getBlockingStub().cancel(cmd);
