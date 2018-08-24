@@ -93,7 +93,20 @@
         <property name="url" value="${jdbc.url}"/>
         <property name="username" value="${jdbc.username}"/>
         <property name="password" value="${jdbc.password}"/>
+        <property name="initialSize" value="5"/><!-- 在启动连接池初始创建的数据库连接，默认为0 -->
+        <property name="maxActive" value="100"/><!-- 设置数据库同一时间的最大活跃连接默认为8，负数表示不闲置 -->
+        <property name="maxIdle" value="10"/><!-- 在连接池空闲时的最大连接数，超过的会被释放，默认为8，负数表示不闲置 -->
+        <property name="minIdle" value="2"/><!-- 空闲时的最小连接数，低于这个数量会创建新连接，默认为0 -->
+        <property name="maxWait" value="10000"/><!-- 连接被用完时等待归还的最大等待时间，单位毫秒，超出时间抛异常，默认为无限等待 -->
+        <property name="validationQuery" value="select current_date()"/>
+        <property name="testOnBorrow" value="false"/>
+        <property name="testOnReturn" value="false"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="timeBetweenEvictionRunsMillis" value="30000"/>
+        <property name="numTestsPerEvictionRun" value="30"/>
+        <property name="minEvictableIdleTimeMillis" value="1800000"/>
     </bean>
+
 
     <!-- spring和MyBatis完美整合 -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
