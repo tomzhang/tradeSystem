@@ -1,6 +1,7 @@
 package com.bernard.tradesystem.tasks;
 
 import com.bernard.App;
+import com.bernard.common.error.ErrorType;
 import com.bernard.grpc.client.pool.tradeSystem.TradeCoreClient;
 import com.bernard.grpc.client.pool.tradeSystem.TradeCoreClientPool;
 import com.bernard.mysql.dto.Order;
@@ -44,11 +45,11 @@ public class UserCancelOrderTask implements Callable {
             logger.error("查询订单失败", e);
         }
         if (userOrder == null) {
-            replyErrorState();
+            replyErrorState(ErrorType.AccountError);
             return null;
         }
         if (userOrder.getState() == OrderState.COMPLETE) {
-            replyErrorState();
+            replyErrorState(ErrorType.OrderError);
             return null;
         }
         String assetPair = userOrder.getAssetPair();
@@ -57,14 +58,14 @@ public class UserCancelOrderTask implements Callable {
         String account = userOrder.getAccount();
         if (account.equalsIgnoreCase(cancelOrderRequest.getAccount()) == false) {
             //TODO 撤单信息错误
-            replyErrorState();
+            replyErrorState(ErrorType.AccountError);
             return null;
         }
         BigDecimal remain = new BigDecimal(userOrder.getRemain());
         BigDecimal price = new BigDecimal(userOrder.getPrice());
         if (remain.compareTo(BigDecimal.ZERO) == 0) {
             //TODO 返回撤单失败
-            replyErrorState();
+            replyErrorState(ErrorType.OrderError);
             logger.fatal("订单余额为0，但是未关闭！");
             return null;
         }
@@ -79,7 +80,8 @@ public class UserCancelOrderTask implements Callable {
         Response response = sendCancelToTradeCore(userOrder.getOrderID(), cargoCoin, baseCoin, account, rpcSide, remain.toString());
         if (response == null || response.getCode() != 0) {
             logger.error("撤单失败");
-            replyErrorState();
+            ErrorType errorType = ErrorType.InternalError;
+            replyErrorState(errorType);
             return null;
         }
 
@@ -115,8 +117,8 @@ public class UserCancelOrderTask implements Callable {
         return null;
     }
 
-    private void replyErrorState() {
-        CancelOrderReply cancelOrderReply = CancelOrderReply.newBuilder().setState(false).setErrorMessage("123").build();
+    private void replyErrorState(ErrorType errorType) {
+        CancelOrderReply cancelOrderReply = CancelOrderReply.newBuilder().setState(false).setErrorCode(errorType.getCode() + "").setErrorMessage(errorType.getMessage()).build();
         responseObserver.onNext(cancelOrderReply);
         responseObserver.onCompleted();
         return;
