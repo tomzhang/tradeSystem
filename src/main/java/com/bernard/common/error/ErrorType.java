@@ -19,6 +19,8 @@ public enum ErrorType {
 
 
     private ErrorType(String message, int code) {
+        this.message = message;
+        this.code = code;
 
     }
 
@@ -36,5 +38,9 @@ public enum ErrorType {
 
     public void setCode(int code) {
         this.code = code;
+    }
+
+    public static void main(String[] args) {
+        ErrorType.InternalError.getCode();
     }
 }
