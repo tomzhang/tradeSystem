@@ -106,6 +106,7 @@ public class UserCancelOrderTask implements Callable {
         userOrder.setState(OrderState.CANCLE);
         userOrder.setRemain("0");
         userOrder.setLockVersion(userOrder.getLockVersion() + 1);
+        //cacheService.updateCacheOrder(userOrder);
         int updateOrderResult = userDataService.updateUserOrder(userOrder);
         if (updateOrderResult != 1) {
             logger.error("更新用户订单失败");

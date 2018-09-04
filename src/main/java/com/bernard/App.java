@@ -1,6 +1,7 @@
 package com.bernard;
 
 
+import com.bernard.cache.service.CacheService;
 import com.bernard.common.config.AssetCoinfig;
 import com.bernard.common.config.AssetPairConfig;
 import com.bernard.mysql.dto.*;
@@ -10,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -44,6 +46,7 @@ public class App
 
     private static void loadCoinfig() {
         UserDataService userDataService = (UserDataService) context.getBean("userDataServiceImpl");
+        CacheService cacheService = (CacheService) App.context.getBean("cacheServiceImpl");
         List<String> assets = userDataService.queryAllAsset();
         for (String asset : assets) {
             AssetCoinfig.assetMap.put(asset, "");
@@ -53,7 +56,12 @@ public class App
             AssetPairConfig.assetPairMap.put(pair, "");
         }
         logger.info("加载支持货币数量：" + assets.size() + " 加载支持交易币对数量：" + assetPair.size());
-        for (String asset : assets) {
+        List<String> ad = new ArrayList<>();
+        ad.add("223d27a1-5577-47a3-9ca3-f14838a2df73");
+        ad.add("07cd839d-ff6c-488a-a807-d91ee70c816f");
+        List<Order> OD = cacheService.mGetCacheOrder(ad);
+        System.out.println(1);
+        /*for (String asset : assets) {
             int isOk = userDataService.existTable("T_USER_ASSET_" + asset);
             if (isOk == 0) {
                 logger.info("发现新增资产种类，新建表：" + "T_USER_ASSET_" + asset);
@@ -65,7 +73,7 @@ public class App
                 logger.info("发现新增用户地址表，新建表：T_USER_TRANSFERIN_ADDR_" + asset);
                 userDataService.createAddrTable("T_USER_TRANSFERIN_ADDR_" + asset);
             }
-        }
+        }*/
 
     }
 }

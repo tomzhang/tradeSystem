@@ -35,8 +35,6 @@ public class GetTransferAddrTask implements Callable {
 
     @Override
     public Object call() throws Exception {
-
-        // replySuccessState();
         String addr = null;
         try {
             addr = userDataService.queryUserAddr(getTransferInAddrRequest.getAccount(), getTransferInAddrRequest.getAsset());
@@ -44,7 +42,6 @@ public class GetTransferAddrTask implements Callable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //  String addr = userDataService.queryUserAddr(getTransferInAddrRequest.getAccount(), getTransferInAddrRequest.getAsset());
         if (addr == null) {
             //TODO 调用钱包 生成地址
             WalletClient walletClient = WalletClientPool.borrowObject();

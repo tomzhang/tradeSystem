@@ -108,6 +108,18 @@ public class RedisUtil {
     }
 
     /**
+     * 批量查询
+     */
+
+    public List<Object> mGet(List keys) {
+        try {
+            return redisTemplate.opsForValue().multiGet(keys);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    /**
      * 普通缓存放入并设置时间
      * @param key 键
      * @param value 值
@@ -430,7 +442,6 @@ public class RedisUtil {
      * 将list放入缓存
      * @param key 键
      * @param value 值
-     * @param time 时间(秒)
      * @return
      */
     public boolean lSet(String key, Object value) {
@@ -465,7 +476,7 @@ public class RedisUtil {
      * 将list放入缓存
      * @param key 键
      * @param value 值
-     * @param time 时间(秒)
+
      * @return
      */
     public boolean lSet(String key, List<Object> value) {

@@ -2,9 +2,10 @@ package com.bernard.mysql.dto;
 
 import io.grpc.tradesystem.service.UserOrderRequest;
 
+import java.io.Serializable;
 import java.util.UUID;
 
-public class Order {
+public class Order implements Serializable {
     String orderID;// 下单号（主键）
     String orderTime; //下单时间
     String account;// 账号

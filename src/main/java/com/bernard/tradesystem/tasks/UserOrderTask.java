@@ -1,6 +1,7 @@
 package com.bernard.tradesystem.tasks;
 
 import com.bernard.App;
+import com.bernard.cache.service.CacheService;
 import com.bernard.common.error.ErrorType;
 import com.bernard.grpc.client.pool.tradeSystem.TradeCoreClient;
 import com.bernard.grpc.client.pool.tradeSystem.TradeCoreClientPool;
@@ -29,6 +30,7 @@ public class UserOrderTask implements Callable {
     private StreamObserver<UserOrderReply> responseObserver;
     private Order order;
     private UserDataService userDataService = (UserDataService) App.context.getBean("userDataServiceImpl");
+    private CacheService cacheService = (CacheService) App.context.getBean("cacheServiceImpl");
 
     private UserOrderTask() {
 
@@ -105,6 +107,7 @@ public class UserOrderTask implements Callable {
 
     private boolean processUserOrder(String account, String coinToLock, BigDecimal amountToLock) {
         UserAsset userAsset;
+        //userAsset =cacheService.getUserAsset(order.getAccount(),coinToLock);
         try {
             userAsset = userDataService.queryUserAssert(order.getAccount(), coinToLock);
         } catch (Exception e) {
@@ -117,6 +120,7 @@ public class UserOrderTask implements Callable {
             replyErrorState(ErrorType.Insufficient.getCode() + "", ErrorType.Insufficient.getMessage());
             return false;
         }
+        //notice 这里不更新缓存 因为在之后还需要对用户资产进行锁定操作
         BigDecimal available = new BigDecimal(userAsset.getAviliable());
         if (available.compareTo(amountToLock) < 0) {
             logger.error(ErrorType.Insufficient.getMessage());
@@ -142,6 +146,7 @@ public class UserOrderTask implements Callable {
                 return false;
             }
         }
+        cacheService.updateCacheOrder(order);
         userDataService.insertUserOrder(order);
         return true;
 
@@ -180,7 +185,9 @@ public class UserOrderTask implements Callable {
         } else {
             rpcType = io.grpc.tradeCore.service.OrderType.MARKET;
         }
+        logger.info("开始调用撮合系统=========");
         TakeOrderCmd cmd = TakeOrderCmd.newBuilder().setAccount(order.getAccount()).setAssetPair(pair).setUid(order.getOrderID()).setCharge(charge).setSide(rpcSide).setType(rpcType).build();
+        logger.info("调用撮合系统完毕===========");
         Response response = null;
         try {
             ManagedChannel channel = client.getChannel();

@@ -1,8 +1,6 @@
 package com.bernard.mysql.service;
 
-import com.bernard.mysql.dto.Order;
-import com.bernard.mysql.dto.TransferFlow;
-import com.bernard.mysql.dto.UserAsset;
+import com.bernard.mysql.dto.*;
 
 import java.util.Date;
 import java.util.List;
@@ -11,6 +9,8 @@ public interface UserDataService {
     void insertUserOrder(Order userOrder);
 
     int updateUserOrder(Order userOrder);
+
+    int updateUserOrderForce(String orderId, String remainToReduce);
 
     int insertMatchFlow(String flowId, String sellSideOrderId, String sellSideOrderAccount, String buySideOrderId, String buySideOrderAccount, String price, String amount, Date date);
 
@@ -57,6 +57,10 @@ public interface UserDataService {
     String queryAccountByAddr(String addr, String asset);
 
     int insertUserTransferInAddr(String account, String asset, String addr, Date time);
+
+    void batchUpdateUserAsset(List<AssetUpdate> updateList);
+
+    void batchUpdateUserOrder(List<OrderUpdate> orderUpdates);
 
 
 

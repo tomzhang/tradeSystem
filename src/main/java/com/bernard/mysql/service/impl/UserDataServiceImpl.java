@@ -2,15 +2,17 @@ package com.bernard.mysql.service.impl;
 
 
 import com.bernard.mysql.dao.UserDataMapper;
-import com.bernard.mysql.dto.Order;
-import com.bernard.mysql.dto.TransferFlow;
+import com.bernard.mysql.dto.*;
 
-import com.bernard.mysql.dto.UserAsset;
 import com.bernard.mysql.service.UserDataService;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +22,9 @@ public class UserDataServiceImpl implements UserDataService {
 
     @Autowired
     private UserDataMapper userDataMapper;
+
+    @Autowired
+    private SqlSessionFactory sqlSessionFactory;
 
 
     @Override
@@ -33,6 +38,16 @@ public class UserDataServiceImpl implements UserDataService {
         return userDataMapper.updateUserOrder(userOrder);
     }
 
+    @Override
+    public int updateUserOrderForce(String orderId, String remainToReduce) {
+        return userDataMapper.updateUserOrderForce(orderId, remainToReduce);
+    }
+
+    /*  @Override
+      public int updateUserOrderForce(String orderId, String amount) {
+          return userDataMapper.updateUserOrderForce(orderId,amount);
+      }
+  */
     @Override
     public int insertMatchFlow(String flowId, String sellSideOrderId, String sellSideOrderAccount, String buySideOrderId,
                                String buySideOrderAccount, String price, String amount, Date date) {
@@ -136,6 +151,30 @@ public class UserDataServiceImpl implements UserDataService {
     @Override
     public int insertUserTransferInAddr(String account, String asset, String addr, Date time) {
         return userDataMapper.insertUserTransferInAddr(account, asset, addr, time);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void batchUpdateUserAsset(List<AssetUpdate> updateList) {
+        SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, true);
+        UserDataMapper mapper = sqlSession.getMapper(UserDataMapper.class);
+        for (AssetUpdate update : updateList) {
+            mapper.updateUserAssert(update.getAccount(), update.getAsset(), update.getTotalAmountToAdd(),
+                    update.getAviToAdd(), update.getUpdateTime());
+        }
+        sqlSession.flushStatements();
+    }
+
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void batchUpdateUserOrder(List<OrderUpdate> orderUpdates) {
+        SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, true);
+        UserDataMapper mapper = sqlSession.getMapper(UserDataMapper.class);
+        for (OrderUpdate orderUpdate : orderUpdates) {
+            mapper.updateUserOrderForce(orderUpdate.getOrderid(), orderUpdate.getRemainToReduce());
+        }
+        sqlSession.flushStatements();
     }
 
 

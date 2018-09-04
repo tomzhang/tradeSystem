@@ -33,6 +33,7 @@ public class TestGrpcClient {
         TradeSystemGrpc.TradeSystemBlockingStub blockingStub = TradeSystemGrpc.newBlockingStub(channel);
         TradeSystemGrpc.TradeSystemBlockingStub blockingStub1 = TradeSystemGrpc.newBlockingStub(channel1);
         TradeSystemGrpc.TradeSystemBlockingStub blockingStub2 = TradeSystemGrpc.newBlockingStub(channel2);
+
         UserOrderRequest request = UserOrderRequest.newBuilder().setAccount("zzz666").setAmount("1").setAssertLimit("").setAssetPair("ETH-BTC").setOrderSide("SELL")
                 .setOrderType("PRICE_LIMIT").setPrice("1").setFeeRate("0.003").build();
         Thread thread1 = new Thread() {

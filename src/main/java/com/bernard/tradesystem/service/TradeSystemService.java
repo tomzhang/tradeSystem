@@ -28,7 +28,10 @@ public class TradeSystemService extends TradeSystemGrpc.TradeSystemImplBase {
 
     @Override
     public void stepOrder(MatchOrderRequest request, StreamObserver<MatchOrderReply> responseObserver) {
-        MatchOrderTask matchOrderTask = new MatchOrderTask(request, responseObserver);
+        MatchOrderReply matchOrderReply = MatchOrderReply.newBuilder().setState(true).build();
+        responseObserver.onNext(matchOrderReply);
+        responseObserver.onCompleted();
+        MatchOrderTask matchOrderTask = new MatchOrderTask(request);
         FutureTask futureTask = new FutureTask(matchOrderTask);
         TradeTaskServicePool.submitTask(futureTask);
     }
