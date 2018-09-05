@@ -1,6 +1,7 @@
 package com.bernard.mysql.service;
 
 import com.bernard.mysql.dto.*;
+import io.grpc.tradesystem.service.MatchOrderRequest;
 
 import java.util.Date;
 import java.util.List;
@@ -58,7 +59,7 @@ public interface UserDataService {
 
     int insertUserTransferInAddr(String account, String asset, String addr, Date time);
 
-    void batchUpdateUserAsset(List<AssetUpdate> updateList);
+    void batchUpdateUserAsset(List<AssetUpdate> updateList, List<OrderUpdate> orderUpdates, MatchOrderRequest matchOrderRequest);
 
     void batchUpdateUserOrder(List<OrderUpdate> orderUpdates);
 

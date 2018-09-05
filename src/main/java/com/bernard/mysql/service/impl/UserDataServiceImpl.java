@@ -5,6 +5,7 @@ import com.bernard.mysql.dao.UserDataMapper;
 import com.bernard.mysql.dto.*;
 
 import com.bernard.mysql.service.UserDataService;
+import io.grpc.tradesystem.service.MatchOrderRequest;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -155,12 +156,26 @@ public class UserDataServiceImpl implements UserDataService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void batchUpdateUserAsset(List<AssetUpdate> updateList) {
+    public void batchUpdateUserAsset(List<AssetUpdate> updateList, List<OrderUpdate> orderUpdates, MatchOrderRequest matchOrderRequest) {
         SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, true);
         UserDataMapper mapper = sqlSession.getMapper(UserDataMapper.class);
         for (AssetUpdate update : updateList) {
             mapper.updateUserAssert(update.getAccount(), update.getAsset(), update.getTotalAmountToAdd(),
                     update.getAviToAdd(), update.getUpdateTime());
+        }
+        //2.成交流水
+        mapper.insertMatchFlow(matchOrderRequest.getMatchOrderWaterflow(),
+                matchOrderRequest.getSellSideOrderId(),
+                matchOrderRequest.getSellSideAccount(),
+                matchOrderRequest.getBuySideOrderId(),
+                matchOrderRequest.getBuySideAccount(),
+                matchOrderRequest.getMatchPrice(),
+                matchOrderRequest.getMatchAmount(),
+                new Date());
+
+        //3.订单更新
+        for (OrderUpdate orderUpdate : orderUpdates) {
+            mapper.updateUserOrderForce(orderUpdate.getOrderid(), orderUpdate.getRemainToReduce());
         }
         sqlSession.flushStatements();
     }
