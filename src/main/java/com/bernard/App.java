@@ -56,11 +56,7 @@ public class App
             AssetPairConfig.assetPairMap.put(pair, "");
         }
         logger.info("加载支持货币数量：" + assets.size() + " 加载支持交易币对数量：" + assetPair.size());
-        List<String> ad = new ArrayList<>();
-        ad.add("223d27a1-5577-47a3-9ca3-f14838a2df73");
-        ad.add("07cd839d-ff6c-488a-a807-d91ee70c816f");
-        List<Order> OD = cacheService.mGetCacheOrder(ad);
-        System.out.println(1);
+
         /*for (String asset : assets) {
             int isOk = userDataService.existTable("T_USER_ASSET_" + asset);
             if (isOk == 0) {
