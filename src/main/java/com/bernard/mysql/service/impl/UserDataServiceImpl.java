@@ -44,11 +44,6 @@ public class UserDataServiceImpl implements UserDataService {
         return userDataMapper.updateUserOrderForce(orderId, remainToReduce);
     }
 
-    /*  @Override
-      public int updateUserOrderForce(String orderId, String amount) {
-          return userDataMapper.updateUserOrderForce(orderId,amount);
-      }
-  */
     @Override
     public int insertMatchFlow(String flowId, String sellSideOrderId, String sellSideOrderAccount, String buySideOrderId,
                                String buySideOrderAccount, String price, String amount, Date date) {
