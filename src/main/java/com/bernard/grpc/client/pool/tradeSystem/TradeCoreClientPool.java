@@ -38,7 +38,7 @@ public class TradeCoreClientPool {
     public static TradeCoreClient borrowObject() {
         try {
             TradeCoreClient clientSingle = objectPool.borrowObject();
-            logger.info("总创建线程数" + objectPool.getCreatedCount());
+            //logger.info("总创建线程数" + objectPool.getCreatedCount());
 
             return clientSingle;
         } catch (Exception e) {

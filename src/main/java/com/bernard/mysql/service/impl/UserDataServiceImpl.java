@@ -156,7 +156,7 @@ public class UserDataServiceImpl implements UserDataService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void batchUpdateUserAsset(List<AssetUpdate> updateList, List<OrderUpdate> orderUpdates, MatchOrderRequest matchOrderRequest) {
+    public void batchUpdateMatchOrderTask(List<AssetUpdate> updateList, List<OrderUpdate> orderUpdates, MatchOrderRequest matchOrderRequest) {
         SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, true);
         UserDataMapper mapper = sqlSession.getMapper(UserDataMapper.class);
         for (AssetUpdate update : updateList) {

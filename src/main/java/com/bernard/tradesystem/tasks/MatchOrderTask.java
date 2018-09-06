@@ -84,14 +84,14 @@ public class MatchOrderTask implements Callable {
                 return null;
             }
         }
-        userDataService.batchUpdateUserAsset(assetUpdates, orderUpdates, matchOrderRequest);
+        userDataService.batchUpdateMatchOrderTask(assetUpdates, orderUpdates, matchOrderRequest);
         replySuccessState();
         logger.info("成交回报整体耗时：" + (System.currentTimeMillis() - start));
         return null;
     }
 
     private boolean handleOrder(Order order, BigDecimal matchAmount, BigDecimal matchPrice, List<AssetUpdate> assetUpdates, List<OrderUpdate> orderUpdates) {
-        logger.info("开始处理成交回报订单：" + order.toString());
+        //logger.info("开始处理成交回报订单：" + order.toString());
         String assetPair = order.getAssetPair();
         String cargoCoin = assetPair.split("-")[0];
         String baseCoin = assetPair.split("-")[1];

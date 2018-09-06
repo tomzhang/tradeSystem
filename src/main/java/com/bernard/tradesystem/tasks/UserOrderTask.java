@@ -46,6 +46,7 @@ public class UserOrderTask implements Callable {
     @Transactional
     public Object call() throws Exception {
         logger.info("开始处理用户订单:" + order.toString());
+        long start = System.currentTimeMillis();
         String assetPair = order.getAssetPair();
         String cargoCoin = assetPair.split("-")[0];
         String baseCoin = assetPair.split("-")[1];
@@ -59,7 +60,7 @@ public class UserOrderTask implements Callable {
                     if (response == null || response.getCode() != 0) {
                         throw new RuntimeException("调用撮合系统失败");
                     }
-                    replySuccessState();
+                    replySuccessState(start);
                 } catch (Exception e) {
                     logger.error("插入订单失败", e);
                     unLockAsset(order.getAccount(), baseCoin, neededCoin.toString(), new Date());
@@ -81,7 +82,7 @@ public class UserOrderTask implements Callable {
                     if (response == null || response.getCode() != 0) {
                         throw new RuntimeException("调用撮合系统失败");
                     }
-                    replySuccessState();
+                    replySuccessState(start);
                 } catch (Exception e) {
                     logger.error("插入订单失败", e);
                     unLockAsset(order.getAccount(), cargoCoin, needCoin.toString(), new Date());
@@ -160,8 +161,8 @@ public class UserOrderTask implements Callable {
         return;
     }
 
-    private void replySuccessState() {
-        logger.info("下单成功");
+    private void replySuccessState(long start) {
+        logger.info("下单成功,整体耗时：" + (System.currentTimeMillis() - start));
         UserOrderReply userOrderReply = UserOrderReply.newBuilder().setState(true).setOrderId(order.getOrderID()).build();
         responseObserver.onNext(userOrderReply);
         responseObserver.onCompleted();
