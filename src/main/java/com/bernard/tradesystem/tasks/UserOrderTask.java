@@ -186,14 +186,11 @@ public class UserOrderTask implements Callable {
         } else {
             rpcType = io.grpc.tradeCore.service.OrderType.MARKET;
         }
-        logger.info("开始调用撮合系统=========");
         TakeOrderCmd cmd = TakeOrderCmd.newBuilder().setAccount(order.getAccount()).setAssetPair(pair).setUid(order.getOrderID()).setCharge(charge).setSide(rpcSide).setType(rpcType).build();
-        logger.info("调用撮合系统完毕===========");
         Response response = null;
         try {
-            ManagedChannel channel = client.getChannel();
-            ConnectivityState state = channel.getState(false);
-            System.out.println(state.toString());
+            //ManagedChannel channel = client.getChannel();
+            // ConnectivityState state = channel.getState(false);
             response = client.getBlockingStub().take(cmd);
         } catch (Exception e) {
             logger.error("调用撮合系统失败", e);
