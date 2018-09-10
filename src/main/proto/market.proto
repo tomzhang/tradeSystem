@@ -27,11 +27,24 @@ enum OrderType {
     TYPEUNKNOW = 0;
     MARKET = 1;
     LIMIT = 2;
+    BENEFITU = 3;
 }
 
 message Charge {
     string price = 1;
     string amount = 2;
+    string min_deal_unit = 3;
+}
+enum OrderValidTimeType {
+    TIMETYPEUNKNOW = 0;
+    DAY = 1;
+    IOC = 2;
+}
+message SpotTradeExt {
+    string stop_price = 1;
+    string min_qty = 2;
+    uint32 max_price_level = 3;
+    OrderValidTimeType time_in_force = 4;
 }
 
 message TakeOrderCmd {
@@ -41,6 +54,7 @@ message TakeOrderCmd {
     OrderSide side = 4; // ask or bid
     OrderType type = 5; // market or limit
     Charge charge = 6;
+    SpotTradeExt ext = 7;
 }
 
 message CancelOrderCmd {
