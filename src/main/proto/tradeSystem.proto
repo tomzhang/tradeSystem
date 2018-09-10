@@ -19,6 +19,9 @@ service TradeSystem {
     //撮合系统成交回报
     rpc stepOrder (MatchOrderRequest) returns (MatchOrderReply) {
     }
+    //撮合系统剩余单撤销
+    rpc stepOrderCancel (MatchOrderCancelRequest) returns (MatchOrderCancelReply) {
+    }
     //钱包系统转入通知
     rpc transferIn (TransferInRequest) returns (TransferInReply) {
     }
@@ -40,6 +43,19 @@ message UserOrderRequest {
   string price = 6;
   string assertLimit = 7;
   string feeRate = 8;
+}
+
+//撮合剩余单撤销
+message MatchOrderCancelRequest {
+    string asset = 1;
+    string account = 2;
+    string orderId = 3;
+    string cancelAmount = 4;
+}
+
+//撮合剩余单撤消回复
+message MatchOrderCancelReply {
+    bool state = 1;
 }
 
 // The response message containing the greetings
