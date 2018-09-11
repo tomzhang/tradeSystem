@@ -34,23 +34,8 @@ public class MatchOrderTask implements Callable {
 
     @Override
     public Object call() throws Exception {
-        logger.info("开始处理成交回报======");
+        logger.info("开始处理成交回报======" + matchOrderRequest.toString());
         long start = System.currentTimeMillis();
-        //0.插入成交流水
-      /*  try {
-            userDataService.insertMatchFlow(matchOrderRequest.getMatchOrderWaterflow(),
-                    matchOrderRequest.getSellSideOrderId(),
-                    matchOrderRequest.getSellSideAccount(),
-                    matchOrderRequest.getBuySideOrderId(),
-                    matchOrderRequest.getBuySideAccount(),
-                    matchOrderRequest.getMatchPrice(),
-                    matchOrderRequest.getMatchAmount(),
-                    new Date());
-        } catch (Exception e) {
-            logger.error("插入成交流水失败", e);
-            replyErrorState();
-            return null;
-        }*/
         //1.查询订单
         List<Order> matchOrders = new ArrayList<>();
         List<String> strings = new ArrayList<>();
@@ -153,17 +138,11 @@ public class MatchOrderTask implements Callable {
 
     private void replyErrorState() {
         logger.info("处理成交回报失败");
-        //  MatchOrderReply matchOrderReply = MatchOrderReply.newBuilder().setState(false).build();
-     /*   responseObserver.onNext(matchOrderReply);
-        responseObserver.onCompleted();*/
         return;
     }
 
     private void replySuccessState() {
         logger.info("处理成交回报成功");
-        //    MatchOrderReply matchOrderReply = MatchOrderReply.newBuilder().setState(true).build();
-   /*     responseObserver.onNext(matchOrderReply);
-        responseObserver.onCompleted();*/
         return;
     }
 

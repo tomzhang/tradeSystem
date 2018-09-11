@@ -159,14 +159,16 @@ public class UserDataServiceImpl implements UserDataService {
                     update.getAviToAdd(), update.getUpdateTime());
         }
         //2.成交流水
-        mapper.insertMatchFlow(matchOrderRequest.getMatchOrderWaterflow(),
-                matchOrderRequest.getSellSideOrderId(),
-                matchOrderRequest.getSellSideAccount(),
-                matchOrderRequest.getBuySideOrderId(),
-                matchOrderRequest.getBuySideAccount(),
-                matchOrderRequest.getMatchPrice(),
-                matchOrderRequest.getMatchAmount(),
-                new Date());
+        if (matchOrderRequest != null) {
+            mapper.insertMatchFlow(matchOrderRequest.getMatchOrderWaterflow(),
+                    matchOrderRequest.getSellSideOrderId(),
+                    matchOrderRequest.getSellSideAccount(),
+                    matchOrderRequest.getBuySideOrderId(),
+                    matchOrderRequest.getBuySideAccount(),
+                    matchOrderRequest.getMatchPrice(),
+                    matchOrderRequest.getMatchAmount(),
+                    new Date());
+        }
 
         //3.订单更新
         for (OrderUpdate orderUpdate : orderUpdates) {

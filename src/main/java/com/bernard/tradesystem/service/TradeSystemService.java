@@ -56,4 +56,12 @@ public class TradeSystemService extends TradeSystemGrpc.TradeSystemImplBase {
         FutureTask futureTask = new FutureTask(getTransferAddrTask);
         TradeTaskServicePool.submitTask(futureTask);
     }
+
+
+    @Override
+    public void stepOrderCancel(MatchOrderCancelRequest request, StreamObserver<MatchOrderCancelReply> responseObserver) {
+        MatchOrderCancelTask matchOrderCancelTask = new MatchOrderCancelTask(request, responseObserver);
+        FutureTask futureTask = new FutureTask(matchOrderCancelTask);
+        TradeTaskServicePool.submitTask(futureTask);
+    }
 }

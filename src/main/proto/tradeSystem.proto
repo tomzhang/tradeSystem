@@ -51,6 +51,7 @@ message MatchOrderCancelRequest {
     string account = 2;
     string orderId = 3;
     string cancelAmount = 4;
+    OrderSide orderSide = 5;
 }
 
 //撮合剩余单撤消回复
@@ -64,6 +65,7 @@ message UserOrderReply {
   string orderId=2;
   string errorCode = 3;
   string errorMessage = 4;
+
 
 }
 
@@ -143,4 +145,10 @@ message GetTransferInAddrReply {
     string addr = 2;
     string errorCode = 3;
     string errorMessage = 4;
+}
+
+enum OrderSide {
+    SIDEUNKNOW = 0;
+    ASK = 1;
+    BID = 2;
 }
