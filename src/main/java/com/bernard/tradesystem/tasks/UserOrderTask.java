@@ -260,8 +260,14 @@ public class UserOrderTask implements Callable {
                     .setMinQty("0").setMaxPriceLevel(0).setTimeInForce(orderValidTimeType)
                     .build();
         }
-        TakeOrderCmd cmd = TakeOrderCmd.newBuilder().setAccount(order.getAccount()).setAssetPair(pair).setUid(order.getOrderID())
-                .setCharge(charge).setSide(rpcSide).setType(rpcType).setExt(spotTradeExt).build();
+        TakeOrderCmd cmd;
+        if (spotTradeExt != null) {
+            cmd = TakeOrderCmd.newBuilder().setAccount(order.getAccount()).setAssetPair(pair).setUid(order.getOrderID())
+                    .setCharge(charge).setSide(rpcSide).setType(rpcType).setExt(spotTradeExt).build();
+        } else {
+            cmd = TakeOrderCmd.newBuilder().setAccount(order.getAccount()).setAssetPair(pair).setUid(order.getOrderID())
+                    .setCharge(charge).setSide(rpcSide).setType(rpcType).build();
+        }
         Response response = null;
         try {
             response = client.getBlockingStub().take(cmd);

@@ -11,7 +11,7 @@ public interface UserDataService {
 
     int updateUserOrder(Order userOrder);
 
-    int updateUserOrderForce(String orderId, String remainToReduce);
+    int updateUserOrderForce(String orderId, String remainToReduce, String matchMoneyToAdd);
 
     int insertMatchFlow(String flowId, String sellSideOrderId, String sellSideOrderAccount, String buySideOrderId, String buySideOrderAccount, String price, String amount, Date date);
 

@@ -7,11 +7,11 @@
 		INSERT INTO T_USER_ORDER
         (ORDER_ID,ORDER_TIME,ACCOUNT,ASSET_PAIR,ORDER_SIDE,
         ORDER_TYPE,SURVIVE_TIME,AMOUNT,PRICE,STATE,
-		REMAIN,ASSET_LIMIT,LOCK_VERSION,ORDER_FEE_RATE)
+        REMAIN,ASSET_LIMIT,LOCK_VERSION,ORDER_FEE_RATE,MATCH_MONEY)
         VALUES
         (#{orderID},#{orderTime},#{account},#{assetPair},#{orderSide,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
         #{orderType,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{surviveTime},#{amount},#{price},#{state,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
-		#{remain},#{AssertLimit},#{LockVersion},#{feeRate})
+        #{remain},#{AssertLimit},#{LockVersion},#{feeRate},#{matchMoney})
 	</insert>
 
     <update id="updateUserOrder" parameterType="com.bernard.mysql.dto.Order">
@@ -179,7 +179,9 @@
 
     <update id="updateUserOrderForce">
         UPDATE T_USER_ORDER SET LOCK_VERSION = LOCK_VERSION +1,REMAIN
-        =CONVERT(REMAIN,DECIMAL(32,8))-CONVERT (#{remainToReduce},DECIMAL(32,8)) WHERE ORDER_ID=#{orderId}
+        =CONVERT(REMAIN,DECIMAL(32,8))-CONVERT (#{remainToReduce},DECIMAL(32,8)),
+        MATCH_MONEY=CONVERT(MATCH_MONEY,DECIMAL(32,8))+CONVERT (#{matchMoneyToAdd},DECIMAL(32,8)) WHERE
+        ORDER_ID=#{orderId}
     </update>
 
 

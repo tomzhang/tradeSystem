@@ -88,6 +88,9 @@ message MatchOrderRequest {
     string matchAmount = 5;
     string matchPrice = 6;
     string matchOrderWaterflow = 7;
+    string asset = 8;
+    string buySideOrderLeft = 9;
+    string sellSideOrderLeft = 10;
 }
 
 message MatchOrderReply {

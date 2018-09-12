@@ -18,22 +18,23 @@ import java.util.concurrent.Callable;
 public class MatchOrderCancelTask implements Callable {
     private static Logger logger = Logger.getLogger(MatchOrderCancelTask.class);
     private MatchOrderCancelRequest request;
-    StreamObserver<MatchOrderCancelReply> responseObserver;
+    //StreamObserver<MatchOrderCancelReply> responseObserver;
     private UserDataService userDataService = (UserDataService) App.context.getBean("userDataServiceImpl");
 
     private MatchOrderCancelTask() {
 
     }
 
-    public MatchOrderCancelTask(MatchOrderCancelRequest request, StreamObserver<MatchOrderCancelReply> responseObserver) {
+    public MatchOrderCancelTask(MatchOrderCancelRequest request) {
         this.request = request;
-        this.responseObserver = responseObserver;
+        //this.responseObserver = responseObserver;
 
     }
 
     @Override
     public Object call() throws Exception {
-        logger.info("开始处理未成交返还请求");
+        logger.info("开始处理未成交返还请求：" + request.toString());
+        long start = System.currentTimeMillis();
         String amount = request.getCancelAmount();
         String orderId = request.getOrderId();
         String assetPair = request.getAsset();
@@ -55,10 +56,11 @@ public class MatchOrderCancelTask implements Callable {
         assetUpdates.add(cargoUpdate);
 
         List<OrderUpdate> orderUpdates = new ArrayList<>();
-        OrderUpdate orderUpdate = new OrderUpdate(orderId, amount);
+        OrderUpdate orderUpdate = new OrderUpdate(orderId, amount, "0");
         orderUpdates.add(orderUpdate);
 
         userDataService.batchUpdateMatchOrderTask(assetUpdates, orderUpdates, null);
+        logger.info("开始处理未成交返还请求完毕：" + (System.currentTimeMillis() - start));
 
         return null;
     }

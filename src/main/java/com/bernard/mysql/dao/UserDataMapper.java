@@ -56,7 +56,7 @@ public interface UserDataMapper {
 
     String queryUserAccountByAddr(@Param("addr") String addr, @Param("asset") String asset);
 
-    int updateUserOrderForce(@Param("orderId") String orderId, @Param("remainToReduce") String remainToReduce);
+    int updateUserOrderForce(@Param("orderId") String orderId, @Param("remainToReduce") String remainToReduce, @Param("matchMoneyToAdd") String matchMoneyToAdd);
 
 
 

@@ -60,8 +60,11 @@ public class TradeSystemService extends TradeSystemGrpc.TradeSystemImplBase {
 
     @Override
     public void stepOrderCancel(MatchOrderCancelRequest request, StreamObserver<MatchOrderCancelReply> responseObserver) {
-        MatchOrderCancelTask matchOrderCancelTask = new MatchOrderCancelTask(request, responseObserver);
+        MatchOrderCancelTask matchOrderCancelTask = new MatchOrderCancelTask(request);
         FutureTask futureTask = new FutureTask(matchOrderCancelTask);
         TradeTaskServicePool.submitTask(futureTask);
+        MatchOrderCancelReply reply = MatchOrderCancelReply.newBuilder().setState(true).build();
+        responseObserver.onNext(reply);
+        responseObserver.onCompleted();
     }
 }
