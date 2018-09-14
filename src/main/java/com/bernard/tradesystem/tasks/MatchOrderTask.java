@@ -69,7 +69,9 @@ public class MatchOrderTask implements Callable {
                 return null;
             }
         }
+        logger.info("开始更新数据库");
         userDataService.batchUpdateMatchOrderTask(assetUpdates, orderUpdates, matchOrderRequest);
+        logger.info("更新数据库完毕");
         replySuccessState();
         logger.info("成交回报整体耗时：" + (System.currentTimeMillis() - start));
         return null;
@@ -82,13 +84,18 @@ public class MatchOrderTask implements Callable {
         String baseCoin = assetPair.split("-")[1];
         String account = order.getAccount();
         String feeRateString = order.getFeeRate();
+        String matchMoney = matchAmount.multiply(matchPrice).toString();
+        logger.info("成交金额：" + matchMoney);
         BigDecimal feeRate;
         if (feeRateString == null || feeRateString.isEmpty()) {
             feeRate = new BigDecimal(0);
         } else {
             feeRate = new BigDecimal(feeRateString);
         }
-        BigDecimal orderPrice = new BigDecimal(order.getPrice());
+        BigDecimal orderPrice = null;
+        if (order.getOrderType() == OrderType.PRICE_LIMIT) {
+            orderPrice = new BigDecimal(order.getPrice());
+        }
         BigDecimal remain = new BigDecimal(order.getRemain());
         if (remain.compareTo(matchAmount) < 0) {
             logger.info("订单金额不足");
@@ -100,7 +107,12 @@ public class MatchOrderTask implements Callable {
         }
         if (order.getOrderSide() == OrderSide.BUY) {
             //1.买入，钱-》锁定的钱减少，钱总量减少，货物总量增多
-            BigDecimal preLockMoneyAmount = orderPrice.multiply(matchAmount);//预先锁定的钱
+            BigDecimal preLockMoneyAmount;
+            if (order.getOrderType() == OrderType.PRICE_LIMIT) {
+                preLockMoneyAmount = orderPrice.multiply(matchAmount);//预先锁定的钱
+            } else {
+                preLockMoneyAmount = matchAmount.multiply(matchPrice);
+            }
             BigDecimal spendMoney = matchAmount.multiply(matchPrice);//实际花掉的钱
             AssetUpdate assetUpdate = new AssetUpdate(account, baseCoin, spendMoney.multiply(new BigDecimal(-1)).toString(), preLockMoneyAmount.subtract(spendMoney).toString(), new Date());
             assetUpdates.add(assetUpdate);
@@ -111,7 +123,7 @@ public class MatchOrderTask implements Callable {
             AssetUpdate cargoUpdate = new AssetUpdate(account, cargoCoin, amountToUser.toString(), amountToUser.toString(), new Date());
             assetUpdates.add(cargoUpdate);
             //3.更新订单
-            OrderUpdate orderUpdate = new OrderUpdate(order.getOrderID(), matchAmount.toString());
+            OrderUpdate orderUpdate = new OrderUpdate(order.getOrderID(), matchAmount.toString(), matchMoney);
             orderUpdates.add(orderUpdate);
             return true;
         } else if (order.getOrderSide() == OrderSide.SELL) {
@@ -127,7 +139,7 @@ public class MatchOrderTask implements Callable {
             assetUpdates.add(baseUpdate);
             //更新订单
 
-            OrderUpdate orderUpdate = new OrderUpdate(order.getOrderID(), matchAmount.toString());
+            OrderUpdate orderUpdate = new OrderUpdate(order.getOrderID(), matchAmount.toString(), matchMoney);
             orderUpdates.add(orderUpdate);
             return true;
         } else {

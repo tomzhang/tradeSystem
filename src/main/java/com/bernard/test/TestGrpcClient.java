@@ -36,7 +36,12 @@ public class TestGrpcClient {
 
         UserOrderRequest request = UserOrderRequest.newBuilder().setAccount("zzz666").setAmount("1").setAssertLimit("").setAssetPair("ETH-BTC").setOrderSide("SELL")
                 .setOrderType("PRICE_LIMIT").setPrice("1").setFeeRate("0.003").build();
-        Thread thread1 = new Thread() {
+        MatchOrderRequest matchOrderRequest = MatchOrderRequest.newBuilder().setMatchPrice("1").setMatchAmount("1")
+                .setSellSideOrderId("b908dd87-8008-441f-b438-bef69d82d7ed").setSellSideAccount("bernard10060@yahoo.com")
+                .setBuySideOrderId("af5e4ca6-12a2-478a-82c8-868c37d1dd0d").setBuySideAccount("bernard10060@yahoo.com").setMatchOrderWaterflow("948da559-abf2-488a-8023-f7336c2063e2")
+                .setAsset("ETH-BTC").setBuySideOrderLeft("0").setSellSideOrderLeft("0").build();
+        blockingStub.stepOrder(matchOrderRequest);
+        /*Thread thread1 = new Thread() {
             @Override
             public void run() {
                 ManagedChannel channel = ManagedChannelBuilder
@@ -52,124 +57,11 @@ public class TestGrpcClient {
                 }
 
             }
-        };
-        Thread thread2 = new Thread() {
-            @Override
-            public void run() {
-                ManagedChannel channel = ManagedChannelBuilder
-                        .forAddress("localhost", 50051)
-                        .usePlaintext(true)
-                        .build();
-                TradeSystemGrpc.TradeSystemBlockingStub blockingStub = TradeSystemGrpc.newBlockingStub(channel);
-                UserOrderRequest request = UserOrderRequest.newBuilder().setAccount("zzz666").setAmount("1").setAssertLimit("").setAssetPair("ETH-BTC").setOrderSide("SELL")
-                        .setOrderType("PRICE_LIMIT").setPrice("1").setFeeRate("0.003").build();
-                for (int i = 0; i < 1000; i++) {
-                    UserOrderReply reply = blockingStub.takeOrder(request);
-                    System.out.println("收到回复" + i + ":" + reply.getState());
-                }
-
-            }
-        };
-
-        Thread thread3 = new Thread() {
-            @Override
-            public void run() {
-                ManagedChannel channel = ManagedChannelBuilder
-                        .forAddress("localhost", 50051)
-                        .usePlaintext(true)
-                        .build();
-                TradeSystemGrpc.TradeSystemBlockingStub blockingStub = TradeSystemGrpc.newBlockingStub(channel);
-                UserOrderRequest request = UserOrderRequest.newBuilder().setAccount("zzz666").setAmount("1").setAssertLimit("").setAssetPair("ETH-BTC").setOrderSide("SELL")
-                        .setOrderType("PRICE_LIMIT").setPrice("1").setFeeRate("0.003").build();
-                for (int i = 0; i < 1000; i++) {
-                    UserOrderReply reply = blockingStub.takeOrder(request);
-                    System.out.println("收到回复" + i + ":" + reply.getState());
-                }
-
-            }
-        };
-
-        Thread thread4 = new Thread() {
-            @Override
-            public void run() {
-                ManagedChannel channel = ManagedChannelBuilder
-                        .forAddress("localhost", 50051)
-                        .usePlaintext(true)
-                        .build();
-                TradeSystemGrpc.TradeSystemBlockingStub blockingStub = TradeSystemGrpc.newBlockingStub(channel);
-                UserOrderRequest request = UserOrderRequest.newBuilder().setAccount("zzz666").setAmount("1").setAssertLimit("").setAssetPair("ETH-BTC").setOrderSide("SELL")
-                        .setOrderType("PRICE_LIMIT").setPrice("1").setFeeRate("0.003").build();
-                for (int i = 0; i < 1000; i++) {
-                    UserOrderReply reply = blockingStub.takeOrder(request);
-                    System.out.println("收到回复" + i + ":" + reply.getState());
-                }
-
-            }
-        };
-
-        Thread thread5 = new Thread() {
-            @Override
-            public void run() {
-                ManagedChannel channel = ManagedChannelBuilder
-                        .forAddress("localhost", 50051)
-                        .usePlaintext(true)
-                        .build();
-                TradeSystemGrpc.TradeSystemBlockingStub blockingStub = TradeSystemGrpc.newBlockingStub(channel);
-                UserOrderRequest request = UserOrderRequest.newBuilder().setAccount("zzz666").setAmount("1").setAssertLimit("").setAssetPair("ETH-BTC").setOrderSide("SELL")
-                        .setOrderType("PRICE_LIMIT").setPrice("1").setFeeRate("0.003").build();
-                for (int i = 0; i < 1000; i++) {
-                    UserOrderReply reply = blockingStub.takeOrder(request);
-                    System.out.println("收到回复" + i + ":" + reply.getState());
-                }
-
-            }
-        };
+        };*/
 
 
-        Thread thread6 = new Thread() {
-            @Override
-            public void run() {
-                ManagedChannel channel = ManagedChannelBuilder
-                        .forAddress("localhost", 50051)
-                        .usePlaintext(true)
-                        .build();
-                TradeSystemGrpc.TradeSystemBlockingStub blockingStub = TradeSystemGrpc.newBlockingStub(channel);
-                UserOrderRequest request = UserOrderRequest.newBuilder().setAccount("zzz666").setAmount("1").setAssertLimit("").setAssetPair("ETH-BTC").setOrderSide("SELL")
-                        .setOrderType("PRICE_LIMIT").setPrice("1").setFeeRate("0.003").build();
-                for (int i = 0; i < 1000; i++) {
-                    UserOrderReply reply = blockingStub.takeOrder(request);
-                    System.out.println("收到回复" + i + ":" + reply.getState());
-                }
-
-            }
-        };
-
-
-        Thread thread7 = new Thread() {
-            @Override
-            public void run() {
-                ManagedChannel channel = ManagedChannelBuilder
-                        .forAddress("localhost", 50051)
-                        .usePlaintext(true)
-                        .build();
-                TradeSystemGrpc.TradeSystemBlockingStub blockingStub = TradeSystemGrpc.newBlockingStub(channel);
-                UserOrderRequest request = UserOrderRequest.newBuilder().setAccount("zzz666").setAmount("1").setAssertLimit("").setAssetPair("ETH-BTC").setOrderSide("SELL")
-                        .setOrderType("PRICE_LIMIT").setPrice("1").setFeeRate("0.003").build();
-                for (int i = 0; i < 1000; i++) {
-                    UserOrderReply reply = blockingStub.takeOrder(request);
-                    System.out.println("收到回复" + i + ":" + reply.getState());
-                }
-
-            }
-        };
-
-        thread1.start();
-        thread2.start();
-        thread3.start();
-        thread4.start();
-        thread5.start();
-        thread6.start();
-        thread7.start();
+        // thread6.start();
+        // thread7.start();
 
         /*for (int i = 0; i < 1000; i++) {
             UserOrderReply reply = blockingStub.takeOrder(request);
