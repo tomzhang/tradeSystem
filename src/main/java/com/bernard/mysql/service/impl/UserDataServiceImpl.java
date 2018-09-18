@@ -171,8 +171,10 @@ public class UserDataServiceImpl implements UserDataService {
         }
 
         //3.订单更新
-        for (OrderUpdate orderUpdate : orderUpdates) {
-            mapper.updateUserOrderForce(orderUpdate.getOrderid(), orderUpdate.getRemainToReduce(), orderUpdate.getMatchMoney());
+        if (orderUpdates != null && orderUpdates.size() != 0) {
+            for (OrderUpdate orderUpdate : orderUpdates) {
+                mapper.updateUserOrderForce(orderUpdate.getOrderid(), orderUpdate.getRemainToReduce(), orderUpdate.getMatchMoney());
+            }
         }
         sqlSession.flushStatements();
     }
