@@ -25,7 +25,7 @@ public class StateReportTask {
     @Scheduled(cron = "0/10 * * * * ? ")
     public void reportState() {
         // HashMap map=AssetCoinfig.assetMap;
-        logger.info("开始执行定时统计任务");
+        //logger.info("开始执行定时统计任务");
         List<StateReport> stateReports = new ArrayList<>();
         for (Map.Entry<String, String> entry : AssetCoinfig.assetMap.entrySet()) {
 
@@ -41,7 +41,9 @@ public class StateReportTask {
             stateReports.add(report);
         }
         userDataService.updateStateReport(stateReports);
-        logger.info("定时统计任务执行完毕");
+        if (System.currentTimeMillis() % 5 == 0) {
+            logger.info("定时统计任务执行完毕");
+        }
     }
 
 }
