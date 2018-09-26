@@ -46,9 +46,9 @@ public class UserDataServiceImpl implements UserDataService {
 
     @Override
     public int insertMatchFlow(String flowId, String sellSideOrderId, String sellSideOrderAccount, String buySideOrderId,
-                               String buySideOrderAccount, String price, String amount, Date date) {
+                               String buySideOrderAccount, String price, String amount, Date date, String assetPair, String buysideFee, String sellsideFee) {
         return userDataMapper.insertMatchFlow(flowId, sellSideOrderId, sellSideOrderAccount,
-                buySideOrderId, buySideOrderAccount, price, amount, date);
+                buySideOrderId, buySideOrderAccount, price, amount, date, assetPair, buysideFee, sellsideFee);
     }
 
 
@@ -151,7 +151,7 @@ public class UserDataServiceImpl implements UserDataService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void batchUpdateMatchOrderTask(List<AssetUpdate> updateList, List<OrderUpdate> orderUpdates, MatchOrderRequest matchOrderRequest) {
+    public void batchUpdateMatchOrderTask(List<AssetUpdate> updateList, List<OrderUpdate> orderUpdates, MatchOrderRequest matchOrderRequest, String buySideFee, String sellSideFee) {
         SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, true);
         UserDataMapper mapper = sqlSession.getMapper(UserDataMapper.class);
         for (AssetUpdate update : updateList) {
@@ -167,7 +167,7 @@ public class UserDataServiceImpl implements UserDataService {
                     matchOrderRequest.getBuySideAccount(),
                     matchOrderRequest.getMatchPrice(),
                     matchOrderRequest.getMatchAmount(),
-                    new Date());
+                    new Date(), matchOrderRequest.getAsset(), buySideFee, sellSideFee);
         }
 
         //3.订单更新

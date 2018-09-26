@@ -56,10 +56,8 @@ public class MatchOrderCancelTask implements Callable {
         assetUpdates.add(cargoUpdate);
 
         List<OrderUpdate> orderUpdates = new ArrayList<>();
-        //OrderUpdate orderUpdate = new OrderUpdate(orderId, amount, "0");
-        // orderUpdates.add(orderUpdate);
 
-        userDataService.batchUpdateMatchOrderTask(assetUpdates, orderUpdates, null);
+        userDataService.batchUpdateMatchOrderTask(assetUpdates, orderUpdates, null, "0", "0");
         logger.info("开始处理未成交返还请求完毕：" + (System.currentTimeMillis() - start));
 
         return null;

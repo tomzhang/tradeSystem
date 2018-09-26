@@ -64,23 +64,23 @@ public class MatchOrderTask implements Callable {
         //2.处理订单
         List<AssetUpdate> assetUpdates = new ArrayList<>();
         List<OrderUpdate> orderUpdates = new ArrayList<>();
+        BigDecimal buySideFee = new BigDecimal(0);
+        BigDecimal sellSideFee = new BigDecimal(0);
         for (Order order : matchOrders) {
-            boolean handleOrderResult = handleOrder(order, new BigDecimal(matchOrderRequest.getMatchAmount()), new BigDecimal(matchOrderRequest.getMatchPrice()), assetUpdates, orderUpdates);
+            boolean handleOrderResult = handleOrder(order, new BigDecimal(matchOrderRequest.getMatchAmount()), new BigDecimal(matchOrderRequest.getMatchPrice()), assetUpdates, orderUpdates, buySideFee, sellSideFee);
             if (handleOrderResult == false) {
                 logger.error("成交回报处理订单失败：" + order.toString());
                 replyErrorState();
                 return null;
             }
         }
-        logger.info("开始更新数据库");
-        userDataService.batchUpdateMatchOrderTask(assetUpdates, orderUpdates, matchOrderRequest);
-        logger.info("更新数据库完毕");
+        userDataService.batchUpdateMatchOrderTask(assetUpdates, orderUpdates, matchOrderRequest, buySideFee.toString(), sellSideFee.toString());
         replySuccessState();
         logger.info("成交回报整体耗时：" + (System.currentTimeMillis() - start));
         return null;
     }
 
-    private boolean handleOrder(Order order, BigDecimal matchAmount, BigDecimal matchPrice, List<AssetUpdate> assetUpdates, List<OrderUpdate> orderUpdates) {
+    private boolean handleOrder(Order order, BigDecimal matchAmount, BigDecimal matchPrice, List<AssetUpdate> assetUpdates, List<OrderUpdate> orderUpdates, BigDecimal buySideFee, BigDecimal sellSideFee) {
         //logger.info("开始处理成交回报订单：" + order.toString());
         String assetPair = order.getAssetPair();
         String cargoCoin = assetPair.split("-")[0];
@@ -122,6 +122,7 @@ public class MatchOrderTask implements Callable {
             //2.货物增加 //计算手续费
             BigDecimal fee = matchAmount.multiply(feeRate);
             BigDecimal amountToUser = matchAmount.subtract(fee);
+            buySideFee = fee;
 
             //2.1 记录手续费
             ReportStateManager.addFee(cargoCoin, fee);
@@ -141,6 +142,7 @@ public class MatchOrderTask implements Callable {
             BigDecimal receiveMoney = matchAmount.multiply(matchPrice);
             BigDecimal fee = receiveMoney.multiply(feeRate);
             BigDecimal moneyToUser = receiveMoney.subtract(fee);
+            sellSideFee = fee;
 
             //统计手续费
             ReportStateManager.addFee(baseCoin, fee);

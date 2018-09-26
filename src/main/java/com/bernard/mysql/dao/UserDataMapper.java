@@ -33,7 +33,7 @@ public interface UserDataMapper {
 
     int updateUserAssert(String account, String asset, String totalAmountToAdd, String aviToAdd, Date updateTime);
 
-    int insertMatchFlow(String flowId, String sellSideOrderId, String sellSideAccount, String buySideOrderId, String buySideOrderAccount, String price, String amount, Date date);
+    int insertMatchFlow(String flowId, String sellSideOrderId, String sellSideAccount, String buySideOrderId, String buySideOrderAccount, String price, String amount, Date date, String assetPair, String buySideFee, String sellSideFee);
 
     int unlockUserAssertWhenFail(String account, String asset, String amountToUnlock, Date updateTime);
 

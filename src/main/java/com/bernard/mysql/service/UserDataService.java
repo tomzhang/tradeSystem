@@ -14,11 +14,9 @@ public interface UserDataService {
 
     int updateUserOrderForce(String orderId, String remainToReduce, String matchMoneyToAdd);
 
-    int insertMatchFlow(String flowId, String sellSideOrderId, String sellSideOrderAccount, String buySideOrderId, String buySideOrderAccount, String price, String amount, Date date);
-
+    int insertMatchFlow(String flowId, String sellSideOrderId, String sellSideOrderAccount, String buySideOrderId, String buySideOrderAccount, String price, String amount, Date date, String assetPair, String buySideFee, String sellSideFee);
 
     UserAsset queryUserAssert(String account, String asset);
-
 
     int lockUserAssert(String account, String asset, String totalAmount, String oldAvi, String newAvi, int oldLock, int newLock, Date updateTime);
 
@@ -29,11 +27,9 @@ public interface UserDataService {
     // int updateUserAssert(String account,String asset,String totalAmount,String newAvi,int oldLock, int newLock,Date updateTime);
     int updateUserAssert(String account, String asset, String totalAmountToAdd, String aviToAdd, Date updateTime);
 
-    //public void updateUserAssert();
     Order queryUserOrder(String orderId, String account);
 
     List<Order> queryMatchOrders(String id1, String id2);
-
 
     List<String> queryAllAsset();
 
@@ -60,17 +56,10 @@ public interface UserDataService {
 
     int insertUserTransferInAddr(String account, String asset, String addr, Date time);
 
-    void batchUpdateMatchOrderTask(List<AssetUpdate> updateList, List<OrderUpdate> orderUpdates, MatchOrderRequest matchOrderRequest);
+    void batchUpdateMatchOrderTask(List<AssetUpdate> updateList, List<OrderUpdate> orderUpdates, MatchOrderRequest matchOrderRequest, String buySideFee, String sellSideFee);
 
     void batchUpdateUserOrder(List<OrderUpdate> orderUpdates);
 
     void updateStateReport(List<StateReport> stateReports);
-
-
-
-
-    //更新用户ETH资产
-
-
 
 }

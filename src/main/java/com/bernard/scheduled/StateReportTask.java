@@ -28,6 +28,16 @@ public class StateReportTask {
         //logger.info("开始执行定时统计任务");
         List<StateReport> stateReports = new ArrayList<>();
         for (Map.Entry<String, String> entry : AssetCoinfig.assetMap.entrySet()) {
+            StateReport report = new StateReport();
+            report.setAssetPair(entry.getKey());
+            report.setAmount("0");
+            report.setFee(ReportStateManager.getFee(entry.getKey()).toString());
+            Date date = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            report.setDate(sdf.format(date));
+            stateReports.add(report);
+
+
 
         }
         for (Map.Entry<String, String> entry : AssetPairConfig.assetPairMap.entrySet()) {
