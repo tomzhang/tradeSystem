@@ -82,7 +82,6 @@ public class MatchOrderTask implements Callable {
     }
 
     private boolean handleOrder(Order order, BigDecimal matchAmount, BigDecimal matchPrice, List<AssetUpdate> assetUpdates, List<OrderUpdate> orderUpdates) {
-        //logger.info("开始处理成交回报订单：" + order.toString());
         String assetPair = order.getAssetPair();
         String cargoCoin = assetPair.split("-")[0];
         String baseCoin = assetPair.split("-")[1];
