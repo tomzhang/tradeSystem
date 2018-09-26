@@ -191,5 +191,17 @@ public class UserDataServiceImpl implements UserDataService {
         sqlSession.flushStatements();
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void updateStateReport(List<StateReport> stateReports) {
+        SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, true);
+        UserDataMapper mapper = sqlSession.getMapper(UserDataMapper.class);
+        for (StateReport report : stateReports) {
+            mapper.mergeStateInfo(report);
+        }
+        sqlSession.flushStatements();
+
+    }
+
 
 }

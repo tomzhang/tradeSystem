@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface UserDataService {
+
     void insertUserOrder(Order userOrder);
 
     int updateUserOrder(Order userOrder);
@@ -62,6 +63,8 @@ public interface UserDataService {
     void batchUpdateMatchOrderTask(List<AssetUpdate> updateList, List<OrderUpdate> orderUpdates, MatchOrderRequest matchOrderRequest);
 
     void batchUpdateUserOrder(List<OrderUpdate> orderUpdates);
+
+    void updateStateReport(List<StateReport> stateReports);
 
 
 

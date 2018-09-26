@@ -184,5 +184,27 @@
         ORDER_ID=#{orderId}
     </update>
 
+    <insert id="mergeStateInfo" parameterType="com.bernard.mysql.dto.StateReport">
+        <selectKey keyProperty="count" resultType="int" order="BEFORE">
+            SELECT COUNT(*) as count from T_STATE_REPORT where DATE =
+            #{date} and ASSET_PAIR = #{assetPair}
+        </selectKey>
+        <!-- 如果大于0则更新 -->
+        <if test="count>0">
+            UPDATE T_STATE_REPORT SET
+            TOTAL_AMOUNT= CONVERT(TOTAL_AMOUNT,DECIMAL(32,8))+CONVERT (#{amount},DECIMAL(32,8)),
+            TOTAL_FEE= CONVERT(TOTAL_FEE,DECIMAL(32,8)) + CONVERT (#{fee},DECIMAL(32,8))
+            WHERE ASSET_PAIR = #{assetPair} and DATE = #{date}
+        </if>
+        <!-- 如果等于0则保存 -->
+        <if test="count==0">
+            INSERT INTO T_STATE_REPORT(
+            ASSET_PAIR,DATE,TOTAL_AMOUNT,TOTAL_FEE
+            ) VALUES (
+            #{assetPair},#{date},#{amount},#{fee}
+            )
+        </if>
+    </insert>
+
 
 </mapper>

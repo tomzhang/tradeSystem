@@ -1,6 +1,7 @@
 package com.bernard.mysql.dao;
 
 import com.bernard.mysql.dto.Order;
+import com.bernard.mysql.dto.StateReport;
 import com.bernard.mysql.dto.TransferFlow;
 import com.bernard.mysql.dto.UserAsset;
 import org.apache.ibatis.annotations.Param;
@@ -57,6 +58,8 @@ public interface UserDataMapper {
     String queryUserAccountByAddr(@Param("addr") String addr, @Param("asset") String asset);
 
     int updateUserOrderForce(@Param("orderId") String orderId, @Param("remainToReduce") String remainToReduce, @Param("matchMoneyToAdd") String matchMoneyToAdd);
+
+    void mergeStateInfo(StateReport stateReport);
 
 
 

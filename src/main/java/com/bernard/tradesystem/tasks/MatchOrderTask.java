@@ -3,6 +3,7 @@ package com.bernard.tradesystem.tasks;
 import com.bernard.App;
 import com.bernard.cache.RedisKeys;
 import com.bernard.cache.service.CacheService;
+import com.bernard.globle.ReportStateManager;
 import com.bernard.mysql.dto.*;
 import com.bernard.mysql.service.UserDataService;
 import io.grpc.stub.StreamObserver;
@@ -35,6 +36,8 @@ public class MatchOrderTask implements Callable {
     @Override
     public Object call() throws Exception {
         logger.info("开始处理成交回报======" + matchOrderRequest.toString());
+        //0.记录成交统计
+        ReportStateManager.addTotal(matchOrderRequest.getAsset(), new BigDecimal(matchOrderRequest.getMatchAmount()));
         long start = System.currentTimeMillis();
         //1.查询订单
         List<Order> matchOrders = new ArrayList<>();
@@ -120,6 +123,10 @@ public class MatchOrderTask implements Callable {
             BigDecimal fee = matchAmount.multiply(feeRate);
             BigDecimal amountToUser = matchAmount.subtract(fee);
 
+            //2.1 记录手续费
+            ReportStateManager.addFee(cargoCoin, fee);
+            //
+
             AssetUpdate cargoUpdate = new AssetUpdate(account, cargoCoin, amountToUser.toString(), amountToUser.toString(), new Date());
             assetUpdates.add(cargoUpdate);
             //3.更新订单
@@ -134,6 +141,9 @@ public class MatchOrderTask implements Callable {
             BigDecimal receiveMoney = matchAmount.multiply(matchPrice);
             BigDecimal fee = receiveMoney.multiply(feeRate);
             BigDecimal moneyToUser = receiveMoney.subtract(fee);
+
+            //统计手续费
+            ReportStateManager.addFee(baseCoin, fee);
 
             AssetUpdate baseUpdate = new AssetUpdate(account, baseCoin, moneyToUser.toString(), moneyToUser.toString(), new Date());
             assetUpdates.add(baseUpdate);
