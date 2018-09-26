@@ -22,6 +22,8 @@ public class MatchOrderTask implements Callable {
     private MatchOrderRequest matchOrderRequest;
     private UserDataService userDataService = (UserDataService) App.context.getBean("userDataServiceImpl");
     private CacheService cacheService = (CacheService) App.context.getBean("cacheServiceImpl");
+    private BigDecimal buySideFee = new BigDecimal(0);
+    private BigDecimal sellSideFee = new BigDecimal(0);
 
 
     private MatchOrderTask() {
@@ -64,23 +66,22 @@ public class MatchOrderTask implements Callable {
         //2.处理订单
         List<AssetUpdate> assetUpdates = new ArrayList<>();
         List<OrderUpdate> orderUpdates = new ArrayList<>();
-        BigDecimal buySideFee = new BigDecimal(0);
-        BigDecimal sellSideFee = new BigDecimal(0);
         for (Order order : matchOrders) {
-            boolean handleOrderResult = handleOrder(order, new BigDecimal(matchOrderRequest.getMatchAmount()), new BigDecimal(matchOrderRequest.getMatchPrice()), assetUpdates, orderUpdates, buySideFee, sellSideFee);
+            boolean handleOrderResult = handleOrder(order, new BigDecimal(matchOrderRequest.getMatchAmount()), new BigDecimal(matchOrderRequest.getMatchPrice()), assetUpdates, orderUpdates);
             if (handleOrderResult == false) {
                 logger.error("成交回报处理订单失败：" + order.toString());
                 replyErrorState();
                 return null;
             }
         }
-        userDataService.batchUpdateMatchOrderTask(assetUpdates, orderUpdates, matchOrderRequest, buySideFee.toString(), sellSideFee.toString());
+        //System.out.println("buysideFee:"+ buySideFee.toString()+" sellSideFee:"+sellSideFee.toString());
+        userDataService.batchUpdateMatchOrderTask(assetUpdates, orderUpdates, matchOrderRequest, buySideFee.toPlainString(), sellSideFee.toPlainString());
         replySuccessState();
         logger.info("成交回报整体耗时：" + (System.currentTimeMillis() - start));
         return null;
     }
 
-    private boolean handleOrder(Order order, BigDecimal matchAmount, BigDecimal matchPrice, List<AssetUpdate> assetUpdates, List<OrderUpdate> orderUpdates, BigDecimal buySideFee, BigDecimal sellSideFee) {
+    private boolean handleOrder(Order order, BigDecimal matchAmount, BigDecimal matchPrice, List<AssetUpdate> assetUpdates, List<OrderUpdate> orderUpdates) {
         //logger.info("开始处理成交回报订单：" + order.toString());
         String assetPair = order.getAssetPair();
         String cargoCoin = assetPair.split("-")[0];
