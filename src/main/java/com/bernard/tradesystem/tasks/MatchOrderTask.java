@@ -74,7 +74,7 @@ public class MatchOrderTask implements Callable {
                 return null;
             }
         }
-        //System.out.println("buysideFee:"+ buySideFee.toString()+" sellSideFee:"+sellSideFee.toString());
+
         userDataService.batchUpdateMatchOrderTask(assetUpdates, orderUpdates, matchOrderRequest, buySideFee.toPlainString(), sellSideFee.toPlainString());
         replySuccessState();
         logger.info("成交回报整体耗时：" + (System.currentTimeMillis() - start));
@@ -126,12 +126,12 @@ public class MatchOrderTask implements Callable {
 
             //2.1 记录手续费
             ReportStateManager.addFee(cargoCoin, fee);
-            //
 
             AssetUpdate cargoUpdate = new AssetUpdate(account, cargoCoin, amountToUser.toString(), amountToUser.toString(), new Date());
             assetUpdates.add(cargoUpdate);
+
             //3.更新订单
-            OrderUpdate orderUpdate = new OrderUpdate(order.getOrderID(), matchAmount.toString(), matchMoney);
+            OrderUpdate orderUpdate = new OrderUpdate(order.getOrderID(), matchAmount.toString(), matchMoney, fee.toPlainString());
             orderUpdates.add(orderUpdate);
             return true;
         } else if (order.getOrderSide() == OrderSide.SELL) {
@@ -143,15 +143,13 @@ public class MatchOrderTask implements Callable {
             BigDecimal fee = receiveMoney.multiply(feeRate);
             BigDecimal moneyToUser = receiveMoney.subtract(fee);
             sellSideFee = fee;
-
             //统计手续费
             ReportStateManager.addFee(baseCoin, fee);
 
             AssetUpdate baseUpdate = new AssetUpdate(account, baseCoin, moneyToUser.toString(), moneyToUser.toString(), new Date());
             assetUpdates.add(baseUpdate);
             //更新订单
-
-            OrderUpdate orderUpdate = new OrderUpdate(order.getOrderID(), matchAmount.toString(), matchMoney);
+            OrderUpdate orderUpdate = new OrderUpdate(order.getOrderID(), matchAmount.toString(), matchMoney, fee.toPlainString());
             orderUpdates.add(orderUpdate);
             return true;
         } else {

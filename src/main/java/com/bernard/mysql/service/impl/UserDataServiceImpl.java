@@ -40,8 +40,8 @@ public class UserDataServiceImpl implements UserDataService {
     }
 
     @Override
-    public int updateUserOrderForce(String orderId, String remainToReduce, String matchMoneyToAdd) {
-        return userDataMapper.updateUserOrderForce(orderId, remainToReduce, matchMoneyToAdd);
+    public int updateUserOrderForce(String orderId, String remainToReduce, String matchMoneyToAdd, String feeToAdd) {
+        return userDataMapper.updateUserOrderForce(orderId, remainToReduce, matchMoneyToAdd, feeToAdd);
     }
 
     @Override
@@ -173,7 +173,7 @@ public class UserDataServiceImpl implements UserDataService {
         //3.订单更新
         if (orderUpdates != null && orderUpdates.size() != 0) {
             for (OrderUpdate orderUpdate : orderUpdates) {
-                mapper.updateUserOrderForce(orderUpdate.getOrderid(), orderUpdate.getRemainToReduce(), orderUpdate.getMatchMoney());
+                mapper.updateUserOrderForce(orderUpdate.getOrderid(), orderUpdate.getRemainToReduce(), orderUpdate.getMatchMoney(), orderUpdate.getOrderFee());
             }
         }
         sqlSession.flushStatements();
@@ -186,7 +186,7 @@ public class UserDataServiceImpl implements UserDataService {
         SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, true);
         UserDataMapper mapper = sqlSession.getMapper(UserDataMapper.class);
         for (OrderUpdate orderUpdate : orderUpdates) {
-            mapper.updateUserOrderForce(orderUpdate.getOrderid(), orderUpdate.getRemainToReduce(), orderUpdate.getMatchMoney());
+            mapper.updateUserOrderForce(orderUpdate.getOrderid(), orderUpdate.getRemainToReduce(), orderUpdate.getMatchMoney(), orderUpdate.getOrderFee());
         }
         sqlSession.flushStatements();
     }
