@@ -43,6 +43,7 @@ message UserOrderRequest {
   string price = 6;
   string assertLimit = 7;
   string feeRate = 8;
+  string source = 9;
 }
 
 //撮合剩余单撤销
