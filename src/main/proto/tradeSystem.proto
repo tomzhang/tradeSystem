@@ -127,7 +127,7 @@ message TransferOutRequest {
   string account = 5;
   string amount = 6;
   string toAddr = 7;
-
+  string fee = 8;
 }
 
 // The response message
