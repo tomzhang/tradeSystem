@@ -37,48 +37,53 @@ public class MatchOrderTask implements Callable {
 
     @Override
     public Object call() throws Exception {
-        logger.info("开始处理成交回报======" + matchOrderRequest.toString());
-        //0.记录成交统计
-        ReportStateManager.addTotal(matchOrderRequest.getAsset(), new BigDecimal(matchOrderRequest.getMatchAmount()));
-        long start = System.currentTimeMillis();
-        //1.查询订单
-        List<Order> matchOrders = new ArrayList<>();
-        List<String> strings = new ArrayList<>();
-        strings.add(RedisKeys.ORDER_MAP_PREFIX + matchOrderRequest.getBuySideOrderId());
-        strings.add(RedisKeys.ORDER_MAP_PREFIX + matchOrderRequest.getSellSideOrderId());
-        matchOrders = cacheService.mGetCacheOrder(strings);
-        if (matchOrders == null || matchOrders.size() != 2) {
-            try {
-                logger.info("缓存未命中，查询数据库订单");
-                matchOrders = userDataService.queryMatchOrders(matchOrderRequest.getBuySideOrderId(), matchOrderRequest.getSellSideOrderId());
-                logger.info("缓存未命中，查询数据库订单耗时：" + (System.currentTimeMillis() - start));
-                if (matchOrders.size() != 2) {
-                    logger.fatal("查询数据库后，成交单号匹配错误:" + matchOrderRequest.getBuySideOrderId() + "|" + matchOrderRequest.getSellSideOrderId());
+        try {
+            logger.info("开始处理成交回报======" + matchOrderRequest.toString());
+            //0.记录成交统计
+            ReportStateManager.addTotal(matchOrderRequest.getAsset(), new BigDecimal(matchOrderRequest.getMatchAmount()));
+            long start = System.currentTimeMillis();
+            //1.查询订单
+            List<Order> matchOrders = new ArrayList<>();
+            List<String> strings = new ArrayList<>();
+            strings.add(RedisKeys.ORDER_MAP_PREFIX + matchOrderRequest.getBuySideOrderId());
+            strings.add(RedisKeys.ORDER_MAP_PREFIX + matchOrderRequest.getSellSideOrderId());
+            matchOrders = cacheService.mGetCacheOrder(strings);
+            if (matchOrders == null || matchOrders.size() != 2) {
+                try {
+                    logger.info("缓存未命中，查询数据库订单");
+                    matchOrders = userDataService.queryMatchOrders(matchOrderRequest.getBuySideOrderId(), matchOrderRequest.getSellSideOrderId());
+                    logger.info("缓存未命中，查询数据库订单耗时：" + (System.currentTimeMillis() - start));
+                    if (matchOrders.size() != 2) {
+                        logger.fatal("查询数据库后，成交单号匹配错误:" + matchOrderRequest.getBuySideOrderId() + "|" + matchOrderRequest.getSellSideOrderId());
+                        replyErrorState();
+                        return null;
+                    }
+                } catch (Exception e) {
+                    logger.error("查询成交订单失败", e);
                     replyErrorState();
                     return null;
                 }
-            } catch (Exception e) {
-                logger.error("查询成交订单失败", e);
-                replyErrorState();
-                return null;
             }
-        }
-        //2.处理订单
-        List<AssetUpdate> assetUpdates = new ArrayList<>();
-        List<OrderUpdate> orderUpdates = new ArrayList<>();
-        for (Order order : matchOrders) {
-            boolean handleOrderResult = handleOrder(order, new BigDecimal(matchOrderRequest.getMatchAmount()), new BigDecimal(matchOrderRequest.getMatchPrice()), assetUpdates, orderUpdates);
-            if (handleOrderResult == false) {
-                logger.error("成交回报处理订单失败：" + order.toString());
-                replyErrorState();
-                return null;
+            //2.处理订单
+            List<AssetUpdate> assetUpdates = new ArrayList<>();
+            List<OrderUpdate> orderUpdates = new ArrayList<>();
+            for (Order order : matchOrders) {
+                boolean handleOrderResult = handleOrder(order, new BigDecimal(matchOrderRequest.getMatchAmount()), new BigDecimal(matchOrderRequest.getMatchPrice()), assetUpdates, orderUpdates);
+                if (handleOrderResult == false) {
+                    logger.error("成交回报处理订单失败：" + order.toString());
+                    replyErrorState();
+                    return null;
+                }
             }
-        }
 
-        userDataService.batchUpdateMatchOrderTask(assetUpdates, orderUpdates, matchOrderRequest, buySideFee.toPlainString(), sellSideFee.toPlainString());
-        replySuccessState();
-        logger.info("成交回报整体耗时：" + (System.currentTimeMillis() - start));
-        return null;
+            userDataService.batchUpdateMatchOrderTask(assetUpdates, orderUpdates, matchOrderRequest, buySideFee.toPlainString(), sellSideFee.toPlainString());
+            replySuccessState();
+            logger.info("成交回报整体耗时：" + (System.currentTimeMillis() - start));
+            return null;
+        } catch (Exception e) {
+            logger.error("处理成交回报异常", e);
+            return null;
+        }
     }
 
     private boolean handleOrder(Order order, BigDecimal matchAmount, BigDecimal matchPrice, List<AssetUpdate> assetUpdates, List<OrderUpdate> orderUpdates) {
