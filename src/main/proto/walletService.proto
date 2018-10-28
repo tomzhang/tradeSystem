@@ -1,45 +1,57 @@
 syntax = "proto3";
 
-
-option java_multiple_files = true;
-option java_package = "io.grpc.walletcore.service";
-option java_outer_classname = "WalletCoreService";
 package walletService;
 
 //钱包service
-service WalletService {
+service WalletService{
     //提现接口
     rpc transferOut (TransferOutRequest) returns (TransferOutReply) {
     }
 
     rpc bindWallets (BindWalletsRequest) returns (BindWalletsReply) {
     }
+
+    rpc getHotWalletBalance (GetHotWalletBalanceRequest) returns (GetHotWalletBalanceReply) {
+    }
 }
+
 
 // The request message.
 message TransferOutRequest {
-    string asset = 1;
-    string feeRate = 2;
-    string pubKey = 3;
-    string sign = 4;
-    string account = 5;
-    string amount = 6;
-    string toAddr = 7;
+  string asset = 1;
+  string feeRate = 2;
+  string pubKey=3;
+  string sign=4;
+  string account = 5;
+  string amount = 6;
+  string toAddr = 7;
 
 }
 
 // The response message
 message TransferOutReply {
-    string id = 1;
+  string id = 1;
 }
 
 // The request message.
 message BindWalletsRequest {
-    string asset = 1;
-    string account = 2;
+  string asset = 1;
+  string account=2;
 }
 
 // The response message
 message BindWalletsReply {
-    string address = 1;
+  string address = 1;
 }
+
+// The request message.
+message GetHotWalletBalanceRequest {
+}
+
+// The response message
+message GetHotWalletBalanceReply {
+  map<string, addrBalances>  HotWalletBalances = 1;
+}
+message addrBalances {
+   map<string,double> addrBalance=1;
+} 

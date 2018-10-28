@@ -28,8 +28,10 @@ service TradeSystem {
     //提现接口
     rpc transferOut (TransferOutRequest) returns (TransferOutReply) {
     }
-
     rpc getAddr (GetTransferInAddrRequest) returns (GetTransferInAddrReply) {
+    }
+    //提币失败
+    rpc transferOutError (TransferOutErrorRequest) returns (TransferOutErrorReply) {
     }
 }
 
@@ -44,6 +46,7 @@ message UserOrderRequest {
   string assertLimit = 7;
   string feeRate = 8;
   string source = 9;
+  string discd = 10;
 }
 
 //撮合剩余单撤销
@@ -149,6 +152,18 @@ message GetTransferInAddrReply {
     string addr = 2;
     string errorCode = 3;
     string errorMessage = 4;
+}
+
+// The request message.
+message TransferOutErrorRequest {
+  string id = 1;
+}
+
+// The response message
+message TransferOutErrorReply {
+    bool state = 1;
+    string errorMessage = 2;
+    string errorCode = 3;
 }
 
 enum OrderSide {
