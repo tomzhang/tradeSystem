@@ -29,6 +29,15 @@
         <property name="location" value="classpath:jdbc.properties"/>
     </bean>
 
+    <bean id="prop" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations">
+            <array>
+                <value>classpath:tradeSystem.properties</value>
+            </array>
+        </property>
+    </bean>
+
+
     <!-- redis连接池配置-->
     <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig" >
         <!--最大空闲数-->

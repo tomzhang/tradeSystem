@@ -62,4 +62,6 @@ public interface UserDataService {
 
     void updateStateReport(List<StateReport> stateReports);
 
+    void updateCoinTransferRate(List<CoinTransferRate> coinTransferRates);
+
 }

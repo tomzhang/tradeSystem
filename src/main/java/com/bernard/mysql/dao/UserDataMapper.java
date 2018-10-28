@@ -1,9 +1,6 @@
 package com.bernard.mysql.dao;
 
-import com.bernard.mysql.dto.Order;
-import com.bernard.mysql.dto.StateReport;
-import com.bernard.mysql.dto.TransferFlow;
-import com.bernard.mysql.dto.UserAsset;
+import com.bernard.mysql.dto.*;
 import org.apache.ibatis.annotations.Param;
 import org.mybatis.spring.annotation.MapperScan;
 
@@ -60,6 +57,8 @@ public interface UserDataMapper {
     int updateUserOrderForce(@Param("orderId") String orderId, @Param("remainToReduce") String remainToReduce, @Param("matchMoneyToAdd") String matchMoneyToAdd, @Param("orderFee") String orderFee);
 
     void mergeStateInfo(StateReport stateReport);
+
+    void mergeCoinTransfer(CoinTransferRate rate);
 
 
 

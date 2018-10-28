@@ -207,5 +207,25 @@
         </if>
     </insert>
 
+    <insert id="mergeCoinTransfer" parameterType="com.bernard.mysql.dto.CoinTransferRate">
+        <selectKey keyProperty="count" resultType="int" order="BEFORE">
+            SELECT COUNT(*) as count from T_ASSETPAIR_PRICE where DATE =
+            #{date} and ASSET_PAIR = #{pair}
+        </selectKey>
+        <!-- 如果大于0则更新 -->
+        <if test="count>0">
+            UPDATE T_ASSETPAIR_PRICE SET
+            CLOSE_PRICE= #{rate}
+            WHERE ASSET_PAIR = #{pair} and DATE = #{date}
+        </if>
+        <!-- 如果等于0则保存 -->
+        <if test="count==0">
+            INSERT INTO T_ASSETPAIR_PRICE (ASSET_PAIR,CLOSE_PRICE,DATE)
+            VALUES (#{pair},#{rate},#{date})
+        </if>
+
+
+    </insert>
+
 
 </mapper>

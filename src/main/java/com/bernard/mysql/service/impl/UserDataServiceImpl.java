@@ -203,5 +203,13 @@ public class UserDataServiceImpl implements UserDataService {
 
     }
 
-
+    @Override
+    public void updateCoinTransferRate(List<CoinTransferRate> coinTransferRates) {
+        SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, true);
+        UserDataMapper mapper = sqlSession.getMapper(UserDataMapper.class);
+        for (CoinTransferRate coinTransferRate : coinTransferRates) {
+            mapper.mergeCoinTransfer(coinTransferRate);
+        }
+        sqlSession.flushStatements();
+    }
 }
