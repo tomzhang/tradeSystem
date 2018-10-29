@@ -67,4 +67,10 @@ public class TradeSystemService extends TradeSystemGrpc.TradeSystemImplBase {
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
     }
+
+    @Override
+    public void transferOutError(TransferOutErrorRequest request, StreamObserver<TransferOutErrorReply> responseObserver) {
+        //super.transferOutError(request, responseObserver);
+
+    }
 }
