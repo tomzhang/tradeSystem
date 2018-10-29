@@ -10,7 +10,10 @@ public enum ErrorType {
     //撤单
     OrderError("Order Error", 10005),
     //
-    MatchAccoutError("Match account addr Error", 10006);
+    MatchAccoutError("Match account addr Error", 10006),
+
+    //提现
+    AssetChanged("Asset amount changed", 10007);
 
 
 

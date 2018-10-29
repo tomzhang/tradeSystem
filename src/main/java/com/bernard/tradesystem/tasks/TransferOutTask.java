@@ -2,6 +2,7 @@ package com.bernard.tradesystem.tasks;
 
 import com.bernard.App;
 
+import com.bernard.common.error.ErrorType;
 import com.bernard.mysql.dto.TransferFlow;
 import com.bernard.mysql.dto.TransferSide;
 import com.bernard.mysql.dto.UserAsset;
@@ -50,20 +51,25 @@ public class TransferOutTask implements Callable {
             logger.info("提币余额不足");
             transferOutFlow.setSuccessState(false);
             userDataService.updateUserChangeFlow(transferOutFlow);
-            replyErrorState();
+            replyErrorState(ErrorType.Insufficient.getMessage(), ErrorType.InternalError.getCode() + "");
             return null;
         }
         BigDecimal newAvi = avi.subtract(new BigDecimal(transferOutFlow.getAmount())).setScale(8, BigDecimal.ROUND_DOWN);
         BigDecimal newTotal = new BigDecimal(userAsset.getTotalAmount()).subtract(new BigDecimal(transferOutFlow.getAmount())).setScale(8, BigDecimal.ROUND_DOWN);
-        userDataService.decreaseUserAssert(transferOutFlow.getAccount(), transferOutFlow.getAsset(), userAsset.getLockVersion(), newTotal.toString(), newAvi.toString(), new Date());
+        int result = userDataService.decreaseUserAssert(transferOutFlow.getAccount(), transferOutFlow.getAsset(), userAsset.getLockVersion(), newTotal.toString(), newAvi.toString(), new Date());
+        if (result != 1) {
+            logger.error("提币锁定账户金额错误");
+            replyErrorState(ErrorType.AssetChanged.getMessage(), ErrorType.AssetChanged.getCode() + "");
+            return null;
+        }
         //3.通知钱包转账
         userDataService.updateUserChangeFlow(transferOutFlow);
         replySuccessState();
         return null;
     }
 
-    private void replyErrorState() {
-        TransferOutReply transferOutReply = TransferOutReply.newBuilder().setState(false).build();
+    private void replyErrorState(String errorMessage, String errorCode) {
+        TransferOutReply transferOutReply = TransferOutReply.newBuilder().setState(false).setErrorCode(errorCode).setErrorMessage(errorMessage).build();
         responseObserver.onNext(transferOutReply);
         responseObserver.onCompleted();
         return;
