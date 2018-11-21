@@ -7,6 +7,8 @@ import com.bernard.common.config.TradeSystemConfig;
 import com.bernard.common.utils.HttpsUtil;
 import com.bernard.common.utils.TimeUtil;
 import com.bernard.globle.ReportStateManager;
+import com.bernard.mysql.dto.Asset;
+import com.bernard.mysql.dto.AssetToBTCPrice;
 import com.bernard.mysql.dto.CoinTransferRate;
 import com.bernard.mysql.dto.StateReport;
 import com.bernard.mysql.service.UserDataService;
@@ -19,6 +21,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -41,7 +44,7 @@ public class StateReportTask {
         // HashMap map=AssetCoinfig.assetMap;
         //logger.info("开始执行定时统计任务");
         List<StateReport> stateReports = new ArrayList<>();
-        for (Map.Entry<String, String> entry : AssetCoinfig.assetMap.entrySet()) {
+        for (Map.Entry<String, Asset> entry : AssetCoinfig.assetMap.entrySet()) {
             StateReport report = new StateReport();
             report.setAssetPair(entry.getKey());
             report.setAmount("0");
@@ -73,7 +76,6 @@ public class StateReportTask {
             List<CoinTransferRate> coinTransferRates = new ArrayList<>();
             for (Map.Entry<String, String> entry : AssetPairConfig.assetPairMap.entrySet()) {
                 CoinTransferRate rate = new CoinTransferRate();
-                System.out.println(entry.getKey());
                 String url = tradeSystemConfig.getKlineConfig() + entry.getKey() + "?limit=2";
                 JSONObject resultJson = JSONObject.fromObject(HttpsUtil.get(url));
                 JSONArray array = resultJson.getJSONArray("candles");
@@ -90,6 +92,56 @@ public class StateReportTask {
                 }
             }
             userDataService.updateCoinTransferRate(coinTransferRates);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Scheduled(cron = "0/10 * * * * ? ")
+    public void calcCoinTransferRate() {
+        try {
+            List<CoinTransferRate> rates = userDataService.queryAllCoinTransferRate(TimeUtil.getTime());
+            HashMap<String, CoinTransferRate> ratesMap = new HashMap<>();
+            for (CoinTransferRate rate : rates) {
+                ratesMap.put(rate.getPair(), rate);
+            }
+            List<AssetToBTCPrice> assetToBTCPrices = new ArrayList<>();
+            for (Map.Entry<String, Asset> entry : AssetCoinfig.assetMap.entrySet()) {
+                AssetToBTCPrice assetToBTCPrice = new AssetToBTCPrice();
+                Asset asset = entry.getValue();
+                assetToBTCPrice.setAsset(asset.getAsset());
+                String route = asset.getRoute();
+                String[] subRoutes = route.split(";");
+                BigDecimal rate = new BigDecimal(1);
+                for (String a : subRoutes) {
+                    String[] subr = a.split("\\|");
+                    if (subr.length != 2) {
+                        logger.fatal("转换路径配置错误1");
+                    } else {
+                        CoinTransferRate transferRate = ratesMap.get(subr[0]);
+                        if (transferRate == null && !subr[1].equalsIgnoreCase("none")) {
+                            logger.fatal("转换路径配置错误2" + a);
+                            continue;
+                        }
+                        if (subr[1].equalsIgnoreCase("none")) {
+                            continue;
+                        }
+                        if (subr[1].equalsIgnoreCase("multiply")) {
+                            rate = rate.multiply(new BigDecimal(transferRate.getRate()));
+                        } else if (subr[1].equalsIgnoreCase("divide")) {
+                            rate = rate.divide(new BigDecimal(transferRate.getRate()), 8, BigDecimal.ROUND_DOWN);
+                        }
+                    }
+
+                }
+                assetToBTCPrice.setPrice(rate.toString());
+                assetToBTCPrice.setDate(TimeUtil.getTime());
+                assetToBTCPrices.add(assetToBTCPrice);
+
+            }
+            userDataService.updateAssetToBTCPrice(assetToBTCPrices);
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }

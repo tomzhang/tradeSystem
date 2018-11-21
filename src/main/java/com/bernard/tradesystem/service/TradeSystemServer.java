@@ -1,6 +1,8 @@
 package com.bernard.tradesystem.service;
 
 
+import com.bernard.App;
+import com.bernard.common.config.TradeSystemConfig;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
@@ -16,7 +18,8 @@ public class TradeSystemServer {
     private Server server;
 
     public void start() throws IOException {
-        server = ServerBuilder.forPort(port)
+        TradeSystemConfig config = (TradeSystemConfig) App.context.getBean("tradeSystemConfig");
+        server = ServerBuilder.forPort(Integer.parseInt(config.getGrpcPort()))
                 .addService(new TradeSystemService())
                 .build()
                 .start();

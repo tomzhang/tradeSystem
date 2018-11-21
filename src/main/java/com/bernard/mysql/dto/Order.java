@@ -21,6 +21,8 @@ public class Order implements Serializable {
     String feeRate;//手续费率
     int LockVersion;// 乐观锁版本号*/
     String matchMoney;//已成交金额
+    String source;//渠道
+    String needDeduction;//是否需要抵扣
 
     private Order() {
         this.orderTime = System.currentTimeMillis() + "";
@@ -32,7 +34,7 @@ public class Order implements Serializable {
         this.matchMoney = "0";
     }
 
-    public Order(String account, String assetPair, OrderSide orderSide, OrderType orderType, String surviveTime, String amount, String price, String assertLimit, String feeRate, String remain) {
+    public Order(String account, String assetPair, OrderSide orderSide, OrderType orderType, String surviveTime, String amount, String price, String assertLimit, String feeRate, String remain, String source, String needDeduction) {
         this.orderID = UUID.randomUUID().toString();
         this.orderTime = System.currentTimeMillis() + "";
         this.account = account;
@@ -48,6 +50,25 @@ public class Order implements Serializable {
         this.feeRate = feeRate;
         this.LockVersion = 0;
         this.matchMoney = "0";
+        this.source = source;
+        this.needDeduction = needDeduction;
+    }
+
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getNeedDeduction() {
+        return needDeduction;
+    }
+
+    public void setNeedDeduction(String needDeduction) {
+        this.needDeduction = needDeduction;
     }
 
     public String getOrderID() {
@@ -175,10 +196,10 @@ public class Order implements Serializable {
         Order order;
         if (OrderType.valueOf(request.getOrderType()) == OrderType.PRICE_LIMIT) {
             order = new Order(request.getAccount(), request.getAssetPair(), OrderSide.valueOf(request.getOrderSide()),
-                    OrderType.valueOf(request.getOrderType()), "", request.getAmount(), request.getPrice(), request.getAssertLimit(), request.getFeeRate(), request.getAmount());
+                    OrderType.valueOf(request.getOrderType()), "", request.getAmount(), request.getPrice(), request.getAssertLimit(), request.getFeeRate(), request.getAmount(), request.getSource(), request.getDiscd());
         } else {
             order = new Order(request.getAccount(), request.getAssetPair(), OrderSide.valueOf(request.getOrderSide()),
-                    OrderType.valueOf(request.getOrderType()), "", request.getAmount(), request.getPrice(), request.getAssertLimit(), request.getFeeRate(), request.getAssertLimit());
+                    OrderType.valueOf(request.getOrderType()), "", request.getAmount(), request.getPrice(), request.getAssertLimit(), request.getFeeRate(), "0", request.getSource(), request.getDiscd());
         }
         return order;
     }
@@ -201,6 +222,8 @@ public class Order implements Serializable {
                 ", feeRate='" + feeRate + '\'' +
                 ", LockVersion=" + LockVersion +
                 ", matchMoney='" + matchMoney + '\'' +
+                ", source='" + source + '\'' +
+                ", needDeduction='" + needDeduction + '\'' +
                 '}';
     }
 }

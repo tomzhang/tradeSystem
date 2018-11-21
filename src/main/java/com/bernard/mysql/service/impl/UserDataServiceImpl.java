@@ -90,7 +90,7 @@ public class UserDataServiceImpl implements UserDataService {
     }
 
     @Override
-    public List<String> queryAllAsset() {
+    public List<Asset> queryAllAsset() {
         return userDataMapper.queryAllAsset();
     }
 
@@ -203,12 +203,29 @@ public class UserDataServiceImpl implements UserDataService {
 
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateCoinTransferRate(List<CoinTransferRate> coinTransferRates) {
         SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, true);
         UserDataMapper mapper = sqlSession.getMapper(UserDataMapper.class);
         for (CoinTransferRate coinTransferRate : coinTransferRates) {
             mapper.mergeCoinTransfer(coinTransferRate);
+        }
+        sqlSession.flushStatements();
+    }
+
+    @Override
+    public List<CoinTransferRate> queryAllCoinTransferRate(String date) {
+        return userDataMapper.queryAllCoinTransferRate(date);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void updateAssetToBTCPrice(List<AssetToBTCPrice> assetToBTCPrices) {
+        SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, true);
+        UserDataMapper mapper = sqlSession.getMapper(UserDataMapper.class);
+        for (AssetToBTCPrice assetToBTCPrice : assetToBTCPrices) {
+            mapper.mergeAssetToBTC(assetToBTCPrice);
         }
         sqlSession.flushStatements();
     }

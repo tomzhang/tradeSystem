@@ -8,6 +8,17 @@ public class TradeSystemConfig {
     @Value("#{prop.KLineUrl}")
     private String KlineConfig;
 
+    @Value("#{prop.GRPC_PORT}")
+    private String grpcPort;
+
+
+    public String getGrpcPort() {
+        return grpcPort;
+    }
+
+    public void setGrpcPort(String grpcPort) {
+        this.grpcPort = grpcPort;
+    }
 
     public String getKlineConfig() {
         return KlineConfig;

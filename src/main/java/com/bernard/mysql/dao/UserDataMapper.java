@@ -20,7 +20,7 @@ public interface UserDataMapper {
 
     Order queryUserOrder(String orderId, String account);
 
-    List<String> queryAllAsset();
+    List<Asset> queryAllAsset();
 
     List<String> queryAllAssetPair();
 
@@ -59,6 +59,10 @@ public interface UserDataMapper {
     void mergeStateInfo(StateReport stateReport);
 
     void mergeCoinTransfer(CoinTransferRate rate);
+
+    List<CoinTransferRate> queryAllCoinTransferRate(@Param("date") String date);
+
+    void mergeAssetToBTC(AssetToBTCPrice assetToBTCPrice);
 
 
 

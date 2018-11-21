@@ -7,11 +7,11 @@
 		INSERT INTO T_USER_ORDER
         (ORDER_ID,ORDER_TIME,ACCOUNT,ASSET_PAIR,ORDER_SIDE,
         ORDER_TYPE,SURVIVE_TIME,AMOUNT,PRICE,STATE,
-        REMAIN,ASSET_LIMIT,LOCK_VERSION,ORDER_FEE_RATE,MATCH_MONEY)
+        REMAIN,ASSET_LIMIT,LOCK_VERSION,ORDER_FEE_RATE,MATCH_MONEY,SOURCE,DEDUCTION)
         VALUES
         (#{orderID},#{orderTime},#{account},#{assetPair},#{orderSide,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
         #{orderType,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{surviveTime},#{amount},#{price},#{state,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
-        #{remain},#{AssertLimit},#{LockVersion},#{feeRate},#{matchMoney})
+        #{remain},#{AssertLimit},#{LockVersion},#{feeRate},#{matchMoney},#{source},#{needDeduction})
 	</insert>
 
     <update id="updateUserOrder" parameterType="com.bernard.mysql.dto.Order">
@@ -43,13 +43,16 @@
 
 
     <update id="updateUserAssert">
-		UPDATE T_USER_ASSET_${param2} SET LOCK_VERSION=LOCK_VERSION+1,AIVILIABLE=CONVERT(AIVILIABLE,DECIMAL(32,8))+CONVERT (#{param4},DECIMAL(32,8)),TOTAL_AMOUNT=CONVERT (TOTAL_AMOUNT,DECIMAL(32,8))+CONVERT (#{param3},DECIMAL(32,8)),UPDATE_TIME=#{param5} WHERE ACCOUNT=#{param1}
+        UPDATE T_USER_ASSET_${param2} SET
+        LOCK_VERSION=LOCK_VERSION+1,AIVILIABLE=CONVERT(AIVILIABLE,DECIMAL(32,15))+CONVERT
+        (#{param4},DECIMAL(32,15)),TOTAL_AMOUNT=CONVERT (TOTAL_AMOUNT,DECIMAL(32,15))+CONVERT
+        (#{param3},DECIMAL(32,15)),UPDATE_TIME=#{param5} WHERE ACCOUNT=#{param1}
 	</update>
 
     <update id="unlockUserAssertWhenFail">
 		unlockUserAssertWhenFail(String account, String asset, String amountToUnlock, Date updateTime)
 		UPDATE T_USER_ASSET_${param2} SET LOCK_VERSION = LOCK_VERSION+1,AIVILIABLE
-		=CONVERT(AIVILIABLE,DECIMAL(32,8))+CONVERT (#{param3},DECIMAL(32,8)),UPDATE_TIME=#{param4} WHERE ACCOUNT
+        =CONVERT(AIVILIABLE,DECIMAL(32,15))+CONVERT (#{param3},DECIMAL(32,15)),UPDATE_TIME=#{param4} WHERE ACCOUNT
 		=#{param}
 	</update>
 
@@ -79,8 +82,9 @@
         SELECT * FROM T_USER_ORDER WHERE ORDER_ID=#{0} OR ORDER_ID =#{1}
 	</select>
 
-    <resultMap id="queryAssetResult" type="java.lang.String">
+    <resultMap id="queryAssetResult" type="com.bernard.mysql.dto.Asset">
         <result column="ASSET" property="asset" jdbcType="VARCHAR"/>
+        <result column="ROUTE" property="route"/>
     </resultMap>
     <select id="queryAllAsset" resultMap="queryAssetResult" parameterType="java.lang.String">
 		SELECT * FROM T_ASSET
@@ -179,9 +183,9 @@
 
     <update id="updateUserOrderForce">
         UPDATE T_USER_ORDER SET LOCK_VERSION = LOCK_VERSION +1,REMAIN
-        =CONVERT(REMAIN,DECIMAL(32,8))-CONVERT (#{remainToReduce},DECIMAL(32,8)),
-        MATCH_MONEY=CONVERT(MATCH_MONEY,DECIMAL(32,8))+CONVERT (#{matchMoneyToAdd},DECIMAL(32,8)),
-        ORDER_FEE =CONVERT(ORDER_FEE,DECIMAL(32,11))+CONVERT (#{orderFee},DECIMAL(32,11)) WHERE
+        =CONVERT(REMAIN,DECIMAL(32,15))-CONVERT (#{remainToReduce},DECIMAL(32,15)),
+        MATCH_MONEY=CONVERT(MATCH_MONEY,DECIMAL(32,15))+CONVERT (#{matchMoneyToAdd},DECIMAL(32,15)),
+        ORDER_FEE =CONVERT(ORDER_FEE,DECIMAL(32,15))+CONVERT (#{orderFee},DECIMAL(32,15)) WHERE
         ORDER_ID=#{orderId}
     </update>
 
@@ -193,8 +197,8 @@
         <!-- 如果大于0则更新 -->
         <if test="count>0">
             UPDATE T_STATE_REPORT SET
-            TOTAL_AMOUNT= CONVERT(TOTAL_AMOUNT,DECIMAL(32,8))+CONVERT (#{amount},DECIMAL(32,8)),
-            TOTAL_FEE= CONVERT(TOTAL_FEE,DECIMAL(32,8)) + CONVERT (#{fee},DECIMAL(32,8))
+            TOTAL_AMOUNT= CONVERT(TOTAL_AMOUNT,DECIMAL(32,15))+CONVERT (#{amount},DECIMAL(32,15)),
+            TOTAL_FEE= CONVERT(TOTAL_FEE,DECIMAL(32,15)) + CONVERT (#{fee},DECIMAL(32,15))
             WHERE ASSET_PAIR = #{assetPair} and DATE = #{date}
         </if>
         <!-- 如果等于0则保存 -->
@@ -208,24 +212,24 @@
     </insert>
 
     <insert id="mergeCoinTransfer" parameterType="com.bernard.mysql.dto.CoinTransferRate">
-        <selectKey keyProperty="count" resultType="int" order="BEFORE">
-            SELECT COUNT(*) as count from T_ASSETPAIR_PRICE where DATE =
-            #{date} and ASSET_PAIR = #{pair}
-        </selectKey>
-        <!-- 如果大于0则更新 -->
-        <if test="count>0">
-            UPDATE T_ASSETPAIR_PRICE SET
-            CLOSE_PRICE= #{rate}
-            WHERE ASSET_PAIR = #{pair} and DATE = #{date}
-        </if>
-        <!-- 如果等于0则保存 -->
-        <if test="count==0">
-            INSERT INTO T_ASSETPAIR_PRICE (ASSET_PAIR,CLOSE_PRICE,DATE)
-            VALUES (#{pair},#{rate},#{date})
-        </if>
-
-
+        INSERT INTO T_ASSETPAIR_PRICE (
+        ASSET_PAIR,CLOSE_PRICE,DATE) VALUES (#{pair},#{rate},#{date}) ON DUPLICATE KEY UPDATE CLOSE_PRICE = #{rate}
     </insert>
 
+    <resultMap id="queryAllCoinTransferRateResult" type="com.bernard.mysql.dto.CoinTransferRate">
+        <result column="ASSET_PAIR" property="pair" jdbcType="VARCHAR"/>
+        <result column="CLOSE_PRICE" property="rate" jdbcType="VARCHAR"/>
+        <result column="DATE" property="date" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="queryAllCoinTransferRate" resultMap="queryAllCoinTransferRateResult" parameterType="java.lang.String">
+        SELECT * FROM T_ASSETPAIR_PRICE WHERE DATE=#{date}
+    </select>
+
+
+    <insert id="mergeAssetToBTC" parameterType="com.bernard.mysql.dto.AssetToBTCPrice">
+        INSERT INTO T_ASSET_TO_BTC_PRICE (ASSET,TO_BTC_PRICE,DATE) VALUES (#{asset},#{price},#{date}) ON DUPLICATE KEY
+        UPDATE TO_BTC_PRICE=#{price}
+    </insert>
 
 </mapper>

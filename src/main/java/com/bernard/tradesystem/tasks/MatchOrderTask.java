@@ -104,11 +104,11 @@ public class MatchOrderTask implements Callable {
         if (order.getOrderType() == OrderType.PRICE_LIMIT) {
             orderPrice = new BigDecimal(order.getPrice());
         }
-        BigDecimal remain = new BigDecimal(order.getRemain());
+        /*BigDecimal remain = new BigDecimal(order.getRemain());
         if (remain.compareTo(matchAmount) < 0) {
             logger.info("订单金额不足");
             return false;
-        }
+        }*/
         if (order.getState() == OrderState.CANCLE || order.getState() == OrderState.COMPLETE) {
             logger.fatal("订单状态异常");
             return false;

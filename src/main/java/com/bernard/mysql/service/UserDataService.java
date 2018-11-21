@@ -31,7 +31,7 @@ public interface UserDataService {
 
     List<Order> queryMatchOrders(String id1, String id2);
 
-    List<String> queryAllAsset();
+    List<Asset> queryAllAsset();
 
     List<String> queryAllAssetPair();
 
@@ -63,5 +63,9 @@ public interface UserDataService {
     void updateStateReport(List<StateReport> stateReports);
 
     void updateCoinTransferRate(List<CoinTransferRate> coinTransferRates);
+
+    List<CoinTransferRate> queryAllCoinTransferRate(String date);
+
+    void updateAssetToBTCPrice(List<AssetToBTCPrice> assetToBTCPrices);
 
 }

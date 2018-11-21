@@ -47,9 +47,9 @@ public class App
     private static void loadCoinfig() {
         UserDataService userDataService = (UserDataService) context.getBean("userDataServiceImpl");
         CacheService cacheService = (CacheService) App.context.getBean("cacheServiceImpl");
-        List<String> assets = userDataService.queryAllAsset();
-        for (String asset : assets) {
-            AssetCoinfig.assetMap.put(asset, "");
+        List<Asset> assets = userDataService.queryAllAsset();
+        for (Asset asset : assets) {
+            AssetCoinfig.assetMap.put(asset.getAsset(), asset);
         }
         List<String> assetPair = userDataService.queryAllAssetPair();
         for (String pair : assetPair) {
