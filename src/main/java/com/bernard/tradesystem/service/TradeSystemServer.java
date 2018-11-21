@@ -24,7 +24,7 @@ public class TradeSystemServer {
                 .build()
                 .start();
 
-        logger.info("交易柜台GRPC服务开启,服务端口：" + port);
+        logger.info("交易柜台GRPC服务开启,服务端口：" + config.getGrpcPort());
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
 
