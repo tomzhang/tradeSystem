@@ -1,16 +1,14 @@
 package com.bernard.scheduled;
 
-import com.bernard.App;
+
 import com.bernard.common.config.AssetCoinfig;
 import com.bernard.common.config.AssetPairConfig;
 import com.bernard.common.config.TradeSystemConfig;
 import com.bernard.common.utils.HttpsUtil;
 import com.bernard.common.utils.TimeUtil;
 import com.bernard.globle.ReportStateManager;
-import com.bernard.mysql.dto.Asset;
-import com.bernard.mysql.dto.AssetToBTCPrice;
-import com.bernard.mysql.dto.CoinTransferRate;
-import com.bernard.mysql.dto.StateReport;
+import com.bernard.mysql.dto.*;
+import com.bernard.mysql.service.ClearDataService;
 import com.bernard.mysql.service.UserDataService;
 
 import net.sf.json.JSONArray;
@@ -20,11 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -36,13 +30,14 @@ public class StateReportTask {
     private UserDataService userDataService;
 
     @Autowired
+    private ClearDataService clearDataService;
+
+    @Autowired
     private TradeSystemConfig tradeSystemConfig;
-//    private UserDataService userDataService = (UserDataService) App.context.getBean("userDataServiceImpl");
+
 
     @Scheduled(cron = "0/10 * * * * ? ")
     public void reportState() {
-        // HashMap map=AssetCoinfig.assetMap;
-        //logger.info("开始执行定时统计任务");
         List<StateReport> stateReports = new ArrayList<>();
         for (Map.Entry<String, Asset> entry : AssetCoinfig.assetMap.entrySet()) {
             StateReport report = new StateReport();
@@ -146,5 +141,104 @@ public class StateReportTask {
             e.printStackTrace();
         }
     }
+
+
+    @Scheduled(cron = "0/10 * * * * ? ")
+    public void updateUserBounty() {
+        int clearFlag = clearDataService.checkClearFlag(TimeUtil.getClearTime());
+        if (clearFlag == 0) {
+            return;
+        } else {
+            clearBounty();
+            clearRebase();
+        }
+    }
+
+
+    private void clearBounty() {
+        while (clearDataService.bonusCount(TimeUtil.getClearTime()) != 0) {
+            //更新至中间状态
+            List<Bonus> prebonusList = clearDataService.getBonusListByPage(TimeUtil.getClearTime(), "NOT_START");
+            //List<UserAsset> userAssets = new ArrayList<>();
+            String uuid = UUID.randomUUID().toString();
+            if (prebonusList.size() == 0) {
+                continue;
+            }
+            for (Bonus bonus : prebonusList) {
+                bonus.setState(uuid);
+                bonus.setOldState("NOT_START");
+            }
+            try {
+                clearDataService.updateBonus(prebonusList);
+            } catch (Exception e) {
+                logger.info("已处理");
+                continue;
+            }
+            List<Bonus> bonusList = clearDataService.getBonusListByPage(TimeUtil.getClearTime(), uuid);
+            if (bonusList.size() == 0) {
+                continue;
+            }
+            List<UserAsset> userAssets = new ArrayList<>();
+            for (Bonus bonus : bonusList) {
+                UserAsset userAsset = new UserAsset();
+                userAsset.setAsset(bonus.getAsset());
+                userAsset.setTotalAmount(bonus.getBouns());
+                userAsset.setAccount(bonus.getAccount());
+                userAsset.setUpdateTime(new Date());
+                userAssets.add(userAsset);
+            }
+            clearDataService.batchUpdateUserAsset(userAssets);
+            for (Bonus bonus : bonusList) {
+                bonus.setState("COMPLETE");
+                bonus.setOldState(uuid);
+            }
+            try {
+                clearDataService.updateBonus(bonusList);
+            } catch (Exception e) {
+                continue;
+            }
+        }
+    }
+
+
+    private void clearRebase() {
+        while (clearDataService.rebateCount(TimeUtil.getClearTime()) != 0) {
+            List<Rebate> prerebateList = clearDataService.getRebateListByPage(TimeUtil.getClearTime(), "NOT_START");
+            if (prerebateList.size() == 0) {
+                continue;
+            }
+            // List<UserAsset> userAssets = new ArrayList<>();
+            String uuid = UUID.randomUUID().toString();
+            for (Rebate rebate : prerebateList) {
+                rebate.setState(uuid);
+                rebate.setOldState("NOT_START");
+            }
+            try {
+                clearDataService.updateRebate(prerebateList);
+            } catch (Exception e) {
+                logger.info("已处理");
+                continue;
+            }
+            List<Rebate> rebateList = clearDataService.getRebateListByPage(TimeUtil.getClearTime(), uuid);
+            List<UserAsset> userAssets = new ArrayList<>();
+            for (Rebate rebate : rebateList) {
+                UserAsset userAsset = new UserAsset();
+                userAsset.setAsset(rebate.getAsset());
+                userAsset.setTotalAmount(rebate.getAmount());
+                userAsset.setAccount(rebate.getAccount());
+                userAsset.setUpdateTime(new Date());
+                userAssets.add(userAsset);
+            }
+
+            clearDataService.batchUpdateUserAsset(userAssets);
+            for (Rebate rebate : rebateList) {
+                rebate.setState("COMPLETE");
+                rebate.setOldState(uuid);
+            }
+            clearDataService.updateRebate(rebateList);
+        }
+
+    }
+
 
 }

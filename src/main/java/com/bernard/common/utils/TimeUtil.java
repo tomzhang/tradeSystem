@@ -22,6 +22,13 @@ public class TimeUtil {
         return formatter.format(now);
     }
 
+
+    public static String getClearTime() {
+        Date now = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+        return formatter.format(now);
+    }
+
     public static void main(String[] args) {
         System.out.println(getTimeString());
     }

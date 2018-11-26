@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bernard.mysql.dao.ClearDataMapper">
+
+    <select id="checkClearFlag" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM T_CLEAR_STATE WHERE CLEARDATE=#{0}
+    </select>
+
+    <select id="rebateCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM T_USER_REBATE WHERE CLEARDATE=#{0} AND STATE='NOT_START';
+    </select>
+
+    <select id="bonusCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM T_USER_BONUS WHERE  CLEARDATE=#{0} AND STATE='NOT_START';
+    </select>
+
+    <resultMap id="queryRebateList" type="com.bernard.mysql.dto.Rebate">
+        <result column="ASSET" property="asset" jdbcType="VARCHAR"/>
+        <result column="AMOUNT" property="rate" jdbcType="VARCHAR"/>
+        <result column="STATE" property="state" jdbcType="VARCHAR"/>
+        <result column="CLEARDATE" property="clearDate" jdbcType="VARCHAR"/>
+        <result column="ACCOUNT" property="account" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getRebateListByPage" resultMap="queryRebateList">
+        SELECT * FROM T_USER_REBATE WHERE CLEARDATE=#{0} AND STATE=#{1} LIMIT 1000;
+    </select>
+
+
+    <resultMap id="queryBonusList" type="com.bernard.mysql.dto.Bonus">
+        <result column="ASSET" property="asset" jdbcType="VARCHAR"/>
+        <result column="ACCOUNT" property="account" jdbcType="VARCHAR"/>
+        <result column="Bonus" property="bouns" jdbcType="VARCHAR"/>
+        <result column="CLEARDATE" property="cleardate" jdbcType="VARCHAR"/>
+        <result column="STATE" property="state" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="getBonusListByPage" resultMap="queryBonusList">
+        SELECT * FROM T_USER_BONUS WHERE CLEARDATE=#{0} AND STATE=#{1} LIMIT 1000;
+    </select>
+
+    <update id="updateRebate" parameterType="com.bernard.mysql.dto.Rebate">
+        UPDATE T_USER_REBATE SET STATE=#{state} WHERE ACCOUNT=#{account} AND CLEARDATE=#{clearDate} AND ASSET=#{asset} AND STATE=#{oldState}
+    </update>
+
+    <update id="updateBonus" parameterType="com.bernard.mysql.dto.Bonus">
+        UPDATE T_USER_BONUS SET STATE=#{state} WHERE ACCOUNT=#{account} AND CLEARDATE=#{cleardate} AND ASSET=#{asset} AND STATE=#{oldState}
+    </update>
+
+
+</mapper>
