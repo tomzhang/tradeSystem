@@ -13,6 +13,7 @@ public class TransferFlow {
     private int lockVersion;
     private String account;
     private boolean successState;
+    private String fee;
 
 
     public String getAsset() {
@@ -94,6 +95,14 @@ public class TransferFlow {
 
     public void setSuccessState(boolean successState) {
         this.successState = successState;
+    }
+
+    public String getFee() {
+        return fee;
+    }
+
+    public void setFee(String fee) {
+        this.fee = fee;
     }
 
     @Override

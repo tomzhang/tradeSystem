@@ -42,20 +42,22 @@ public class TransferOutTask implements Callable {
         transferOutFlow.setAsset(transferOutRequest.getAsset());
         transferOutFlow.setToAddress(transferOutRequest.getToAddr());
         transferOutFlow.setTime(new Date());
+        transferOutFlow.setFee(transferOutFlow.getFee());
         logger.info("开始处理提币请求:" + transferOutFlow.toString());
 
         //2.交易余额，稳定以后可以用缓存数据以加快访问速度。
         UserAsset userAsset = userDataService.queryUserAssert(transferOutFlow.getAccount(), transferOutFlow.getAsset());
         BigDecimal avi = new BigDecimal(userAsset.getAviliable());
-        if (avi.compareTo(new BigDecimal(transferOutFlow.getAmount())) <= 0) {
+        BigDecimal decrs = new BigDecimal(transferOutFlow.getAmount()).add(new BigDecimal(transferOutFlow.getFee()));
+        if (avi.compareTo(decrs) <= 0) {
             logger.info("提币余额不足");
             transferOutFlow.setSuccessState(false);
             userDataService.updateUserChangeFlow(transferOutFlow);
             replyErrorState(ErrorType.Insufficient.getMessage(), ErrorType.InternalError.getCode() + "");
             return null;
         }
-        BigDecimal newAvi = avi.subtract(new BigDecimal(transferOutFlow.getAmount())).setScale(8, BigDecimal.ROUND_DOWN);
-        BigDecimal newTotal = new BigDecimal(userAsset.getTotalAmount()).subtract(new BigDecimal(transferOutFlow.getAmount())).setScale(8, BigDecimal.ROUND_DOWN);
+        BigDecimal newAvi = avi.subtract(decrs).setScale(8, BigDecimal.ROUND_DOWN);
+        BigDecimal newTotal = new BigDecimal(userAsset.getTotalAmount()).subtract(decrs).setScale(8, BigDecimal.ROUND_DOWN);
         int result = userDataService.decreaseUserAssert(transferOutFlow.getAccount(), transferOutFlow.getAsset(), userAsset.getLockVersion(), newTotal.toString(), newAvi.toString(), new Date());
         if (result != 1) {
             logger.error("提币锁定账户金额错误");
@@ -63,6 +65,7 @@ public class TransferOutTask implements Callable {
             return null;
         }
         //3.通知钱包转账
+        //4,.
         userDataService.updateUserChangeFlow(transferOutFlow);
         replySuccessState();
         return null;

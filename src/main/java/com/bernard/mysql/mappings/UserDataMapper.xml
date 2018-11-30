@@ -142,9 +142,9 @@
 
     <insert id="updateUserChangeFlow">
         INSERT INTO T_USER_ASSET_CHANGE_FLOW
-        (FROM_ADDRESS,TIME,TRANSFER_SIDE,LOCK_VERSION,ASSET,ACCOUNT,TO_ADDRESS,AMOUNT)
+        (FROM_ADDRESS,TIME,TRANSFER_SIDE,LOCK_VERSION,ASSET,ACCOUNT,TO_ADDRESS,AMOUNT,FEE)
         VALUES
-        (#{fromAddress},#{time},#{side,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{lockVersion},#{asset},#{account},#{toAddress},#{amount})
+        (#{fromAddress},#{time},#{side,typeHandler=org.apache.ibatis.type.EnumTypeHandler},#{lockVersion},#{asset},#{account},#{toAddress},#{amount},#{fee})
 	</insert>
 
     <insert id="insertUserAsset" parameterType="com.bernard.mysql.dto.UserAsset">
