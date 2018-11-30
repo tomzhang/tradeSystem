@@ -57,19 +57,20 @@ public class App
         }
         logger.info("加载支持货币数量：" + assets.size() + " 加载支持交易币对数量：" + assetPair.size());
 
-        /*for (String asset : assets) {
-            int isOk = userDataService.existTable("T_USER_ASSET_" + asset);
+        for (Asset asset : assets) {
+            String assetName = asset.getAsset();
+            int isOk = userDataService.existTable("T_USER_ASSET_" + assetName);
             if (isOk == 0) {
-                logger.info("发现新增资产种类，新建表：" + "T_USER_ASSET_" + asset);
-                userDataService.createNewTable("T_USER_ASSET_" + asset);
+                logger.info("发现新增资产种类，新建表：" + "T_USER_ASSET_" + assetName);
+                userDataService.createNewTable("T_USER_ASSET_" + assetName);
 
             }
-            int hasAddrTable = userDataService.existTable("T_USER_TRANSFERIN_ADDR_" + asset);
+            int hasAddrTable = userDataService.existTable("T_USER_TRANSFERIN_ADDR_" + assetName);
             if (hasAddrTable == 0) {
-                logger.info("发现新增用户地址表，新建表：T_USER_TRANSFERIN_ADDR_" + asset);
-                userDataService.createAddrTable("T_USER_TRANSFERIN_ADDR_" + asset);
+                logger.info("发现新增用户地址表，新建表：T_USER_TRANSFERIN_ADDR_" + assetName);
+                userDataService.createAddrTable("T_USER_TRANSFERIN_ADDR_" + assetName);
             }
-        }*/
+        }
 
     }
 }

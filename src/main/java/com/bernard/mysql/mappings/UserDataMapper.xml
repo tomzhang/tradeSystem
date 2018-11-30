@@ -104,20 +104,19 @@
 
     <update id="createNewTable">
         CREATE TABLE ${name} (
-        ID int(11) NOT NULL AUTO_INCREMENT ,
-        ACCOUNT varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL ,
-        TOTAL_AMOUNT varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ,
-        AIVILIABLE varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ,
-        LOCK_VERSION varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ,
-        UPDATE_TIME datetime NULL DEFAULT NULL ,
-        LIQUIDATION_TIME datetime NULL DEFAULT NULL ,
-        PRIMARY KEY (ID, ACCOUNT),
-        UNIQUE INDEX ${name}_ACCOUNT (ACCOUNT) USING BTREE
+        `ID` int(11) NULL DEFAULT NULL ,
+        `ACCOUNT` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL ,
+        `TOTAL_AMOUNT` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ,
+        `AIVILIABLE` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ,
+        `LOCK_VERSION` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ,
+        `UPDATE_TIME` datetime NULL DEFAULT NULL ,
+        `LIQUIDATION_TIME` datetime NULL DEFAULT NULL ,
+        PRIMARY KEY (`ACCOUNT`)
         )
         ENGINE=InnoDB
         DEFAULT CHARACTER SET=latin1 COLLATE=latin1_swedish_ci
-        AUTO_INCREMENT=4
-        ROW_FORMAT=DYNAMIC
+        ROW_FORMAT=DYNAMIC;
+
     </update>
 
     <insert id="insertMatchFlow">
