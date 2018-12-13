@@ -1,7 +1,11 @@
 package com.bernard.tradesystem.tasks;
 
+
 import com.bernard.App;
+import com.bernard.common.config.TradeSystemConfig;
 import com.bernard.common.error.ErrorType;
+import com.bernard.common.utils.HttpsUtil;
+import com.bernard.common.utils.TimeUtil;
 import com.bernard.mysql.dto.TransferFlow;
 import com.bernard.mysql.dto.TransferSide;
 import com.bernard.mysql.dto.UserAsset;
@@ -9,6 +13,7 @@ import com.bernard.mysql.service.UserDataService;
 import io.grpc.stub.StreamObserver;
 import io.grpc.tradesystem.service.TransferInReply;
 import io.grpc.tradesystem.service.TransferInRequest;
+import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
@@ -20,6 +25,8 @@ public class TransferInTask implements Callable {
     private StreamObserver<TransferInReply> responseObserver;
     private TransferInRequest transferInRequest;
     private UserDataService userDataService = (UserDataService) App.context.getBean("userDataServiceImpl");
+    TradeSystemConfig config = (TradeSystemConfig) App.context.getBean("tradeSystemConfig");
+
 
 
     private TransferInTask() {
@@ -73,6 +80,13 @@ public class TransferInTask implements Callable {
         if (updateChangeFlowCount != 1) {
             logger.fatal("插入转账流水失败，但是用户资金已增加");
         }
+        JSONObject postData = new JSONObject();
+        postData.put("account", account);
+        postData.put("asset", transferInRequest.getAsset());
+        postData.put("amount", String.valueOf(transferInRequest.getAmount()));
+        postData.put("time", TimeUtil.getTimeString());
+        String postURL = "https://" + config.getApiServiceHost() + ":" + config.getApiServicePort() + "/web/wallet/in";
+        String result = HttpsUtil.post(postURL, null, postData);
         replySuccessState();
         return null;
     }

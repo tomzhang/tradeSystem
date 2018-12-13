@@ -1,15 +1,18 @@
 package com.bernard.grpc.client.pool.tradeSystem;
 
+import com.bernard.App;
+import com.bernard.common.config.TradeSystemConfig;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 
 public class GrpcClientFactory extends BasePooledObjectFactory<TradeCoreClient> {
-    public static String host = "172.17.146.141";
+    TradeSystemConfig config = (TradeSystemConfig) App.context.getBean("tradeSystemConfig");
+    public static String host = "10.0.1.20";
     public static int port = 20039;
     @Override
     public TradeCoreClient create() throws Exception {
-        return new TradeCoreClient(host, port);
+        return new TradeCoreClient(config.getTradeCoreHost(), Integer.parseInt(config.getTradeCorePort()));
     }
 
     @Override
