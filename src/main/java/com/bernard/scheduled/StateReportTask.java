@@ -72,7 +72,12 @@ public class StateReportTask {
             for (Map.Entry<String, String> entry : AssetPairConfig.assetPairMap.entrySet()) {
                 CoinTransferRate rate = new CoinTransferRate();
                 String url = tradeSystemConfig.getKlineConfig() + entry.getKey() + "?limit=2";
-                JSONObject resultJson = JSONObject.fromObject(HttpsUtil.get(url));
+                JSONObject resultJson;
+                try {
+                    resultJson = JSONObject.fromObject(HttpsUtil.get(url));
+                } catch (Exception e) {
+                    continue;
+                }
                 JSONArray array = resultJson.getJSONArray("candles");
                 if (array.size() != 2) {
                     logger.error("币对" + entry.getKey() + "昨日行情获取失败");

@@ -5,10 +5,12 @@ import com.bernard.mysql.dao.UserDataMapper;
 import com.bernard.mysql.dto.*;
 
 import com.bernard.mysql.service.UserDataService;
+import com.bernard.tradesystem.tasks.MatchOrderCancelTask;
 import io.grpc.tradesystem.service.MatchOrderRequest;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,8 @@ import java.util.List;
 @Service
 @Transactional
 public class UserDataServiceImpl implements UserDataService {
+
+    private static Logger logger = Logger.getLogger(UserDataServiceImpl.class);
 
     @Autowired
     private UserDataMapper userDataMapper;
@@ -206,12 +210,15 @@ public class UserDataServiceImpl implements UserDataService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateCoinTransferRate(List<CoinTransferRate> coinTransferRates) {
+        logger.info("=======================================================================================");
+
         SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, true);
         UserDataMapper mapper = sqlSession.getMapper(UserDataMapper.class);
         for (CoinTransferRate coinTransferRate : coinTransferRates) {
             mapper.mergeCoinTransfer(coinTransferRate);
         }
         sqlSession.flushStatements();
+        logger.info("=======================================================================================");
     }
 
     @Override

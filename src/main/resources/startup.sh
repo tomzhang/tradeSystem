@@ -1,0 +1,1 @@
+nohup java -server -Xms6096m -Xmx6096m tradeSystem-1.0-SNAPSHOT.jar >/dev/null 2>&1 &

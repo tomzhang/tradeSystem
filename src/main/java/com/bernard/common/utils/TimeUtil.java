@@ -24,9 +24,14 @@ public class TimeUtil {
 
 
     public static String getClearTime() {
-        Date now = new Date();
+        //Date now = new Date();
+
+        Calendar ca = Calendar.getInstance();//得到一个Calendar的实例
+        ca.setTime(new Date()); //设置时间为当前时间
+        ca.add(Calendar.DATE, -1); //年份减1
+        Date clearTime = ca.getTime(); //结果
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-        return formatter.format(now);
+        return formatter.format(clearTime);
     }
 
     public static void main(String[] args) {

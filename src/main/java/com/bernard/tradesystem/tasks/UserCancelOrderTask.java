@@ -48,7 +48,7 @@ public class UserCancelOrderTask implements Callable {
             replyErrorState(ErrorType.AccountError);
             return null;
         }
-        if (userOrder.getState() == OrderState.COMPLETE) {
+        if (userOrder.getState() == OrderState.COMPLETE || userOrder.getState() == OrderState.CANCLE || userOrder.getState() == OrderState.ERROR) {
             replyErrorState(ErrorType.OrderError);
             return null;
         }
@@ -69,6 +69,7 @@ public class UserCancelOrderTask implements Callable {
             logger.fatal("订单余额为0，但是未关闭！");
             return null;
         }
+
         //
         //2.发送撤单请求至撮合系统
         io.grpc.tradeCore.service.OrderSide rpcSide;

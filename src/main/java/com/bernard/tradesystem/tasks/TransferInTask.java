@@ -85,7 +85,7 @@ public class TransferInTask implements Callable {
         postData.put("asset", transferInRequest.getAsset());
         postData.put("amount", String.valueOf(transferInRequest.getAmount()));
         postData.put("time", TimeUtil.getTimeString());
-        String postURL = "https://" + config.getApiServiceHost() + ":" + config.getApiServicePort() + "/web/wallet/in";
+        String postURL = "http://" + config.getApiServiceHost() + ":" + config.getApiServicePort() + "/web/wallet/in";
         String result = HttpsUtil.post(postURL, null, postData);
         replySuccessState();
         return null;
