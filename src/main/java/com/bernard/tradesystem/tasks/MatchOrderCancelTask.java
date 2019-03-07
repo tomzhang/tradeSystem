@@ -56,8 +56,14 @@ public class MatchOrderCancelTask implements Callable {
         assetUpdates.add(cargoUpdate);
 
         List<OrderUpdate> orderUpdates = new ArrayList<>();
+        for (AssetUpdate update : assetUpdates) {
+            logger.info("开始更新钱+++++++！！！！！");
+            userDataService.updateUserAssert(update.getAccount(), update.getAsset(), update.getTotalAmountToAdd(),
+                    update.getAviToAdd(), update.getUpdateTime());
+            logger.info("更新钱完毕+++++++！！！！！");
+        }
 
-        userDataService.batchUpdateMatchOrderTask(assetUpdates, orderUpdates, null, "0", "0");
+        userDataService.batchUpdateMatchOrderTask(orderUpdates, null, "0", "0");
         logger.info("开始处理未成交返还请求完毕：" + (System.currentTimeMillis() - start));
 
         return null;

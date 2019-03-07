@@ -155,14 +155,26 @@ public class UserDataServiceImpl implements UserDataService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void batchUpdateMatchOrderTask(List<AssetUpdate> updateList, List<OrderUpdate> orderUpdates, MatchOrderRequest matchOrderRequest, String buySideFee, String sellSideFee) {
-        SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, true);
-        UserDataMapper mapper = sqlSession.getMapper(UserDataMapper.class);
-        for (AssetUpdate update : updateList) {
+    public void batchUpdateMatchOrderTask(List<OrderUpdate> orderUpdates, MatchOrderRequest matchOrderRequest, String buySideFee, String sellSideFee) {
+   /*     SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, true);
+        UserDataMapper mapper = sqlSession.getMapper(UserDataMapper.class);*/
+        /*for (AssetUpdate update : updateList) {
+            SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, true);
+            UserDataMapper mapper = sqlSession.getMapper(UserDataMapper.class);
             mapper.updateUserAssert(update.getAccount(), update.getAsset(), update.getTotalAmountToAdd(),
                     update.getAviToAdd(), update.getUpdateTime());
-        }
+            sqlSession.flushStatements();
+
+        }*/
+     /*   for (AssetUpdate update : updateList) {
+            logger.info("开始更新钱+++++++！！！！！");
+            userDataMapper.updateUserAssert(update.getAccount(), update.getAsset(), update.getTotalAmountToAdd(),
+                    update.getAviToAdd(), update.getUpdateTime());
+            logger.info("更新钱完毕+++++++！！！！！");
+        }*/
         //2.成交流水
+        SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, true);
+        UserDataMapper mapper = sqlSession.getMapper(UserDataMapper.class);
         if (matchOrderRequest != null) {
             mapper.insertMatchFlow(matchOrderRequest.getMatchOrderWaterflow(),
                     matchOrderRequest.getSellSideOrderId(),

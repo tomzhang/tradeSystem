@@ -56,7 +56,7 @@ public interface UserDataService {
 
     int insertUserTransferInAddr(String account, String asset, String addr, Date time);
 
-    void batchUpdateMatchOrderTask(List<AssetUpdate> updateList, List<OrderUpdate> orderUpdates, MatchOrderRequest matchOrderRequest, String buySideFee, String sellSideFee);
+    void batchUpdateMatchOrderTask(List<OrderUpdate> orderUpdates, MatchOrderRequest matchOrderRequest, String buySideFee, String sellSideFee);
 
     void batchUpdateUserOrder(List<OrderUpdate> orderUpdates);
 

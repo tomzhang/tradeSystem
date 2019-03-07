@@ -75,8 +75,13 @@ public class MatchOrderTask implements Callable {
                     return null;
                 }
             }
-
-            userDataService.batchUpdateMatchOrderTask(assetUpdates, orderUpdates, matchOrderRequest, buySideFee.toPlainString(), sellSideFee.toPlainString());
+            for (AssetUpdate update : assetUpdates) {
+                //logger.info("开始更新钱+++++++！！！！！");
+                userDataService.updateUserAssert(update.getAccount(), update.getAsset(), update.getTotalAmountToAdd(),
+                        update.getAviToAdd(), update.getUpdateTime());
+                //logger.info("更新钱完毕+++++++！！！！！");
+            }
+            userDataService.batchUpdateMatchOrderTask(orderUpdates, matchOrderRequest, buySideFee.toPlainString(), sellSideFee.toPlainString());
             replySuccessState();
             logger.info("成交回报整体耗时：" + (System.currentTimeMillis() - start));
             return null;
